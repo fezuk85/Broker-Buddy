@@ -4,3 +4,5 @@ export * from "./age";
 export * from "./repayment";
 export * from "./rental";
 export * from "./bridging";
+export * from "./tax";
+export * from "./secondCharge";
