@@ -22,11 +22,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Type check
-        run: npx tsc --noEmit
-
       - name: Unit tests
         run: npm test
 
       - name: Build
         run: npm run build
+
+      # Runs after the build so Next.js's generated route types (LayoutProps etc.) exist.
+      - name: Type check
+        run: npx tsc --noEmit
