@@ -9,6 +9,9 @@ const TOOLS = [
   { href: "/btl-icr-calculator", title: "BTL ICR Calculator", desc: "Rental coverage and required rent at 125%/145%." },
   { href: "/rental-yield-calculator", title: "Rental Yield Calculator", desc: "Gross yield from purchase price and rent." },
   { href: "/bridging-interest-calculator", title: "Bridging Calculator", desc: "Retained or serviced interest, fees and total cost." },
+  { href: "/second-charge-calculator", title: "Second & Third Charge Calculator", desc: "Combined LTV across all charges, plus new loan cost." },
+  { href: "/salary-calculator", title: "Salary Take-Home Calculator", desc: "Income tax, National Insurance and net pay." },
+  { href: "/dividend-calculator", title: "Salary + Dividend Calculator", desc: "Combined take-home for salary plus dividends." },
 ];
 
 export default function Home() {

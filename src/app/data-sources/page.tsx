@@ -18,9 +18,15 @@ function StatusPill({ status }: { status: "live" | "manual" | "planned" }) {
 
 const SOURCES = [
   {
-    name: "Mortgage & property maths (LTV, LTI, repayments, age/term, ICR, yield, bridging)",
+    name: "Mortgage & property maths (LTV, LTI, repayments, age/term, ICR, yield, bridging, second/third charge)",
     status: "live" as const,
     detail: "Calculated directly from the numbers you enter using standard, published formulae. No external data required.",
+  },
+  {
+    name: "Salary & dividend tax calculators (income tax, National Insurance, dividend tax)",
+    status: "live" as const,
+    detail:
+      "Calculated using published HMRC rates and thresholds for the 2025/26 tax year (England, Wales & Northern Ireland — Scotland has different bands). Rates are reviewed periodically rather than pulled from a live feed; see the calculator pages for the exact assumptions used.",
   },
   {
     name: "HM Land Registry Price Paid Data",
