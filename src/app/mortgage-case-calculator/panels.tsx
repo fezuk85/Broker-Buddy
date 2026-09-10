@@ -365,20 +365,52 @@ export function RentalPanel({ calc, caseState }: { calc: Calc; caseState: CaseSt
   );
 }
 
-export function EpcPanel({ calc }: { calc: Calc; caseState: CaseState }) {
+export function EpcPanel({ calc, caseState }: { calc: Calc; caseState: CaseState }) {
+  const cert = calc.epc?.certificate;
+
   return (
     <Section title="EPC data">
-      {calc.epc?.certificate ? (
-        <div className="grid grid-cols-2 gap-3">
-          <StatTile label="Current EPC" value={calc.epc.certificate.currentRating} />
-          <StatTile label="Potential EPC" value={calc.epc.certificate.potentialRating} />
-        </div>
+      {cert ? (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <StatTile
+              label="Current EPC"
+              value={cert.currentRating}
+              subValue={cert.currentEnergyEfficiencyScore != null ? `Score: ${cert.currentEnergyEfficiencyScore}` : undefined}
+            />
+            <StatTile
+              label="Potential EPC"
+              value={cert.potentialRating}
+              subValue={cert.potentialEnergyEfficiencyScore != null ? `Score: ${cert.potentialEnergyEfficiencyScore}` : undefined}
+            />
+            <StatTile label="Total floor area" value={cert.totalFloorAreaSqm ? `${cert.totalFloorAreaSqm} m²` : "—"} />
+            <StatTile label="Property type" value={cert.propertyType || "—"} />
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <div className="text-xs text-[var(--bb-muted)]">Construction age band</div>
+              <div>{cert.constructionAgeBand ? `Code: ${cert.constructionAgeBand}` : "Not stated"}</div>
+            </div>
+            <div>
+              <div className="text-xs text-[var(--bb-muted)]">Main heating</div>
+              <div>{cert.mainHeatingType ?? "Not stated"}</div>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-[var(--bb-muted)]">
+            Certificate date: {cert.certificateDate}. Source: {calc.epc?.sourceLabel}. Matched by
+            postcode only — at a postcode covering multiple flats this may not be the exact
+            property. Construction age band is shown as the certificate&apos;s raw code, not yet
+            decoded to a date range.
+          </p>
+        </>
+      ) : caseState.property.postcode ? (
+        <p className="text-sm text-[var(--bb-muted)]">{calc.epc?.sourceLabel ?? "Looking up EPC data..."}</p>
       ) : (
         <p className="text-sm text-[var(--bb-muted)]">
-          Not connected yet. Broker Buddy is architected to pull current/potential EPC rating,
-          floor area, construction age band and heating type from the official EPC open-data
-          service once connected (Phase 2) — floor area in particular improves the indicative
-          property estimate via £/m² comparisons.
+          Enter a property postcode to look up its current/potential EPC rating, floor area,
+          construction age band and heating type from MHCLG&apos;s official EPC open data —
+          floor area in particular improves the indicative property estimate via £/m²
+          comparisons.
         </p>
       )}
     </Section>

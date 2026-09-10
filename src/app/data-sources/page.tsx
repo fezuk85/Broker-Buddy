@@ -47,10 +47,10 @@ const SOURCES = [
       "Historic sale prices for England & Wales (from 1995, updated monthly) via HM Land Registry's live, unauthenticated Linked Data API — no bulk file import. Matched by postcode only, not full address/UPRN (the API has no UPRN field), so results shown for a property are best-effort address-text matches within that postcode's sales, and 'comparable sales' means other sales at the same postcode rather than a true geographic radius search. Open Government Licence for prices; the address fields carry a separate Royal Mail/Ordnance Survey restriction limiting use to displaying residential property price information, which is what this does — see the attribution note below.",
   },
   {
-    name: "EPC open data (gov.uk)",
-    status: "planned" as const,
+    name: "MHCLG Get Energy Performance Data (domestic EPC)",
+    status: "live" as const,
     detail:
-      "Will provide current/potential EPC rating, floor area, construction age band and heating type from the official EPC open-data service. Not yet connected.",
+      "Provides current/potential EPC rating and score, floor area, property type, main heating and (as a raw, undecoded code) construction age band, for domestic properties in England & Wales — Scotland and Northern Ireland run separate EPC registers not covered by this API. Matched by postcode only, not full address/UPRN, so a postcode covering multiple flats returns the most recently registered EPC for any of them. Requires an EPC_API_TOKEN to be configured on the server; if it isn't set, or no certificate is found, the property panel shows that plainly rather than fabricating data.",
   },
   {
     name: "ONS Family Spending (household expenditure benchmark)",
