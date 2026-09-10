@@ -96,10 +96,11 @@ describe("calculateIndicativeValuation", () => {
     expect(r.methods[0].detail).toContain("fewer than 3 in the last 24 months");
   });
 
-  it("weights the indexed estimate above comparable-sales so the combined figure doesn't fall below a recent real sale", () => {
-    // Regression test for a real user-reported case: a property with a known, very recent (10
-    // months ago) sale price shouldn't have the combined estimate pulled below that price just
-    // because nearby but different comparable properties sold for less.
+  it("anchors the combined estimate to the indexed estimate when a specific property is matched, rather than averaging it down with comparables", () => {
+    // Regression test for a real user-reported case: once a house number is entered and matched
+    // to the property's own real, very recent (10 months ago) sale, the combined estimate should
+    // reflect that known trajectory — certainly not fall below the price the property itself just
+    // achieved — even though nearby but different comparable properties sold for less.
     const r = calculateIndicativeValuation({
       asOfDate: "2026-09-10",
       lastKnownSale: { price: 370_000, date: "2025-11-14" },
@@ -112,10 +113,27 @@ describe("calculateIndicativeValuation", () => {
       ],
     });
     expect(r.methods).toHaveLength(2);
-    // The indexed estimate (~£372k) should dominate the combined figure, not be dragged down to
-    // roughly the unweighted midpoint (~£319k) with 4 lower-priced neighbouring sales.
-    expect(r.combinedEstimate!).toBeGreaterThan(340_000);
+    const indexedEstimate = r.methods.find((m) => m.method === "historic-sale-indexation")!.estimate;
+    // The combined estimate should equal the indexed estimate exactly — not be diluted by
+    // averaging with the comparable-sales figure — and, since the index movement was positive,
+    // it comes out above the last known sale price.
+    expect(r.combinedEstimate).toBe(indexedEstimate);
+    expect(r.combinedEstimate!).toBeGreaterThan(370_000);
     // The range should still bracket the property's own real, recent sale price.
-    expect(r.rangeHigh!).toBeGreaterThanOrEqual(370_000);
+    expect(r.rangeLow!).toBeLessThanOrEqual(370_000);
+  });
+
+  it("falls back to averaging comparable-based methods when no specific property is matched (no indexed estimate)", () => {
+    const r = calculateIndicativeValuation({
+      asOfDate: "2026-09-10",
+      comparableSales: [
+        { pricePaid: 370_000, saleDate: "2025-11-14" },
+        { pricePaid: 310_000, saleDate: "2025-05-09" },
+        { pricePaid: 223_000, saleDate: "2025-03-11" },
+        { pricePaid: 200_000, saleDate: "2025-03-03" },
+      ],
+    });
+    expect(r.methods).toHaveLength(1);
+    expect(r.combinedEstimate).toBe(r.methods[0].estimate);
   });
 });

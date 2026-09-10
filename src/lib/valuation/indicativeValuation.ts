@@ -138,22 +138,22 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
   }
 
   /**
-   * historic-sale-indexation is anchored to the subject property's own real, recent transaction
-   * (just carried forward by real market movement since) — much stronger evidence than
-   * comparable-sales or floor-area-comparison, which are both based on *other* properties. An
-   * unweighted average let a handful of lower-priced neighbouring sales pull the combined
-   * estimate below a sale price the property itself achieved months earlier, which is misleading
-   * when the indexed figure is available. Weighting it 3x the others fixes that without ignoring
-   * the comparable evidence entirely.
+   * historic-sale-indexation is anchored to the subject property's own real, recent transaction —
+   * just carried forward by real market movement since — which is categorically stronger evidence
+   * than comparable-sales or floor-area-comparison, both based on *other* properties nearby.
+   * Blending it with those (even weighted) could still pull the combined figure below a price the
+   * property itself achieved months earlier, which misrepresents what we actually know. So when
+   * the indexed estimate is available, it *is* the combined estimate; comparable-sales/floor-area
+   * are still shown as separate method rows for context, but don't drag the headline figure down.
+   * Without an indexed estimate (no address entered, or no matching sale), there's no single
+   * property to anchor to, so the combined estimate falls back to an average across whatever
+   * comparable-based methods are available — that's the best a postcode-wide estimate can do.
    */
-  const METHOD_WEIGHT: Record<MethodEstimate["method"], number> = {
-    "historic-sale-indexation": 3,
-    "comparable-sales": 1,
-    "floor-area-comparison": 1,
-  };
+  const indexedMethod = methods.find((m) => m.method === "historic-sale-indexation");
   const estimates = methods.map((m) => m.estimate);
-  const totalWeight = methods.reduce((sum, m) => sum + METHOD_WEIGHT[m.method], 0);
-  const combinedEstimate = methods.reduce((sum, m) => sum + m.estimate * METHOD_WEIGHT[m.method], 0) / totalWeight;
+  const combinedEstimate = indexedMethod
+    ? indexedMethod.estimate
+    : estimates.reduce((sum, v) => sum + v, 0) / estimates.length;
 
   // Spread between methods (relative to the combined estimate) drives the indicative range.
   const maxEstimate = Math.max(...estimates);
