@@ -137,8 +137,23 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
     };
   }
 
+  /**
+   * historic-sale-indexation is anchored to the subject property's own real, recent transaction —
+   * just carried forward by real market movement since — which is categorically stronger evidence
+   * than comparable-sales or floor-area-comparison, both based on *other* properties nearby.
+   * Blending it with those (even weighted) could still pull the combined figure below a price the
+   * property itself achieved months earlier, which misrepresents what we actually know. So when
+   * the indexed estimate is available, it *is* the combined estimate; comparable-sales/floor-area
+   * are still shown as separate method rows for context, but don't drag the headline figure down.
+   * Without an indexed estimate (no address entered, or no matching sale), there's no single
+   * property to anchor to, so the combined estimate falls back to an average across whatever
+   * comparable-based methods are available — that's the best a postcode-wide estimate can do.
+   */
+  const indexedMethod = methods.find((m) => m.method === "historic-sale-indexation");
   const estimates = methods.map((m) => m.estimate);
-  const combinedEstimate = estimates.reduce((sum, v) => sum + v, 0) / estimates.length;
+  const combinedEstimate = indexedMethod
+    ? indexedMethod.estimate
+    : estimates.reduce((sum, v) => sum + v, 0) / estimates.length;
 
   // Spread between methods (relative to the combined estimate) drives the indicative range.
   const maxEstimate = Math.max(...estimates);
