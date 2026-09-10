@@ -95,4 +95,27 @@ describe("calculateIndicativeValuation", () => {
     expect(r.methods[0].estimate).toBe(134_500);
     expect(r.methods[0].detail).toContain("fewer than 3 in the last 24 months");
   });
+
+  it("weights the indexed estimate above comparable-sales so the combined figure doesn't fall below a recent real sale", () => {
+    // Regression test for a real user-reported case: a property with a known, very recent (10
+    // months ago) sale price shouldn't have the combined estimate pulled below that price just
+    // because nearby but different comparable properties sold for less.
+    const r = calculateIndicativeValuation({
+      asOfDate: "2026-09-10",
+      lastKnownSale: { price: 370_000, date: "2025-11-14" },
+      indexMovementPercent: 0.59,
+      comparableSales: [
+        { pricePaid: 370_000, saleDate: "2025-11-14" },
+        { pricePaid: 310_000, saleDate: "2025-05-09" },
+        { pricePaid: 223_000, saleDate: "2025-03-11" },
+        { pricePaid: 200_000, saleDate: "2025-03-03" },
+      ],
+    });
+    expect(r.methods).toHaveLength(2);
+    // The indexed estimate (~£372k) should dominate the combined figure, not be dragged down to
+    // roughly the unweighted midpoint (~£319k) with 4 lower-priced neighbouring sales.
+    expect(r.combinedEstimate!).toBeGreaterThan(340_000);
+    // The range should still bracket the property's own real, recent sale price.
+    expect(r.rangeHigh!).toBeGreaterThanOrEqual(370_000);
+  });
 });

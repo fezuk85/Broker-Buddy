@@ -137,8 +137,23 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
     };
   }
 
+  /**
+   * historic-sale-indexation is anchored to the subject property's own real, recent transaction
+   * (just carried forward by real market movement since) — much stronger evidence than
+   * comparable-sales or floor-area-comparison, which are both based on *other* properties. An
+   * unweighted average let a handful of lower-priced neighbouring sales pull the combined
+   * estimate below a sale price the property itself achieved months earlier, which is misleading
+   * when the indexed figure is available. Weighting it 3x the others fixes that without ignoring
+   * the comparable evidence entirely.
+   */
+  const METHOD_WEIGHT: Record<MethodEstimate["method"], number> = {
+    "historic-sale-indexation": 3,
+    "comparable-sales": 1,
+    "floor-area-comparison": 1,
+  };
   const estimates = methods.map((m) => m.estimate);
-  const combinedEstimate = estimates.reduce((sum, v) => sum + v, 0) / estimates.length;
+  const totalWeight = methods.reduce((sum, m) => sum + METHOD_WEIGHT[m.method], 0);
+  const combinedEstimate = methods.reduce((sum, m) => sum + m.estimate * METHOD_WEIGHT[m.method], 0) / totalWeight;
 
   // Spread between methods (relative to the combined estimate) drives the indicative range.
   const maxEstimate = Math.max(...estimates);
