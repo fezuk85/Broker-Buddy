@@ -60,8 +60,9 @@ const SOURCES = [
   },
   {
     name: "Council Tax",
-    status: "manual" as const,
-    detail: "You enter your own monthly Council Tax figure. Automatic postcode → band → charge lookup via official local authority data is planned for Phase 2.",
+    status: "live" as const,
+    detail:
+      "An automatic estimate appears as soon as a postcode is entered — no lookup or manual entry required. Individual property bands are legally restricted data (the Valuation Office Agency treats them as personal property data under the Commissioners for Revenue and Customs Act 2005, with no open bulk source), so the estimate uses the most common Council Tax band among properties in that postcode's local area (VOA 'Council Tax: stock of properties' release), priced using MHCLG's official per-authority, per-band charges ('Council Tax levels set by local authorities in England'). This is clearly labelled as an area-typical estimate, not the confirmed band for the specific property. You can still enter your own figure manually if you know the actual band/charge, which always takes priority over the estimate.",
   },
   {
     name: "Rental estimates",

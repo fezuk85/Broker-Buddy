@@ -264,7 +264,17 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
                 value={formatGbp(calc.affordability.monthlyExpenditure)}
                 subValue={`per month · ${calc.expenditure?.estimate?.regionUsed ?? "UK average"}`}
               />
-              <StatTile label="Council tax" value={formatGbp(calc.affordability.monthlyCouncilTax)} subValue="per month" />
+              <StatTile
+                label="Council tax"
+                value={formatGbp(calc.affordability.monthlyCouncilTax)}
+                subValue={
+                  calc.councilTax?.source === "modelled-illustrative" && calc.councilTax.details
+                    ? `Estimated · Band ${calc.councilTax.details.band} typical for this area · ${calc.councilTax.details.localAuthority}`
+                    : calc.councilTax?.source === "manual-entry"
+                      ? "Entered manually"
+                      : "per month"
+                }
+              />
               <StatTile label="Mortgage payment" value={formatGbp(calc.affordability.mortgagePayment)} subValue="per month" />
               <StatTile label="Credit commitments" value={formatGbp(calc.affordability.credit)} subValue="per month" />
             </div>

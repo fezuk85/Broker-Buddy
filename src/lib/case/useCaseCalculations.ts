@@ -26,7 +26,7 @@ import {
   HouseholdExpenditureResult,
 } from "@/lib/providers/householdExpenditureProvider";
 import { UnavailableEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
-import { ManualCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
+import { ManualCouncilTaxProvider, RealCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
 import { RealPropertySaleProvider, PropertySaleQueryResult } from "@/lib/providers/propertySaleProvider";
 import { deriveRegionFromPostcode } from "@/lib/data/postcodeRegions";
 
@@ -147,16 +147,36 @@ export function useCaseCalculations(caseState: CaseState) {
     };
   }, [totalIncome, household.adults, household.dependentChildren, derivedRegion]);
 
-  const [councilTax, setCouncilTax] = useState<CouncilTaxResult | null>(null);
+  /**
+   * Council Tax: a user-entered figure always wins (it's the confirmed real amount). With no
+   * manual figure entered, falls back to the automatic estimate (most common band locally,
+   * priced from official per-authority charges) so there's still a usable number with zero
+   * manual lookup required — clearly labelled "modelled-illustrative" rather than confirmed.
+   */
+  const [councilTaxEstimate, setCouncilTaxEstimate] = useState<CouncilTaxResult | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    new RealCouncilTaxProvider().lookup({ postcode: property.postcode }).then((r) => {
+      if (!cancelled) setCouncilTaxEstimate(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [property.postcode]);
+
+  const [manualCouncilTax, setManualCouncilTax] = useState<CouncilTaxResult | null>(null);
   useEffect(() => {
     let cancelled = false;
     new ManualCouncilTaxProvider(household.monthlyCouncilTax).lookup().then((r) => {
-      if (!cancelled) setCouncilTax(r);
+      if (!cancelled) setManualCouncilTax(r);
     });
     return () => {
       cancelled = true;
     };
   }, [household.monthlyCouncilTax]);
+
+  const councilTax =
+    manualCouncilTax?.source === "manual-entry" ? manualCouncilTax : councilTaxEstimate ?? manualCouncilTax;
 
   const [epc, setEpc] = useState<EpcQueryResult | null>(null);
   useEffect(() => {
