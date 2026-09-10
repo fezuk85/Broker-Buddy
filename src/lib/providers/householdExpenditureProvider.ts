@@ -15,7 +15,6 @@ export interface HouseholdProfile {
   grossAnnualIncome: number;
   adults: number;
   dependentChildren: number;
-  region?: string;
 }
 
 export interface ExpenditureCategoryBreakdown {
@@ -105,9 +104,7 @@ export class RuleBasedHouseholdExpenditureProvider implements HouseholdExpenditu
         weeklyTotal,
         monthlyTotal: Math.round((weeklyTotal * 52) / 12),
         weeklyBreakdown,
-        benchmarkLabel: `${adults} adult${adults === 1 ? "" : "s"}, ${children} dependent child${children === 1 ? "" : "ren"}${
-          profile.region ? `, ${profile.region}` : ""
-        }`,
+        benchmarkLabel: `${adults} adult${adults === 1 ? "" : "s"}, ${children} dependent child${children === 1 ? "" : "ren"}`,
         excludedCategories: EXCLUDED_CATEGORIES,
       },
     };

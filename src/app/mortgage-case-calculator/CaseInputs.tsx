@@ -73,9 +73,6 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
           <Field label="Dependent children">
             <NumberInput value={household.dependentChildren} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, dependentChildren: v } }))} min={0} step={1} />
           </Field>
-          <Field label="Region">
-            <TextInput value={household.region} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, region: v } }))} placeholder="e.g. South East" />
-          </Field>
           <Field label="Monthly credit commitments">
             <NumberInput value={household.monthlyCreditCommitments} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, monthlyCreditCommitments: v } }))} />
           </Field>

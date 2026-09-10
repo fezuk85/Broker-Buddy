@@ -132,7 +132,6 @@ export function useCaseCalculations(caseState: CaseState) {
         grossAnnualIncome: totalIncome,
         adults: household.adults,
         dependentChildren: household.dependentChildren,
-        region: household.region,
       })
       .then((r) => {
         if (!cancelled) setExpenditure(r);
@@ -140,7 +139,7 @@ export function useCaseCalculations(caseState: CaseState) {
     return () => {
       cancelled = true;
     };
-  }, [totalIncome, household.adults, household.dependentChildren, household.region]);
+  }, [totalIncome, household.adults, household.dependentChildren]);
 
   const [councilTax, setCouncilTax] = useState<CouncilTaxResult | null>(null);
   useEffect(() => {
