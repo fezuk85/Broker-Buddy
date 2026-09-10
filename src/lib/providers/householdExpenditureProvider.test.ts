@@ -53,4 +53,15 @@ describe("RuleBasedHouseholdExpenditureProvider", () => {
     expect(r.source).toBe("unavailable");
     expect(r.estimate).toBeNull();
   });
+
+  it("provides a monthly breakdown alongside the weekly one, consistently scaled", async () => {
+    const r = await new RuleBasedHouseholdExpenditureProvider().getBenchmark({
+      grossAnnualIncome: 40_000,
+      adults: 2,
+      dependentChildren: 0,
+    });
+    expect(r.estimate?.monthlyBreakdown.food).toBeCloseTo((r.estimate!.weeklyBreakdown.food * 52) / 12, 0);
+    const monthlySum = Object.values(r.estimate!.monthlyBreakdown).reduce((s, v) => s + v, 0);
+    expect(monthlySum).toBeCloseTo(r.estimate!.monthlyTotal, -1);
+  });
 });

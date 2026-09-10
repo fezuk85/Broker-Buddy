@@ -18,6 +18,7 @@ import {
   calculateGrossYield,
   calculateIcrExamples,
   calculateMaxLoanFromRent,
+  calculateSalaryTakeHome,
 } from "@/lib/calc";
 import { calculateIndicativeValuation } from "@/lib/valuation/indicativeValuation";
 import {
@@ -170,6 +171,18 @@ export function useCaseCalculations(caseState: CaseState) {
   const monthlyMortgagePayment =
     mortgage.repaymentType === "repayment" ? repayment?.monthlyPayment ?? null : interestOnlyPayment;
 
+  /**
+   * Net income is derived from the same gross incomes used for LTI, run through the salary
+   * take-home engine (calculateSalaryTakeHome) — assumes employment/PAYE income with no pension
+   * contributions, same simplification as the salary calculator. Not a substitute for actual
+   * take-home pay (payslips, self-employed accounts, etc.).
+   */
+  const netMonthlyIncome = useMemo(() => {
+    const applicant1Net = calculateSalaryTakeHome(applicants.applicant1.grossIncome).netMonthly;
+    const applicant2Net = applicants.applicant2 ? calculateSalaryTakeHome(applicants.applicant2.grossIncome).netMonthly : 0;
+    return applicant1Net + applicant2Net;
+  }, [applicants]);
+
   const affordability = useMemo(() => {
     if (!expenditure?.estimate) return null;
     const monthlyExpenditure = expenditure.estimate.monthlyTotal;
@@ -177,8 +190,19 @@ export function useCaseCalculations(caseState: CaseState) {
     const mortgagePayment = monthlyMortgagePayment ?? 0;
     const credit = household.monthlyCreditCommitments || 0;
     const totalOutgoings = monthlyExpenditure + monthlyCouncilTax + mortgagePayment + credit;
-    return { monthlyExpenditure, monthlyCouncilTax, mortgagePayment, credit, totalOutgoings };
-  }, [expenditure, councilTax, monthlyMortgagePayment, household.monthlyCreditCommitments]);
+    const remainingAfterOutgoings = netMonthlyIncome - totalOutgoings;
+    const outgoingsPercentOfNetIncome = netMonthlyIncome > 0 ? (totalOutgoings / netMonthlyIncome) * 100 : null;
+    return {
+      monthlyExpenditure,
+      monthlyCouncilTax,
+      mortgagePayment,
+      credit,
+      totalOutgoings,
+      netMonthlyIncome,
+      remainingAfterOutgoings,
+      outgoingsPercentOfNetIncome,
+    };
+  }, [expenditure, councilTax, monthlyMortgagePayment, household.monthlyCreditCommitments, netMonthlyIncome]);
 
   return {
     termMonths,
