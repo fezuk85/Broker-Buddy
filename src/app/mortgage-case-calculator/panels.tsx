@@ -266,13 +266,15 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
               />
               <StatTile
                 label="Council tax"
-                value={formatGbp(calc.affordability.monthlyCouncilTax)}
+                value={calc.councilTax?.details ? formatGbp(calc.affordability.monthlyCouncilTax) : "—"}
                 subValue={
                   calc.councilTax?.source === "modelled-illustrative" && calc.councilTax.details
                     ? `Estimated · Band ${calc.councilTax.details.band} typical for this area · ${calc.councilTax.details.localAuthority}`
                     : calc.councilTax?.source === "manual-entry"
                       ? "Entered manually"
-                      : "per month"
+                      : calc.councilTax === null
+                        ? "Looking up estimate…"
+                        : `No estimate available (${calc.councilTax.sourceLabel}) — enter a figure above`
                 }
               />
               <StatTile label="Mortgage payment" value={formatGbp(calc.affordability.mortgagePayment)} subValue="per month" />
