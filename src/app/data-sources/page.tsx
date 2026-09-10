@@ -47,6 +47,12 @@ const SOURCES = [
       "Historic sale prices for England & Wales (from 1995, updated monthly) via HM Land Registry's live, unauthenticated Linked Data API — no bulk file import. Matched by postcode only, not full address/UPRN (the API has no UPRN field), so results shown for a property are best-effort address-text matches within that postcode's sales, and 'comparable sales' means other sales at the same postcode rather than a true geographic radius search. Open Government Licence for prices; the address fields carry a separate Royal Mail/Ordnance Survey restriction limiting use to displaying residential property price information, which is what this does — see the attribution note below.",
   },
   {
+    name: "HM Land Registry UK House Price Index (indicative valuation)",
+    status: "live" as const,
+    detail:
+      "Powers part of the 'Indicative Property Estimate' on the Property tab. When a house name/number is entered and matched to the property's own HM Land Registry sale history, the indexed estimate takes that last sale price and applies the real price movement since then for the property's local authority, from HM Land Registry's UK House Price Index (local authority level, England & Wales; base January 2015 = 100). This only runs when a specific past sale for that exact property was found — without an address match there's no single 'last sale' to index from, so it's correctly omitted rather than indexing an arbitrary sale from elsewhere at the postcode. The comparable-sales method (median of nearby sale prices) runs independently and doesn't need an address match. Open Government Licence.",
+  },
+  {
     name: "MHCLG Get Energy Performance Data (domestic EPC)",
     status: "live" as const,
     detail:

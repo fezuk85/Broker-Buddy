@@ -216,11 +216,14 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
           <p className="text-sm text-[var(--bb-muted)]">Insufficient data for a reliable indicative estimate.</p>
         ) : (
           <>
-            <div className="space-y-1 text-sm">
+            <div className="space-y-2 text-sm">
               {v.methods.map((m) => (
-                <div key={m.method} className="flex justify-between">
-                  <span className="text-[var(--bb-muted)]">{m.label}</span>
-                  <span className="font-medium">{formatGbp(m.estimate)}</span>
+                <div key={m.method}>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--bb-muted)]">{m.label}</span>
+                    <span className="font-medium">{formatGbp(m.estimate)}</span>
+                  </div>
+                  <div className="text-xs text-[var(--bb-muted)]">{m.detail}</div>
                 </div>
               ))}
             </div>
