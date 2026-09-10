@@ -16,7 +16,14 @@ describe("getChargesForAuthority", () => {
     expect(result?.charges.D).toBeCloseTo(2306, 2);
   });
 
-  it("returns null for an unknown or non-English ONS code", () => {
+  it("returns Cardiff's real Welsh charges, including the Band I that England doesn't have (cross-checked against the source CSV)", () => {
+    const result = getChargesForAuthority("W06000015");
+    expect(result?.authority).toBe("Cardiff");
+    expect(result?.charges.D).toBeCloseTo(2013.18, 2);
+    expect(result?.charges.I).toBeCloseTo(4697.42, 2);
+  });
+
+  it("returns null for an unknown ONS code", () => {
     expect(getChargesForAuthority("Z99999999")).toBeNull();
   });
 });

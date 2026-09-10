@@ -20,4 +20,11 @@ describe("getAreaTypicalBand", () => {
     expect(result?.band).toBe("A");
     expect(result?.propertyCountInBand).toBe(260);
   });
+
+  it("resolves a real Welsh LSOA correctly, including reading the Band I column (cross-checked against the source CSV)", () => {
+    // Row: W01000003, band_a=300, band_b=510, band_c=290, band_d=130, band_e=40, band_f=20, band_g=-, band_h=-, band_i=0
+    const result = getAreaTypicalBand("W01000003");
+    expect(result?.band).toBe("B");
+    expect(result?.propertyCountInBand).toBe(510);
+  });
 });

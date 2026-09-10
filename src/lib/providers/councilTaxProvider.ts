@@ -5,12 +5,14 @@
  * local authority and LSOA (ONS Postcode Directory), takes the most common Council Tax band
  * among properties in that small area (VOA CTSOP1.1 — per-property bands are legally restricted
  * data, so this is the closest legitimate open proxy, not a confirmed band for the specific
- * property), and prices it using MHCLG's official per-authority, per-band charges (Table 9).
- * Always labelled "modelled-illustrative" — never presented as the confirmed figure.
+ * property), and prices it using each country's official per-authority, per-band charges
+ * (MHCLG's Table 9 for England; the Welsh Government/StatsWales release for Wales — Wales has a
+ * ninth band, "I", that England doesn't). Scotland and Northern Ireland aren't covered yet — see
+ * /data-sources. Always labelled "modelled-illustrative" — never presented as the confirmed figure.
  */
 import { AddressQuery, DataSourceKind } from "./types";
 
-export type CouncilTaxBand = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
+export type CouncilTaxBand = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I";
 
 export interface CouncilTaxDetails {
   localAuthority: string;
