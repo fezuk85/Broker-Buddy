@@ -6,3 +6,4 @@ export * from "./rental";
 export * from "./bridging";
 export * from "./tax";
 export * from "./secondCharge";
+export * from "./benefits";

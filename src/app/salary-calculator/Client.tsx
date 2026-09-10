@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { BenefitsSection } from "@/components/BenefitsSection";
 
 export default function SalaryCalculatorClient() {
   const [grossSalary, setGrossSalary] = useState(50_000);
@@ -17,7 +18,7 @@ export default function SalaryCalculatorClient() {
     <CalculatorPage
       h1="Salary Take-Home Pay Calculator"
       intro={`Work out income tax, National Insurance and net take-home pay from a gross salary — annual, monthly and weekly. Uses ${TAX_YEAR_LABEL} rates.`}
-      disclaimer={`Estimates only, based on published HMRC rates for ${TAX_YEAR_LABEL}. Assumes no pension contributions, student loan, benefits-in-kind or marriage allowance, and standard tax code. Not tax advice — for an exact figure, check your payslip or consult an accountant.`}
+      disclaimer={`Estimates only, based on published HMRC rates for ${TAX_YEAR_LABEL}. Assumes no pension contributions, student loan or benefits-in-kind, and standard tax code. Net take-home figures above do not include Child Benefit or Marriage Allowance shown below. Not tax advice — for an exact figure, check your payslip or consult an accountant.`}
       inputs={
         <Section title="Your salary">
           <Field label="Gross annual salary">
@@ -76,6 +77,7 @@ export default function SalaryCalculatorClient() {
               </table>
             </div>
           </Section>
+          <BenefitsSection primaryIncome={grossSalary} />
         </>
       }
       explanation={
@@ -103,6 +105,11 @@ export default function SalaryCalculatorClient() {
         {
           question: "Is this exact to the penny?",
           answer: "It's a close estimate based on annual HMRC rates. Your actual payslip may differ slightly due to pay-period rounding, tax codes, or other deductions.",
+        },
+        {
+          question: "Why is Child Benefit based on the higher earner, not household income?",
+          answer:
+            "The High Income Child Benefit Charge looks at whichever partner has the higher individual income — a household with two earners on £55,000 each keeps full Child Benefit, while a single-earner household on £70,000 does not, even though the second household's total income is lower.",
         },
       ]}
     />

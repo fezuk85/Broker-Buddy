@@ -14,10 +14,10 @@
 
 export const TAX_YEAR_LABEL = "2025/26 (England, Wales & Northern Ireland)";
 
-const PERSONAL_ALLOWANCE = 12_570;
+export const PERSONAL_ALLOWANCE = 12_570;
 const PA_TAPER_START = 100_000; // PA reaches £0 at £125,140 (reduced £1 per £2 over this)
 
-const BASIC_RATE_LIMIT = 50_270; // upper bound of income taxed at basic rate
+export const BASIC_RATE_LIMIT = 50_270; // upper bound of income taxed at basic rate
 const HIGHER_RATE_LIMIT = 125_140; // upper bound of income taxed at higher rate
 
 const INCOME_TAX_BASIC_RATE = 0.2;

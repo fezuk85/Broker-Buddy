@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { BenefitsSection } from "@/components/BenefitsSection";
 
 export default function DividendCalculatorClient() {
   const [grossSalary, setGrossSalary] = useState(12_570);
@@ -18,7 +19,7 @@ export default function DividendCalculatorClient() {
     <CalculatorPage
       h1="Salary + Dividend Take-Home Calculator"
       intro={`Common for limited company directors: combine a salary and dividends and see the net take-home. Dividends are taxed correctly on top of salary, using ${TAX_YEAR_LABEL} rates.`}
-      disclaimer={`Estimates only, based on published HMRC rates for ${TAX_YEAR_LABEL}. Assumes no other income, pension contributions or student loan. Does not cover Corporation Tax on the company's profits before dividends are declared. Not tax advice — consult an accountant for company tax planning.`}
+      disclaimer={`Estimates only, based on published HMRC rates for ${TAX_YEAR_LABEL}. Assumes no other income, pension contributions or student loan. Does not cover Corporation Tax on the company's profits before dividends are declared. Net take-home figures above do not include Child Benefit or Marriage Allowance shown below. Not tax advice — consult an accountant for company tax planning.`}
       inputs={
         <Section title="Your income">
           <div className="grid grid-cols-1 gap-3">
@@ -80,6 +81,7 @@ export default function DividendCalculatorClient() {
               </table>
             </div>
           </Section>
+          <BenefitsSection primaryIncome={result.grossTotal} />
         </>
       }
       explanation={
@@ -107,6 +109,11 @@ export default function DividendCalculatorClient() {
         {
           question: "What order are salary and dividends taxed in?",
           answer: "Salary (and other non-dividend income) is taxed first, using up the Personal Allowance and lower bands; dividends are taxed on top.",
+        },
+        {
+          question: "Does dividend income count towards the Child Benefit charge?",
+          answer:
+            "Yes — the High Income Child Benefit Charge looks at total adjusted net income, which includes dividends alongside salary, not just employment income.",
         },
       ]}
     />
