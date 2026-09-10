@@ -6,23 +6,25 @@ import { StatTile } from "@/components/StatTile";
 import { Section } from "@/components/Section";
 import { Disclaimer } from "@/components/Disclaimer";
 import { formatGbp, formatPercent, formatMultiple, formatYearsMonths } from "@/lib/format";
+import { Coins, BarChart3, TrendingUp, CalendarDays, Home, PieChart } from "lucide-react";
 
 type Calc = ReturnType<typeof useCaseCalculations>;
 
 export function OverviewPanel({ calc }: { calc: Calc; caseState: CaseState }) {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <StatTile label="New loan" value={formatGbp(calc.ltv.totalProposedBorrowing)} accent="primary" />
-        <StatTile label="Proposed LTV" value={formatPercent(calc.ltv.proposedLtvPercent)} accent="primary" />
-        <StatTile label="Loan-to-income" value={formatMultiple(calc.lti)} />
+      <div className="grid grid-cols-2 gap-3 min-w-0">
+        <StatTile label="New loan" value={formatGbp(calc.ltv.totalProposedBorrowing)} accent="primary" icon={Coins} />
+        <StatTile label="Proposed LTV" value={formatPercent(calc.ltv.proposedLtvPercent)} accent="primary" icon={BarChart3} />
+        <StatTile label="Loan-to-income" value={formatMultiple(calc.lti)} icon={TrendingUp} />
         <StatTile
           label="Monthly payment"
           value={formatGbp(calc.monthlyMortgagePayment)}
           subValue={calc.ltv.totalProposedBorrowing > 0 ? undefined : "Enter loan details"}
+          icon={CalendarDays}
         />
-        <StatTile label="Equity" value={formatGbp(calc.ltv.equity)} />
-        <StatTile label="Current LTV" value={formatPercent(calc.ltv.currentLtvPercent)} />
+        <StatTile label="Equity" value={formatGbp(calc.ltv.equity)} icon={Home} />
+        <StatTile label="Current LTV" value={formatPercent(calc.ltv.currentLtvPercent)} icon={PieChart} />
       </div>
       <Disclaimer>
         Lending Calculator provides calculations and indicative information only. It does not provide
@@ -36,7 +38,7 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
   return (
     <div className="space-y-4">
       <Section title="Loan-to-value & equity">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 min-w-0">
           <StatTile label="Current LTV" value={formatPercent(calc.ltv.currentLtvPercent)} />
           <StatTile label="Proposed LTV" value={formatPercent(calc.ltv.proposedLtvPercent)} />
           <StatTile label="Equity now" value={formatGbp(calc.ltv.equity)} />
@@ -68,7 +70,7 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
       </Section>
 
       <Section title="Income multiples (illustrative)">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 min-w-0">
           {calc.incomeMultiples.map((m) => (
             <StatTile key={m.multiple} label={`${m.multiple}x income`} value={formatGbp(m.maxBorrowing)} />
           ))}
@@ -79,7 +81,7 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
       </Section>
 
       <Section title="Age & term">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 min-w-0">
           <StatTile
             label="Applicant 1 age"
             value={calc.applicant1Age ? formatYearsMonths(calc.applicant1Age.years, calc.applicant1Age.months) : "—"}
@@ -124,7 +126,7 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
       </Section>
 
       <Section title="Payment">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 min-w-0">
           <StatTile label="Repayment (C&I) monthly" value={formatGbp(calc.repayment?.monthlyPayment)} />
           <StatTile label="Interest-only monthly" value={formatGbp(calc.interestOnlyPayment)} />
           <StatTile label="Total interest over term" value={formatGbp(calc.repayment?.totalInterest)} />
@@ -160,7 +162,7 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
   return (
     <div className="space-y-4">
       <Section title="Property snapshot">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 min-w-0">
           <StatTile label="Property value entered" value={formatGbp(caseState.property.value)} />
           <StatTile label="Postcode" value={caseState.property.postcode || "—"} />
         </div>
@@ -245,7 +247,7 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
       <Section title="Illustrative household cash-flow snapshot">
         {calc.affordability ? (
           <>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 min-w-0">
               <StatTile label="Net monthly income" value={formatGbp(calc.affordability.netMonthlyIncome)} />
               <StatTile
                 label="Remaining after outgoings"
@@ -299,7 +301,7 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
 
       {calc.expenditure?.estimate && (
         <Section title="ONS benchmark expenditure breakdown (monthly)">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm min-w-0">
             {Object.entries(calc.expenditure.estimate.monthlyBreakdown).map(([k, val]) => (
               <div key={k} className="border-b border-[var(--bb-border)] py-1">
                 <div className="capitalize text-[var(--bb-muted)] text-xs">{k.replace(/([A-Z])/g, " $1")}</div>
@@ -330,7 +332,7 @@ export function RentalPanel({ calc, caseState }: { calc: Calc; caseState: CaseSt
   return (
     <div className="space-y-4">
       <Section title="Rental yield">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 min-w-0">
           <StatTile label="Annual rent" value={formatGbp(calc.rentalYield.annualRent)} />
           <StatTile label="Gross yield" value={formatPercent(calc.rentalYield.grossYieldPercent)} />
         </div>
@@ -374,7 +376,7 @@ export function EpcPanel({ calc, caseState }: { calc: Calc; caseState: CaseState
     <Section title="EPC data">
       {cert ? (
         <>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 min-w-0">
             <StatTile
               label="Current EPC"
               value={cert.currentRating}
