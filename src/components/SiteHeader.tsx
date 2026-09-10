@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 const NAV_LINKS = [
-  { href: "/mortgage-case-calculator", label: "Case Calculator" },
   { href: "/ltv-calculator", label: "LTV" },
   { href: "/second-charge-calculator", label: "2nd Charge" },
   { href: "/mortgage-repayment-calculator", label: "Repayments" },
