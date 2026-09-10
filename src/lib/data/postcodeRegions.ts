@@ -87,13 +87,21 @@ export function deriveRegionFromPostcode(postcode: string): UkRegion | null {
 const UK_POSTCODE_FORMAT = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/;
 
 /**
- * Returns the postcode trimmed/uppercased if it's a *complete, well-formed* UK postcode,
- * otherwise undefined. Used to gate live postcode lookups (EPC, HM Land Registry, Council Tax
- * etc.) so a partial postcode typed character-by-character never gets sent to an external API —
- * without this, every keystroke while typing a postcode would fire a fresh (mostly invalid)
- * request to each connected data source.
+ * Returns the postcode in standard "outward inward" form (a single space before the final 3
+ * characters — the inward code is always 1 digit + 2 letters) if it's a *complete, well-formed*
+ * UK postcode, otherwise undefined. Used to gate live postcode lookups (EPC, HM Land Registry,
+ * Council Tax etc.) so a partial postcode typed character-by-character never gets sent to an
+ * external API — without this, every keystroke while typing a postcode would fire a fresh
+ * (mostly invalid) request to each connected data source.
+ *
+ * Normalising the spacing here (not just validating it) matters: HM Land Registry's API does an
+ * exact-match postcode query, so "DE238PL" (no space, still a well-formed postcode) silently
+ * returned zero results even though "DE23 8PL" has real data — fixed by always returning the
+ * correctly-spaced form regardless of how the user typed it.
  */
 export function asCompletePostcode(postcode: string): string | undefined {
   const cleaned = (postcode || "").trim().toUpperCase();
-  return UK_POSTCODE_FORMAT.test(cleaned) ? cleaned : undefined;
+  if (!UK_POSTCODE_FORMAT.test(cleaned)) return undefined;
+  const compact = cleaned.replace(/\s+/g, "");
+  return `${compact.slice(0, -3)} ${compact.slice(-3)}`;
 }
