@@ -25,7 +25,7 @@ import {
   RuleBasedHouseholdExpenditureProvider,
   HouseholdExpenditureResult,
 } from "@/lib/providers/householdExpenditureProvider";
-import { UnavailableEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
+import { RealEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
 import { ManualCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
 import { deriveRegionFromPostcode } from "@/lib/data/postcodeRegions";
 
@@ -160,13 +160,13 @@ export function useCaseCalculations(caseState: CaseState) {
   const [epc, setEpc] = useState<EpcQueryResult | null>(null);
   useEffect(() => {
     let cancelled = false;
-    new UnavailableEpcProvider().getLatestCertificate().then((r) => {
+    new RealEpcProvider().getLatestCertificate({ postcode: property.postcode }).then((r) => {
       if (!cancelled) setEpc(r);
     });
     return () => {
       cancelled = true;
     };
-  }, [property.postcode, property.addressLine1]);
+  }, [property.postcode]);
 
   const monthlyMortgagePayment =
     mortgage.repaymentType === "repayment" ? repayment?.monthlyPayment ?? null : interestOnlyPayment;
