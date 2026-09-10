@@ -228,12 +228,48 @@ export function useCaseCalculations(caseState: CaseState) {
   }, [completePostcode, property.addressLine1]);
 
   /**
-   * Indicative valuation: comparable-sales method now runs on real HM Land Registry sale
-   * history for the postcode. Floor area comes from the EPC record (when found) but HMLR's
-   * sale data has no per-sale floor area, so the floor-area-comparison method still can't fire —
-   * it needs >= 3 comparables that each have their own floor area, which this data doesn't have.
-   * Historic-sale-indexation still needs a house price index feed, not yet connected — omitted
-   * rather than fabricated, same as before.
+   * The subject property's own last sale — only trustworthy when addressLine1 was entered and
+   * salesHistory matched to that specific address (source "public-open-data"), not when it's
+   * just "every sale at this postcode". getSalesForProperty already returns most-recent-first.
+   */
+  const lastKnownSale = useMemo(() => {
+    if (!property.addressLine1.trim() || salesHistory?.source !== "public-open-data") return null;
+    const mostRecent = salesHistory.sales[0];
+    return mostRecent ? { price: mostRecent.pricePaid, date: mostRecent.saleDate } : null;
+  }, [property.addressLine1, salesHistory]);
+
+  const [indexMovementFetchResult, setIndexMovementFetchResult] = useState<{ movementPercent: number } | null>(null);
+  useEffect(() => {
+    if (!completePostcode || !lastKnownSale) return;
+    let cancelled = false;
+    fetch(`/api/house-price-index?postcode=${encodeURIComponent(completePostcode)}&sinceDate=${lastKnownSale.date}`)
+      .then((res) => (res.ok ? res.json() : { movement: null }))
+      .then((body: { movement: { movementPercent: number } | null }) => {
+        if (!cancelled) setIndexMovementFetchResult(body.movement);
+      })
+      .catch(() => {
+        if (!cancelled) setIndexMovementFetchResult(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [completePostcode, lastKnownSale]);
+
+  const indexMovement = useMemo(
+    () => (completePostcode && lastKnownSale ? indexMovementFetchResult : null),
+    [completePostcode, lastKnownSale, indexMovementFetchResult]
+  );
+
+  /**
+   * Indicative valuation: comparable-sales method runs on real HM Land Registry sale history for
+   * the postcode. Floor area comes from the EPC record (when found) but HMLR's sale data has no
+   * per-sale floor area, so the floor-area-comparison method still can't fire — it needs >= 3
+   * comparables that each have their own floor area, which this data doesn't have. The indexed
+   * estimate (historic-sale-indexation) now runs on HM Land Registry's real UK House Price Index
+   * for the property's local authority — only when a house name/number was entered and matched
+   * to that specific property's own sale history (see lastKnownSale above); without an address
+   * match there's no single "last sale" to index from, so it's correctly omitted rather than
+   * indexing an arbitrary postcode-wide sale.
    */
   const valuation = useMemo(() => {
     const comparableSales = (salesHistory?.sales ?? []).map((s) => ({
@@ -244,8 +280,10 @@ export function useCaseCalculations(caseState: CaseState) {
     return calculateIndicativeValuation({
       comparableSales,
       subjectFloorAreaSqm: epc?.certificate?.totalFloorAreaSqm ?? null,
+      lastKnownSale,
+      indexMovementPercent: indexMovement?.movementPercent ?? null,
     });
-  }, [salesHistory, epc]);
+  }, [salesHistory, epc, lastKnownSale, indexMovement]);
 
   const monthlyMortgagePayment =
     mortgage.repaymentType === "repayment" ? repayment?.monthlyPayment ?? null : interestOnlyPayment;
