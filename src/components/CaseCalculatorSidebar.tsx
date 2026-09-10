@@ -2,7 +2,7 @@ import { Zap, ShieldCheck, Users } from "lucide-react";
 
 const FEATURES = [
   { icon: Zap, title: "Instant results", detail: "All calculations update in real time." },
-  { icon: ShieldCheck, title: "Built on real data", detail: "HM Land Registry, EPC and Council Tax — never fabricated." },
+  { icon: ShieldCheck, title: "Built on real data", detail: "HM Land Registry and Council Tax — never fabricated." },
   { icon: Users, title: "A clearer picture", detail: "See the bigger financial picture, instantly." },
 ];
 

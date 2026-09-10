@@ -25,7 +25,6 @@ import {
   RuleBasedHouseholdExpenditureProvider,
   HouseholdExpenditureResult,
 } from "@/lib/providers/householdExpenditureProvider";
-import { RealEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
 import { ManualCouncilTaxProvider, RealCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
 import { RealPropertySaleProvider, PropertySaleQueryResult } from "@/lib/providers/propertySaleProvider";
 import { deriveRegionFromPostcode, asCompletePostcode } from "@/lib/data/postcodeRegions";
@@ -185,37 +184,6 @@ export function useCaseCalculations(caseState: CaseState) {
   const councilTax =
     manualCouncilTax?.source === "manual-entry" ? manualCouncilTax : councilTaxEstimate ?? manualCouncilTax;
 
-  /**
-   * EPC lookup requires a house name/number as well as a postcode. MHCLG's search API can only
-   * be queried by postcode (no address-level narrowing confirmed), so a postcode alone risks
-   * returning the wrong property at any postcode covering multiple flats/houses — better to show
-   * nothing than a plausible-looking but potentially wrong EPC for a specific property.
-   */
-  const [epcFetchResult, setEpcFetchResult] = useState<EpcQueryResult | null>(null);
-  useEffect(() => {
-    if (!property.addressLine1.trim()) return;
-
-    let cancelled = false;
-    new RealEpcProvider().getLatestCertificate({ postcode: completePostcode }).then((r) => {
-      if (!cancelled) setEpcFetchResult(r);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [completePostcode, property.addressLine1]);
-
-  const epc: EpcQueryResult | null = useMemo(
-    () =>
-      property.addressLine1.trim()
-        ? epcFetchResult
-        : {
-            source: "unavailable",
-            sourceLabel: "EPC open data — enter a house name/number as well as a postcode to check for an EPC",
-            certificate: null,
-          },
-    [property.addressLine1, epcFetchResult]
-  );
-
   const [salesHistory, setSalesHistory] = useState<PropertySaleQueryResult | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -281,15 +249,15 @@ export function useCaseCalculations(caseState: CaseState) {
   /**
    * Indicative valuation: comparable-sales method runs on real HM Land Registry sale history for
    * the postcode — always the full postcode-wide list (`comparables`, not the address-narrowed
-   * `salesHistory`), so entering a house name/number never starves it. Floor area comes from the
-   * EPC record (when found) but HMLR's sale data has no per-sale floor area, so the
-   * floor-area-comparison method still can't fire — it needs >= 3 comparables that each have
-   * their own floor area, which this data doesn't have. The indexed estimate
-   * (historic-sale-indexation) runs on HM Land Registry's real UK House Price Index for the
-   * property's local authority — only when a house name/number was entered and matched to that
-   * specific property's own sale history (see lastKnownSale above); without an address match
-   * there's no single "last sale" to index from, so it's correctly omitted rather than indexing
-   * an arbitrary postcode-wide sale.
+   * `salesHistory`), so entering a house name/number never starves it. There's no per-sale floor
+   * area in HMLR's data (and no EPC integration — postcode-only EPC matching returned the wrong
+   * property too often to be usable, see PR removing it), so the floor-area-comparison method
+   * never fires; it needs >= 3 comparables that each have their own floor area, which nothing
+   * here supplies. The indexed estimate (historic-sale-indexation) runs on HM Land Registry's
+   * real UK House Price Index for the property's local authority — only when a house name/number
+   * was entered and matched to that specific property's own sale history (see lastKnownSale
+   * above); without an address match there's no single "last sale" to index from, so it's
+   * correctly omitted rather than indexing an arbitrary postcode-wide sale.
    */
   const valuation = useMemo(() => {
     const comparableSales = (comparables?.sales ?? []).map((s) => ({
@@ -299,11 +267,10 @@ export function useCaseCalculations(caseState: CaseState) {
     }));
     return calculateIndicativeValuation({
       comparableSales,
-      subjectFloorAreaSqm: epc?.certificate?.totalFloorAreaSqm ?? null,
       lastKnownSale,
       indexMovementPercent: indexMovement?.movementPercent ?? null,
     });
-  }, [comparables, epc, lastKnownSale, indexMovement]);
+  }, [comparables, lastKnownSale, indexMovement]);
 
   const monthlyMortgagePayment =
     mortgage.repaymentType === "repayment" ? repayment?.monthlyPayment ?? null : interestOnlyPayment;
@@ -364,7 +331,6 @@ export function useCaseCalculations(caseState: CaseState) {
     derivedRegion,
     expenditure,
     councilTax,
-    epc,
     salesHistory,
     affordability,
   };

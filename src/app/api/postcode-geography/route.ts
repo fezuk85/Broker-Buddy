@@ -4,7 +4,7 @@ import { fetchPostcodeGeography } from "@/lib/providers/onspd/onspdApiClient";
 /**
  * Server-side proxy to ONS Geography's live Postcode Directory query service. No credential to
  * protect — exists to avoid browser CORS issues and keep the upstream URL/shape out of client
- * code, matching the pattern used for /api/epc and /api/property-sales.
+ * code, matching the pattern used for /api/property-sales.
  */
 export async function GET(request: NextRequest) {
   const postcode = request.nextUrl.searchParams.get("postcode");

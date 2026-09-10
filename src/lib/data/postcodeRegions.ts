@@ -89,7 +89,7 @@ const UK_POSTCODE_FORMAT = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/;
 /**
  * Returns the postcode in standard "outward inward" form (a single space before the final 3
  * characters — the inward code is always 1 digit + 2 letters) if it's a *complete, well-formed*
- * UK postcode, otherwise undefined. Used to gate live postcode lookups (EPC, HM Land Registry,
+ * UK postcode, otherwise undefined. Used to gate live postcode lookups (HM Land Registry,
  * Council Tax etc.) so a partial postcode typed character-by-character never gets sent to an
  * external API — without this, every keystroke while typing a postcode would fire a fresh
  * (mostly invalid) request to each connected data source.

@@ -53,12 +53,6 @@ const SOURCES = [
       "Powers part of the 'Indicative Property Estimate' on the Property tab. When a house name/number is entered and matched to the property's own HM Land Registry sale history, the indexed estimate takes that last sale price and applies the real price movement since then for the property's local authority, from HM Land Registry's UK House Price Index (local authority level, England & Wales; base January 2015 = 100). This only runs when a specific past sale for that exact property was found — without an address match there's no single 'last sale' to index from, so it's correctly omitted rather than indexing an arbitrary sale from elsewhere at the postcode. The comparable-sales method (median of nearby sale prices) runs independently and doesn't need an address match. Open Government Licence.",
   },
   {
-    name: "MHCLG Get Energy Performance Data (domestic EPC)",
-    status: "live" as const,
-    detail:
-      "Provides current/potential EPC rating and score, floor area, property type, main heating and (as a raw, undecoded code) construction age band, for domestic properties in England & Wales — Scotland and Northern Ireland run separate EPC registers not covered by this API. Matched by postcode only, not full address/UPRN, so a postcode covering multiple flats returns the most recently registered EPC for any of them. Requires an EPC_API_TOKEN to be configured on the server; if it isn't set, or no certificate is found, the property panel shows that plainly rather than fabricating data.",
-  },
-  {
     name: "ONS Family Spending (household expenditure benchmark)",
     status: "manual" as const,
     detail:
