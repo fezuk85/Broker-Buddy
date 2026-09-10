@@ -26,6 +26,7 @@ import {
 } from "@/lib/providers/householdExpenditureProvider";
 import { UnavailableEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
 import { ManualCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
+import { deriveRegionFromPostcode } from "@/lib/data/postcodeRegions";
 
 function parseDob(dob: string): Date | null {
   if (!dob) return null;
@@ -124,6 +125,8 @@ export function useCaseCalculations(caseState: CaseState) {
 
   const valuation = useMemo(() => calculateIndicativeValuation({}), []); // Phase 1: no live sale/index data connected yet
 
+  const derivedRegion = useMemo(() => deriveRegionFromPostcode(property.postcode), [property.postcode]);
+
   const [expenditure, setExpenditure] = useState<HouseholdExpenditureResult | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -132,6 +135,7 @@ export function useCaseCalculations(caseState: CaseState) {
         grossAnnualIncome: totalIncome,
         adults: household.adults,
         dependentChildren: household.dependentChildren,
+        region: derivedRegion,
       })
       .then((r) => {
         if (!cancelled) setExpenditure(r);
@@ -139,7 +143,7 @@ export function useCaseCalculations(caseState: CaseState) {
     return () => {
       cancelled = true;
     };
-  }, [totalIncome, household.adults, household.dependentChildren]);
+  }, [totalIncome, household.adults, household.dependentChildren, derivedRegion]);
 
   const [councilTax, setCouncilTax] = useState<CouncilTaxResult | null>(null);
   useEffect(() => {
@@ -196,6 +200,7 @@ export function useCaseCalculations(caseState: CaseState) {
     icrExamples,
     maxLoanFromRent,
     valuation,
+    derivedRegion,
     expenditure,
     councilTax,
     epc,

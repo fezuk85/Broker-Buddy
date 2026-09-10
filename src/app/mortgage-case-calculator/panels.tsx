@@ -207,7 +207,11 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
         {calc.affordability ? (
           <>
             <div className="grid grid-cols-2 gap-3">
-              <StatTile label="ONS benchmark expenditure" value={formatGbp(calc.affordability.monthlyExpenditure)} subValue="per month" />
+              <StatTile
+                label="ONS benchmark expenditure"
+                value={formatGbp(calc.affordability.monthlyExpenditure)}
+                subValue={`per month · ${calc.expenditure?.estimate?.regionUsed ?? "UK average"}`}
+              />
               <StatTile label="Council tax" value={formatGbp(calc.affordability.monthlyCouncilTax)} subValue="per month" />
               <StatTile label="Mortgage payment" value={formatGbp(calc.affordability.mortgagePayment)} subValue="per month" />
               <StatTile label="Credit commitments" value={formatGbp(calc.affordability.credit)} subValue="per month" />
@@ -230,14 +234,20 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
         <Section title="ONS benchmark expenditure breakdown (weekly)">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
             {Object.entries(calc.expenditure.estimate.weeklyBreakdown).map(([k, val]) => (
-              <div key={k} className="flex justify-between border-b border-[var(--bb-border)] py-1">
-                <span className="capitalize text-[var(--bb-muted)]">{k.replace(/([A-Z])/g, " $1")}</span>
-                <span className="font-medium">{formatGbp(val as number)}</span>
+              <div key={k} className="border-b border-[var(--bb-border)] py-1">
+                <div className="capitalize text-[var(--bb-muted)] text-xs">{k.replace(/([A-Z])/g, " $1")}</div>
+                <div className="font-medium">{formatGbp(val as number)}</div>
               </div>
             ))}
           </div>
           <p className="mt-3 text-xs text-[var(--bb-muted)]">
             Source: {calc.expenditure.sourceLabel}. Excludes: {calc.expenditure.estimate.excludedCategories.join(", ")}.
+          </p>
+          <p className="mt-1 text-xs text-[var(--bb-muted)]">
+            Region: {calc.expenditure.estimate.regionUsed}
+            {calc.expenditure.estimate.regionUsed === "UK average"
+              ? " — enter a postcode above to use a region-adjusted benchmark instead."
+              : " (derived from the postcode entered above; illustrative regional cost-of-living adjustment, not the official ONS regional breakdown)."}
           </p>
           <p className="mt-1 text-xs text-[var(--bb-muted)]">
             Household expenditure figures are statistical benchmarks and are not a substitute for
