@@ -35,6 +35,7 @@ export interface HouseholdExpenditureEstimate {
   weeklyTotal: number;
   monthlyTotal: number;
   weeklyBreakdown: ExpenditureCategoryBreakdown;
+  monthlyBreakdown: ExpenditureCategoryBreakdown;
   benchmarkLabel: string;
   excludedCategories: string[];
   regionUsed: UkRegion | "UK average";
@@ -123,6 +124,10 @@ export class RuleBasedHouseholdExpenditureProvider implements HouseholdExpenditu
 
     const weeklyTotal = Object.values(weeklyBreakdown).reduce((sum, v) => sum + v, 0);
 
+    const monthlyBreakdown = Object.fromEntries(
+      Object.entries(weeklyBreakdown).map(([key, value]) => [key, Math.round((value * 52) / 12)])
+    ) as unknown as ExpenditureCategoryBreakdown;
+
     return {
       source: "modelled-illustrative",
       sourceLabel:
@@ -131,6 +136,7 @@ export class RuleBasedHouseholdExpenditureProvider implements HouseholdExpenditu
         weeklyTotal,
         monthlyTotal: Math.round((weeklyTotal * 52) / 12),
         weeklyBreakdown,
+        monthlyBreakdown,
         benchmarkLabel: `${adults} adult${adults === 1 ? "" : "s"}, ${children} dependent child${children === 1 ? "" : "ren"}, ${regionUsed}`,
         excludedCategories: EXCLUDED_CATEGORIES,
         regionUsed,

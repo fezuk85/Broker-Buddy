@@ -207,6 +207,19 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
         {calc.affordability ? (
           <>
             <div className="grid grid-cols-2 gap-3">
+              <StatTile label="Net monthly income" value={formatGbp(calc.affordability.netMonthlyIncome)} />
+              <StatTile
+                label="Remaining after outgoings"
+                value={formatGbp(calc.affordability.remainingAfterOutgoings)}
+                accent={calc.affordability.remainingAfterOutgoings >= 0 ? "primary" : "warning"}
+                subValue={
+                  calc.affordability.outgoingsPercentOfNetIncome != null
+                    ? `Outgoings are ${formatPercent(calc.affordability.outgoingsPercentOfNetIncome, 0)} of net income`
+                    : undefined
+                }
+              />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
               <StatTile
                 label="ONS benchmark expenditure"
                 value={formatGbp(calc.affordability.monthlyExpenditure)}
@@ -225,15 +238,18 @@ export function AffordabilityPanel({ calc }: { calc: Calc; caseState: CaseState 
         )}
         <Disclaimer>
           This is an illustrative household cash-flow snapshot, not a lender affordability
-          decision. Lenders use their own affordability models, stress rates, expenditure
-          assumptions and policy rules.
+          decision. Net income is estimated from gross income as if it were straightforward PAYE
+          salary (no pension contributions, benefits, self-employment or other income). Lenders
+          use their own affordability models, stress rates, expenditure assumptions, income
+          verification and policy rules — a positive figure here is not a guarantee that any
+          lender would approve this borrowing.
         </Disclaimer>
       </Section>
 
       {calc.expenditure?.estimate && (
-        <Section title="ONS benchmark expenditure breakdown (weekly)">
+        <Section title="ONS benchmark expenditure breakdown (monthly)">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            {Object.entries(calc.expenditure.estimate.weeklyBreakdown).map(([k, val]) => (
+            {Object.entries(calc.expenditure.estimate.monthlyBreakdown).map(([k, val]) => (
               <div key={k} className="border-b border-[var(--bb-border)] py-1">
                 <div className="capitalize text-[var(--bb-muted)] text-xs">{k.replace(/([A-Z])/g, " $1")}</div>
                 <div className="font-medium">{formatGbp(val as number)}</div>

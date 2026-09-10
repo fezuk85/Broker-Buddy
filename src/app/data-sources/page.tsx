@@ -35,6 +35,12 @@ const SOURCES = [
       "Calculated using published 2025/26 Child Benefit rates and the High Income Child Benefit Charge thresholds (£60,000–£80,000), and the standard Marriage Allowance transfer rules. Deterministic, rule-based calculations — not means-tested benefits like Universal Credit, which are out of scope due to their many household-specific components.",
   },
   {
+    name: "Illustrative household cash-flow snapshot (net income vs. outgoings)",
+    status: "live" as const,
+    detail:
+      "Net monthly income is calculated from each applicant's gross income using the same salary take-home engine as the Salary Calculator — it assumes straightforward PAYE employment income with no pension contributions, benefits or other income. This is compared against the ONS benchmark expenditure, Council Tax, mortgage payment and credit commitments to show an indicative monthly surplus or deficit. This is explicitly not a lender affordability assessment — lenders apply their own stress rates, expenditure assumptions, income verification and policy rules, and a positive figure here does not indicate any lender would approve the borrowing.",
+  },
+  {
     name: "HM Land Registry Price Paid Data",
     status: "planned" as const,
     detail:
