@@ -76,7 +76,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
           <Field label="Monthly credit commitments">
             <NumberInput value={household.monthlyCreditCommitments} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, monthlyCreditCommitments: v } }))} />
           </Field>
-          <Field label="Council tax (£/month, optional)">
+          <Field label="Council tax (£/month, optional — auto-estimated from postcode if left blank)">
             <NumberInput value={household.monthlyCouncilTax} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, monthlyCouncilTax: v } }))} />
           </Field>
         </div>
