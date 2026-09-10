@@ -71,8 +71,16 @@ describe("asCompletePostcode", () => {
     expect(asCompletePostcode("de23 8pl")).toBe("DE23 8PL"); // trims/uppercases
   });
 
-  it("accepts a postcode missing its internal space", () => {
-    expect(asCompletePostcode("CF235PQ")).toBe("CF235PQ");
+  it("inserts the missing space so a space-less postcode still matches HM Land Registry's exact-match query", () => {
+    // Real bug: HM Land Registry's postcode field is stored as "DE23 8PL" (with space), so
+    // "DE238PL" returned zero results even though it's a well-formed, real postcode.
+    expect(asCompletePostcode("CF235PQ")).toBe("CF23 5PQ");
+    expect(asCompletePostcode("de238pl")).toBe("DE23 8PL");
+    expect(asCompletePostcode("SW1A1AA")).toBe("SW1A 1AA");
+  });
+
+  it("is idempotent on a postcode that already has the correct single space", () => {
+    expect(asCompletePostcode("CF23 5PQ")).toBe("CF23 5PQ");
   });
 
   it("rejects partial postcodes typed character-by-character", () => {
