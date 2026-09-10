@@ -29,6 +29,12 @@ const SOURCES = [
       "Calculated using published HMRC rates and thresholds for the 2025/26 tax year (England, Wales & Northern Ireland — Scotland has different bands). Rates are reviewed periodically rather than pulled from a live feed; see the calculator pages for the exact assumptions used.",
   },
   {
+    name: "Child Benefit & Marriage Allowance",
+    status: "live" as const,
+    detail:
+      "Calculated using published 2025/26 Child Benefit rates and the High Income Child Benefit Charge thresholds (£60,000–£80,000), and the standard Marriage Allowance transfer rules. Deterministic, rule-based calculations — not means-tested benefits like Universal Credit, which are out of scope due to their many household-specific components.",
+  },
+  {
     name: "HM Land Registry Price Paid Data",
     status: "planned" as const,
     detail:
