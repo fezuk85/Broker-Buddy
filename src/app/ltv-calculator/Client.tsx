@@ -29,7 +29,7 @@ export default function LtvCalculatorClient() {
     <CalculatorPage
       h1="LTV Calculator"
       intro="Work out your current and proposed loan-to-value (LTV), equity, and how much extra you could borrow at each LTV band."
-      disclaimer="Broker Buddy provides calculations only. LTV bands and lending limits vary by lender — always confirm with a lender or adviser."
+      disclaimer="Lending Calculator provides calculations only. LTV bands and lending limits vary by lender — always confirm with a lender or adviser."
       inputs={
         <Section title="Your details">
           <div className="grid grid-cols-1 gap-3">

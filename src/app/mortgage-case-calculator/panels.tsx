@@ -25,7 +25,7 @@ export function OverviewPanel({ calc }: { calc: Calc; caseState: CaseState }) {
         <StatTile label="Current LTV" value={formatPercent(calc.ltv.currentLtvPercent)} />
       </div>
       <Disclaimer>
-        Broker Buddy provides calculations and indicative information only. It does not provide
+        Lending Calculator provides calculations and indicative information only. It does not provide
         mortgage advice, lending decisions or property valuations.
       </Disclaimer>
     </div>
@@ -209,7 +209,7 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
         </p>
       </Section>
 
-      <Section title="Broker Buddy Indicative Property Estimate">
+      <Section title="Lending Calculator Indicative Property Estimate">
         {v.insufficientData ? (
           <p className="text-sm text-[var(--bb-muted)]">Insufficient data for a reliable indicative estimate.</p>
         ) : (
@@ -223,7 +223,7 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
               ))}
             </div>
             <div className="mt-4 pt-4 border-t border-[var(--bb-border)]">
-              <StatTile label="Broker Buddy indicative estimate" value={formatGbp(v.combinedEstimate)} accent="primary" />
+              <StatTile label="Lending Calculator indicative estimate" value={formatGbp(v.combinedEstimate)} accent="primary" />
               <p className="mt-2 text-sm text-[var(--bb-muted)]">
                 Range: {formatGbp(v.rangeLow)} – {formatGbp(v.rangeHigh)} · Confidence: {v.confidence}
               </p>

@@ -68,9 +68,9 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-16">
         <div className="bb-card p-6 sm:p-8">
-          <h2 className="text-lg font-semibold">What Broker Buddy is — and isn&apos;t</h2>
+          <h2 className="text-lg font-semibold">What Lending Calculator is — and isn&apos;t</h2>
           <p className="mt-3 text-sm text-[var(--bb-muted)] max-w-3xl">
-            Broker Buddy is a calculation and information tool for mortgage brokers, property
+            Lending Calculator is a calculation and information tool for mortgage brokers, property
             professionals, landlords and consumers. It is <strong>not</strong> a mortgage advice
             platform, sourcing system or lender recommendation engine. Every figure is either a
             transparent mathematical calculation from the numbers you enter, or clearly-labelled

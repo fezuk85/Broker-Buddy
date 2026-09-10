@@ -1,5 +1,5 @@
 /**
- * Shared provider contracts for Broker Buddy's property/finance data modules.
+ * Shared provider contracts for Lending Calculator's property/finance data modules.
  *
  * The calculation engine and UI never depend on a specific data supplier directly —
  * everything goes through these interfaces so a "manual entry" implementation can be

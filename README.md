@@ -1,10 +1,10 @@
-# Broker Buddy
+# Lending Calculator
 
 A free UK mortgage & property-finance calculation hub — LTV, repayments, loan-to-income,
 age/term limits, BTL ICR, rental yield and bridging costs, plus a combined "Mortgage Case
 Calculator" so you only enter your details once.
 
-Broker Buddy provides calculations and indicative information only. It does not provide
+Lending Calculator provides calculations and indicative information only. It does not provide
 mortgage advice, lending decisions or property valuations. See `/data-sources` in the running
 site for exactly which figures are real public data vs. manual entry vs. planned.
 
