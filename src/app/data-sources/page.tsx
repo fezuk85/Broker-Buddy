@@ -42,9 +42,9 @@ const SOURCES = [
   },
   {
     name: "HM Land Registry Price Paid Data",
-    status: "planned" as const,
+    status: "live" as const,
     detail:
-      "Will provide historic sale prices for England & Wales (from 1995, updated monthly, Open Government Licence) for the property snapshot, comparable sales and indicative valuation. Not yet connected — the provider architecture is in place but the calculator currently shows 'insufficient data' rather than a fabricated sale history.",
+      "Historic sale prices for England & Wales (from 1995, updated monthly) via HM Land Registry's live, unauthenticated Linked Data API — no bulk file import. Matched by postcode only, not full address/UPRN (the API has no UPRN field), so results shown for a property are best-effort address-text matches within that postcode's sales, and 'comparable sales' means other sales at the same postcode rather than a true geographic radius search. Open Government Licence for prices; the address fields carry a separate Royal Mail/Ordnance Survey restriction limiting use to displaying residential property price information, which is what this does — see the attribution note below.",
   },
   {
     name: "EPC open data (gov.uk)",
@@ -99,12 +99,17 @@ export default function DataSourcesPage() {
           the required attribution:
         </p>
         <blockquote className="mt-3 border-l-2 pl-4 text-sm italic" style={{ borderColor: "var(--bb-border)" }}>
-          &quot;Contains HM Land Registry data © Crown copyright and database right 2021.&quot;
+          &quot;Contains HM Land Registry data © Crown copyright and database right {new Date().getFullYear()}.
+          This data is licensed under the Open Government Licence v3.0.&quot;
         </blockquote>
         <p className="mt-3 text-xs text-[var(--bb-muted)]">
-          Price Paid Data is published under the Open Government Licence. We check HM Land
-          Registry&apos;s current licence terms before implementation rather than relying on
-          assumptions baked into this page.
+          Price Paid Data itself is freely reusable, including commercially, under the Open
+          Government Licence. The address fields (postcode, house name/number, street, locality,
+          town, district, county) are additionally licensed by Royal Mail/Ordnance Survey for
+          personal/non-commercial use and for &quot;display for the purpose of providing residential
+          property price information services&quot; — which is what this page and the case calculator
+          do. Using that address data for any other purpose (e.g. marketing, CRM enrichment) would
+          need separate permission from Royal Mail.
         </p>
       </Section>
 

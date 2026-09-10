@@ -27,6 +27,7 @@ import {
 } from "@/lib/providers/householdExpenditureProvider";
 import { UnavailableEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
 import { ManualCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
+import { RealPropertySaleProvider, PropertySaleQueryResult } from "@/lib/providers/propertySaleProvider";
 import { deriveRegionFromPostcode } from "@/lib/data/postcodeRegions";
 
 function parseDob(dob: string): Date | null {
@@ -168,6 +169,17 @@ export function useCaseCalculations(caseState: CaseState) {
     };
   }, [property.postcode, property.addressLine1]);
 
+  const [salesHistory, setSalesHistory] = useState<PropertySaleQueryResult | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    new RealPropertySaleProvider().getSalesForProperty({ postcode: property.postcode, addressLine1: property.addressLine1 }).then((r) => {
+      if (!cancelled) setSalesHistory(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [property.postcode, property.addressLine1]);
+
   const monthlyMortgagePayment =
     mortgage.repaymentType === "repayment" ? repayment?.monthlyPayment ?? null : interestOnlyPayment;
 
@@ -228,6 +240,7 @@ export function useCaseCalculations(caseState: CaseState) {
     expenditure,
     councilTax,
     epc,
+    salesHistory,
     affordability,
   };
 }

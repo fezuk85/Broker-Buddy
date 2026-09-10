@@ -165,8 +165,47 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
           <StatTile label="Postcode" value={caseState.property.postcode || "—"} />
         </div>
         <p className="mt-3 text-xs text-[var(--bb-muted)]">
-          Address, tenure, floor area and sale history are shown once HM Land Registry Price Paid
-          Data and EPC lookups are connected (Phase 2). Nothing is invented in the meantime.
+          Address, tenure and floor area are shown once EPC lookups are connected (Phase 2).
+          Nothing is invented in the meantime.
+        </p>
+      </Section>
+
+      <Section title="HM Land Registry sale history">
+        {calc.salesHistory?.sales.length ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-[var(--bb-muted)]">
+                  <th className="font-medium py-1 pr-4">Date</th>
+                  <th className="font-medium py-1 pr-4">Address</th>
+                  <th className="font-medium py-1 pr-4">Price paid</th>
+                  <th className="font-medium py-1">Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {calc.salesHistory.sales.slice(0, 10).map((s, i) => (
+                  <tr key={`${s.saleDate}-${i}`} className="border-t border-[var(--bb-border)]">
+                    <td className="py-1.5 pr-4">{s.saleDate}</td>
+                    <td className="py-1.5 pr-4">{s.addressLine1}</td>
+                    <td className="py-1.5 pr-4">{formatGbp(s.pricePaid)}</td>
+                    <td className="py-1.5 capitalize">
+                      {s.propertyType}
+                      {s.newBuild ? " · new build" : ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-[var(--bb-muted)]">
+            {calc.salesHistory?.sourceLabel ?? "Enter a postcode above to check for sale history."}
+          </p>
+        )}
+        <p className="mt-3 text-xs text-[var(--bb-muted)]">
+          Contains HM Land Registry data © Crown copyright and database right. Licensed under the
+          Open Government Licence v3.0. Matched by postcode, not full address/UPRN — this is all
+          sales recorded at this postcode, which may include neighbouring properties.
         </p>
       </Section>
 
