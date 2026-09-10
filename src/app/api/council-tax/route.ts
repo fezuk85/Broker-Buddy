@@ -12,10 +12,11 @@ export interface CouncilTaxEstimateResponse {
 }
 
 /**
- * Joins postcode -> local authority/LSOA (ONS Postcode Directory) with MHCLG's Table 9 charges
- * and the VOA's CTSOP1.1 area-typical band to produce an illustrative Council Tax estimate with
- * no manual band entry required. The band is never a confirmed value for the specific property —
- * see /data-sources and the response's bandIsAreaTypical flag.
+ * Joins postcode -> local authority/LSOA (ONS Postcode Directory) with official per-authority
+ * charges (England: MHCLG Table 9; Wales: StatsWales) and the VOA's CTSOP1.1 area-typical band
+ * to produce an illustrative Council Tax estimate with no manual band entry required. Covers
+ * England and Wales only (not Scotland or Northern Ireland). The band is never a confirmed value
+ * for the specific property — see /data-sources and the response's bandIsAreaTypical flag.
  */
 export async function GET(request: NextRequest) {
   const postcode = request.nextUrl.searchParams.get("postcode");

@@ -6,9 +6,11 @@
  * properties in the same small area as the postcode entered, not the confirmed band for the
  * specific property. See src/lib/data/councilTax/ctsop11LsoaBands.json for extraction notes.
  *
- * Row shape: [lsoaCode, bandACount, bandBCount, ..., bandHCount]. A `null` count means the VOA
- * suppressed the value (disclosure control on small numbers) or it wasn't applicable — never
- * treated as zero, since that would bias the modal-band calculation.
+ * Row shape: [lsoaCode, bandACount, bandBCount, ..., bandHCount, bandICount]. Band I only applies
+ * in Wales (England has no Band I) — English rows carry `null` there, same as any other
+ * not-applicable/suppressed value. A `null` count means the VOA suppressed the value (disclosure
+ * control on small numbers) or it wasn't applicable — never treated as zero, since that would
+ * bias the modal-band calculation.
  *
  * Keyed on the 2021 LSOA code (e.g. "E01013567"), which is exactly what onspdApiClient's
  * fetchPostcodeGeography returns as lsoa2021Code.
@@ -18,7 +20,7 @@ import { CouncilTaxBand } from "../councilTaxProvider";
 
 type LsoaBandRow = [string, ...Array<number | null>];
 
-const BANDS: CouncilTaxBand[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const BANDS: CouncilTaxBand[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
 const BY_LSOA_CODE = new Map<string, LsoaBandRow>((ctsop11Data as LsoaBandRow[]).map((row) => [row[0], row]));
 
