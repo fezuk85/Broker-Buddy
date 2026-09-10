@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useCase } from "@/lib/case/CaseProvider";
 import { useCaseCalculations } from "@/lib/case/useCaseCalculations";
 import { CaseInputs } from "./CaseInputs";
-import { OverviewPanel, MortgagePanel, PropertyPanel, AffordabilityPanel, RentalPanel, EpcPanel } from "./panels";
+import { OverviewPanel, MortgagePanel, PropertyPanel, AffordabilityPanel, RentalPanel } from "./panels";
 import { AdSlot } from "@/components/AdSlot";
 import { CaseCalculatorSidebar } from "@/components/CaseCalculatorSidebar";
-import { PieChart, Home, Building2, TrendingUp, Wallet, Zap, RotateCcw } from "lucide-react";
+import { PieChart, Home, Building2, TrendingUp, Wallet, RotateCcw } from "lucide-react";
 
 const TABS = [
   { key: "overview", label: "Overview", icon: PieChart },
@@ -15,7 +15,6 @@ const TABS = [
   { key: "property", label: "Property", icon: Building2 },
   { key: "affordability", label: "Affordability", icon: TrendingUp },
   { key: "rental", label: "Rental", icon: Wallet },
-  { key: "epc", label: "EPC", icon: Zap },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -77,7 +76,6 @@ export default function MortgageCaseCalculatorPage() {
             {tab === "property" && <PropertyPanel calc={calc} caseState={caseState} />}
             {tab === "affordability" && <AffordabilityPanel calc={calc} caseState={caseState} />}
             {tab === "rental" && <RentalPanel calc={calc} caseState={caseState} />}
-            {tab === "epc" && <EpcPanel calc={calc} caseState={caseState} />}
           </div>
 
           <div className="mt-6">

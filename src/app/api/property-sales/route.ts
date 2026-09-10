@@ -4,7 +4,7 @@ import { fetchSalesForPostcode } from "@/lib/providers/hmlr/hmlrApiClient";
 /**
  * Server-side proxy to HM Land Registry's Price Paid Data Linked Data API. No credential to
  * protect here (the API is unauthenticated) — this route exists to avoid browser CORS issues and
- * keep the upstream URL/shape out of client code, matching the pattern used for /api/epc.
+ * keep the upstream URL/shape out of client code.
  */
 export async function GET(request: NextRequest) {
   const postcode = request.nextUrl.searchParams.get("postcode");

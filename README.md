@@ -37,7 +37,7 @@ src/
   components/                   Shared UI building blocks (cards, inputs, stat tiles...)
   lib/
     calc/                       Pure calculation functions + their tests (the maths)
-    providers/                  Interfaces for property/EPC/council-tax/ONS/rental data,
+    providers/                  Interfaces for property/council-tax/ONS/rental data,
                                  with manual-entry or "not yet connected" implementations
     valuation/                  The layered indicative property valuation model
     case/                       The shared "case" (your entered details), saved to your
@@ -48,9 +48,10 @@ src/
 
 - **All calculators (LTV, repayments, LTI, age/term, BTL ICR, rental yield, bridging)** are
   fully live — real maths, running against whatever you type in.
-- **HM Land Registry sale history, EPC data** — architecture is in place (see
-  `src/lib/providers/`) but not yet connected to a live data source. The site shows
-  "insufficient data" rather than making anything up.
+- **HM Land Registry sale history, UK House Price Index** — live and connected (see
+  `src/lib/providers/`). EPC data was tried and removed: MHCLG's API can only be matched by
+  postcode, not address/UPRN, which too often surfaced a different property's certificate — see
+  `/data-sources` for what's covered instead.
 - **ONS household expenditure benchmark, Council Tax, rent** — Phase 1 uses manual entry / a
   clearly-labelled simplified model, not live datasets.
 
