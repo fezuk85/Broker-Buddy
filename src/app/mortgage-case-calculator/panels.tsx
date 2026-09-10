@@ -165,8 +165,8 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
           <StatTile label="Postcode" value={caseState.property.postcode || "—"} />
         </div>
         <p className="mt-3 text-xs text-[var(--bb-muted)]">
-          Address, tenure and floor area are shown once EPC lookups are connected (Phase 2).
-          Nothing is invented in the meantime.
+          Sale history, address and tenure are shown below (HM Land Registry); floor area,
+          EPC rating and construction age band are shown in the EPC section.
         </p>
       </Section>
 

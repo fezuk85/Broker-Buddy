@@ -125,8 +125,6 @@ export function useCaseCalculations(caseState: CaseState) {
     [rental.monthlyRent, rental.stressRatePercent, rental.icrPercent]
   );
 
-  const valuation = useMemo(() => calculateIndicativeValuation({}), []); // Phase 1: no live sale/index data connected yet
-
   const derivedRegion = useMemo(() => deriveRegionFromPostcode(property.postcode), [property.postcode]);
 
   const [expenditure, setExpenditure] = useState<HouseholdExpenditureResult | null>(null);
@@ -199,6 +197,26 @@ export function useCaseCalculations(caseState: CaseState) {
       cancelled = true;
     };
   }, [property.postcode, property.addressLine1]);
+
+  /**
+   * Indicative valuation: comparable-sales method now runs on real HM Land Registry sale
+   * history for the postcode. Floor area comes from the EPC record (when found) but HMLR's
+   * sale data has no per-sale floor area, so the floor-area-comparison method still can't fire —
+   * it needs >= 3 comparables that each have their own floor area, which this data doesn't have.
+   * Historic-sale-indexation still needs a house price index feed, not yet connected — omitted
+   * rather than fabricated, same as before.
+   */
+  const valuation = useMemo(() => {
+    const comparableSales = (salesHistory?.sales ?? []).map((s) => ({
+      pricePaid: s.pricePaid,
+      saleDate: s.saleDate,
+      propertyType: s.propertyType,
+    }));
+    return calculateIndicativeValuation({
+      comparableSales,
+      subjectFloorAreaSqm: epc?.certificate?.totalFloorAreaSqm ?? null,
+    });
+  }, [salesHistory, epc]);
 
   const monthlyMortgagePayment =
     mortgage.repaymentType === "repayment" ? repayment?.monthlyPayment ?? null : interestOnlyPayment;
