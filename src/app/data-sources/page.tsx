@@ -3,7 +3,7 @@ import { Section } from "@/components/Section";
 
 export const metadata: Metadata = {
   title: "Data Sources",
-  description: "What data Broker Buddy's calculations and property information are based on — and what's real vs. illustrative in Phase 1.",
+  description: "What data Lending Calculator's calculations and property information are based on — and what's real vs. illustrative in Phase 1.",
 };
 
 function StatusPill({ status }: { status: "live" | "manual" | "planned" }) {
@@ -68,7 +68,7 @@ const SOURCES = [
     name: "Rental estimates",
     status: "manual" as const,
     detail:
-      "You enter your own monthly rent. Broker Buddy does not scrape Rightmove, Zoopla or any other listings site. A licensed rental-data provider may be added in future via the RentalEstimateProvider interface.",
+      "You enter your own monthly rent. Lending Calculator does not scrape Rightmove, Zoopla or any other listings site. A licensed rental-data provider may be added in future via the RentalEstimateProvider interface.",
   },
 ];
 
@@ -77,7 +77,7 @@ export default function DataSourcesPage() {
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
       <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Data sources</h1>
       <p className="mt-3 text-[var(--bb-muted)]">
-        This page explains exactly which parts of Broker Buddy are pure calculation, which use
+        This page explains exactly which parts of Lending Calculator are pure calculation, which use
         real public data, and which are currently manual entry or planned — so nothing is ever
         presented as more authoritative than it is.
       </p>
@@ -96,7 +96,7 @@ export default function DataSourcesPage() {
 
       <Section className="mt-8" title="HM Land Registry attribution">
         <p className="text-sm text-[var(--bb-muted)]">
-          Wherever HM Land Registry Price Paid Data is shown or derived, Broker Buddy will display
+          Wherever HM Land Registry Price Paid Data is shown or derived, Lending Calculator will display
           the required attribution:
         </p>
         <blockquote className="mt-3 border-l-2 pl-4 text-sm italic" style={{ borderColor: "var(--bb-border)" }}>
@@ -119,7 +119,7 @@ export default function DataSourcesPage() {
           <li>Scrape Rightmove, Zoopla, or council-tax websites</li>
           <li>Present an indicative estimate as a formal valuation or lender AVM</li>
           <li>Invent missing property data</li>
-          <li>Disguise public-data outputs as proprietary Broker Buddy data</li>
+          <li>Disguise public-data outputs as proprietary Lending Calculator data</li>
         </ul>
       </Section>
     </div>

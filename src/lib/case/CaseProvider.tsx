@@ -3,7 +3,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { CaseState, DEFAULT_CASE } from "./types";
 
-const STORAGE_KEY = "broker-buddy-case-v1";
+const STORAGE_KEY = "lending-calculator-case-v1";
+const LEGACY_STORAGE_KEY = "broker-buddy-case-v1";
 
 interface CaseContextValue {
   caseState: CaseState;
@@ -16,7 +17,8 @@ const CaseContext = createContext<CaseContextValue | null>(null);
 function loadFromStorage(): CaseState {
   if (typeof window === "undefined") return DEFAULT_CASE;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    // Falls back to the pre-rebrand storage key so an in-progress case isn't lost by the rename.
+    const raw = window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_STORAGE_KEY);
     if (!raw) return DEFAULT_CASE;
     const parsed = JSON.parse(raw);
     // Shallow-merge onto defaults so new fields introduced later don't break old saved cases.

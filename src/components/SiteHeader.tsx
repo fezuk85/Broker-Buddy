@@ -17,9 +17,9 @@ export function SiteHeader() {
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-white text-sm font-bold"
             style={{ background: "var(--bb-primary)" }}
           >
-            BB
+            LC
           </span>
-          <span>Broker Buddy</span>
+          <span>Lending Calculator</span>
         </Link>
         <nav className="hidden md:flex items-center gap-5 text-sm text-[var(--bb-muted)] overflow-x-auto">
           {NAV_LINKS.map((link) => (

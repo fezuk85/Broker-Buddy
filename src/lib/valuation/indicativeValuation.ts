@@ -1,5 +1,5 @@
 /**
- * "Broker Buddy Indicative Property Estimate" — a layered, rule-based combination of up to
+ * "Lending Calculator Indicative Property Estimate" — a layered, rule-based combination of up to
  * three signals. This is explicitly NOT a formal valuation or lender AVM (see disclaimers).
  *
  * It never invents a number: if there isn't enough evidence for a given method, that method

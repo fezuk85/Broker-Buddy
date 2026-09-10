@@ -6,8 +6,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: {
-    default: "Broker Buddy — UK Mortgage & Property Calculators",
-    template: "%s | Broker Buddy",
+    default: "Lending Calculator — UK Mortgage & Property Calculators",
+    template: "%s | Lending Calculator",
   },
   description:
     "Free UK mortgage and property-finance calculators: LTV, loan-to-income, repayments, BTL ICR, rental yield, bridging and more — all in one place.",
