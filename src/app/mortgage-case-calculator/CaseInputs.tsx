@@ -19,6 +19,12 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
           <Field label="Postcode (optional)">
             <TextInput value={property.postcode} onChange={(v) => updateCase((p) => ({ ...p, property: { ...p.property, postcode: v } }))} />
           </Field>
+          <Field label="House name/number (optional — narrows HM Land Registry sale history to this specific property)">
+            <TextInput
+              value={property.addressLine1}
+              onChange={(v) => updateCase((p) => ({ ...p, property: { ...p.property, addressLine1: v } }))}
+            />
+          </Field>
           <Field label="Current mortgage balance">
             <NumberInput value={mortgage.currentBalance} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, currentBalance: v } }))} />
           </Field>

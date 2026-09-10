@@ -411,10 +411,11 @@ export function EpcPanel({ calc, caseState }: { calc: Calc; caseState: CaseState
         <p className="text-sm text-[var(--bb-muted)]">{calc.epc?.sourceLabel ?? "Looking up EPC data..."}</p>
       ) : (
         <p className="text-sm text-[var(--bb-muted)]">
-          Enter a property postcode to look up its current/potential EPC rating, floor area,
-          construction age band and heating type from MHCLG&apos;s official EPC open data —
-          floor area in particular improves the indicative property estimate via £/m²
-          comparisons.
+          Enter a property postcode and house name/number to look up its current/potential EPC
+          rating, floor area, construction age band and heating type from MHCLG&apos;s official
+          EPC open data — floor area in particular improves the indicative property estimate via
+          £/m² comparisons. Both are needed: a postcode alone can match the wrong property at an
+          address covering multiple flats or houses.
         </p>
       )}
     </Section>

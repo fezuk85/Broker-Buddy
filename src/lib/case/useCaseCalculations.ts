@@ -185,16 +185,36 @@ export function useCaseCalculations(caseState: CaseState) {
   const councilTax =
     manualCouncilTax?.source === "manual-entry" ? manualCouncilTax : councilTaxEstimate ?? manualCouncilTax;
 
-  const [epc, setEpc] = useState<EpcQueryResult | null>(null);
+  /**
+   * EPC lookup requires a house name/number as well as a postcode. MHCLG's search API can only
+   * be queried by postcode (no address-level narrowing confirmed), so a postcode alone risks
+   * returning the wrong property at any postcode covering multiple flats/houses — better to show
+   * nothing than a plausible-looking but potentially wrong EPC for a specific property.
+   */
+  const [epcFetchResult, setEpcFetchResult] = useState<EpcQueryResult | null>(null);
   useEffect(() => {
+    if (!property.addressLine1.trim()) return;
+
     let cancelled = false;
     new RealEpcProvider().getLatestCertificate({ postcode: completePostcode }).then((r) => {
-      if (!cancelled) setEpc(r);
+      if (!cancelled) setEpcFetchResult(r);
     });
     return () => {
       cancelled = true;
     };
-  }, [completePostcode]);
+  }, [completePostcode, property.addressLine1]);
+
+  const epc: EpcQueryResult | null = useMemo(
+    () =>
+      property.addressLine1.trim()
+        ? epcFetchResult
+        : {
+            source: "unavailable",
+            sourceLabel: "EPC open data — enter a house name/number as well as a postcode to check for an EPC",
+            certificate: null,
+          },
+    [property.addressLine1, epcFetchResult]
+  );
 
   const [salesHistory, setSalesHistory] = useState<PropertySaleQueryResult | null>(null);
   useEffect(() => {
