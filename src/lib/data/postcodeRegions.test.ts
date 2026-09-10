@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { derivePostcodeArea, deriveRegionFromPostcode } from "./postcodeRegions";
+import { derivePostcodeArea, deriveRegionFromPostcode, asCompletePostcode } from "./postcodeRegions";
 
 describe("derivePostcodeArea", () => {
   it("extracts a two-letter area", () => {
@@ -60,5 +60,33 @@ describe("deriveRegionFromPostcode", () => {
 
   it("returns null for an unrecognised area", () => {
     expect(deriveRegionFromPostcode("ZZ1 1AA")).toBeNull();
+  });
+});
+
+describe("asCompletePostcode", () => {
+  it("accepts complete, well-formed postcodes in various valid shapes", () => {
+    expect(asCompletePostcode("SW1A 1AA")).toBe("SW1A 1AA");
+    expect(asCompletePostcode("CF23 5PQ")).toBe("CF23 5PQ");
+    expect(asCompletePostcode("M1 1AE")).toBe("M1 1AE");
+    expect(asCompletePostcode("de23 8pl")).toBe("DE23 8PL"); // trims/uppercases
+  });
+
+  it("accepts a postcode missing its internal space", () => {
+    expect(asCompletePostcode("CF235PQ")).toBe("CF235PQ");
+  });
+
+  it("rejects partial postcodes typed character-by-character", () => {
+    // This is the exact scenario that was firing a live API request on every keystroke.
+    for (const partial of ["C", "CF", "CF2", "CF23", "CF23 ", "CF23 5", "CF23 5P"]) {
+      expect(asCompletePostcode(partial)).toBeUndefined();
+    }
+  });
+
+  it("rejects empty input", () => {
+    expect(asCompletePostcode("")).toBeUndefined();
+  });
+
+  it("rejects garbage input", () => {
+    expect(asCompletePostcode("not a postcode")).toBeUndefined();
   });
 });

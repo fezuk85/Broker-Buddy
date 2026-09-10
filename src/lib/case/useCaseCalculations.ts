@@ -28,7 +28,7 @@ import {
 import { RealEpcProvider, EpcQueryResult } from "@/lib/providers/epcProvider";
 import { ManualCouncilTaxProvider, RealCouncilTaxProvider, CouncilTaxResult } from "@/lib/providers/councilTaxProvider";
 import { RealPropertySaleProvider, PropertySaleQueryResult } from "@/lib/providers/propertySaleProvider";
-import { deriveRegionFromPostcode } from "@/lib/data/postcodeRegions";
+import { deriveRegionFromPostcode, asCompletePostcode } from "@/lib/data/postcodeRegions";
 
 function parseDob(dob: string): Date | null {
   if (!dob) return null;
@@ -127,6 +127,15 @@ export function useCaseCalculations(caseState: CaseState) {
 
   const derivedRegion = useMemo(() => deriveRegionFromPostcode(property.postcode), [property.postcode]);
 
+  /**
+   * Only a complete, well-formed postcode is sent to any external lookup (EPC, HM Land Registry,
+   * Council Tax). Without this, every keystroke while typing a postcode fires a fresh request per
+   * data source against a partial/invalid postcode — wasteful, and each MHCLG EPC search call in
+   * particular fails with a 400 for a malformed postcode, which showed up as real production
+   * errors. derivedRegion above is unaffected — it's a local, synchronous lookup, not a network call.
+   */
+  const completePostcode = useMemo(() => asCompletePostcode(property.postcode), [property.postcode]);
+
   const [expenditure, setExpenditure] = useState<HouseholdExpenditureResult | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -154,13 +163,13 @@ export function useCaseCalculations(caseState: CaseState) {
   const [councilTaxEstimate, setCouncilTaxEstimate] = useState<CouncilTaxResult | null>(null);
   useEffect(() => {
     let cancelled = false;
-    new RealCouncilTaxProvider().lookup({ postcode: property.postcode }).then((r) => {
+    new RealCouncilTaxProvider().lookup({ postcode: completePostcode }).then((r) => {
       if (!cancelled) setCouncilTaxEstimate(r);
     });
     return () => {
       cancelled = true;
     };
-  }, [property.postcode]);
+  }, [completePostcode]);
 
   const [manualCouncilTax, setManualCouncilTax] = useState<CouncilTaxResult | null>(null);
   useEffect(() => {
@@ -179,24 +188,24 @@ export function useCaseCalculations(caseState: CaseState) {
   const [epc, setEpc] = useState<EpcQueryResult | null>(null);
   useEffect(() => {
     let cancelled = false;
-    new RealEpcProvider().getLatestCertificate({ postcode: property.postcode }).then((r) => {
+    new RealEpcProvider().getLatestCertificate({ postcode: completePostcode }).then((r) => {
       if (!cancelled) setEpc(r);
     });
     return () => {
       cancelled = true;
     };
-  }, [property.postcode]);
+  }, [completePostcode]);
 
   const [salesHistory, setSalesHistory] = useState<PropertySaleQueryResult | null>(null);
   useEffect(() => {
     let cancelled = false;
-    new RealPropertySaleProvider().getSalesForProperty({ postcode: property.postcode, addressLine1: property.addressLine1 }).then((r) => {
+    new RealPropertySaleProvider().getSalesForProperty({ postcode: completePostcode, addressLine1: property.addressLine1 }).then((r) => {
       if (!cancelled) setSalesHistory(r);
     });
     return () => {
       cancelled = true;
     };
-  }, [property.postcode, property.addressLine1]);
+  }, [completePostcode, property.addressLine1]);
 
   /**
    * Indicative valuation: comparable-sales method now runs on real HM Land Registry sale

@@ -80,3 +80,20 @@ export function deriveRegionFromPostcode(postcode: string): UkRegion | null {
   if (!area) return null;
   return POSTCODE_AREA_TO_REGION[area] ?? null;
 }
+
+// Standard UK postcode format (outward + inward code, e.g. "SW1A 1AA", "M1 1AE", "CF23 5PQ").
+// Doesn't verify the postcode actually exists — that's what the live lookups are for — only that
+// it's a complete, well-formed postcode worth sending to an external API.
+const UK_POSTCODE_FORMAT = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/;
+
+/**
+ * Returns the postcode trimmed/uppercased if it's a *complete, well-formed* UK postcode,
+ * otherwise undefined. Used to gate live postcode lookups (EPC, HM Land Registry, Council Tax
+ * etc.) so a partial postcode typed character-by-character never gets sent to an external API —
+ * without this, every keystroke while typing a postcode would fire a fresh (mostly invalid)
+ * request to each connected data source.
+ */
+export function asCompletePostcode(postcode: string): string | undefined {
+  const cleaned = (postcode || "").trim().toUpperCase();
+  return UK_POSTCODE_FORMAT.test(cleaned) ? cleaned : undefined;
+}
