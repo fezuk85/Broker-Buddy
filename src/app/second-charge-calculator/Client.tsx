@@ -1,7 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { calculateCombinedCharges, calculateSecuredLoanCost, ExistingCharge } from "@/lib/calc";
+import {
+  calculateCombinedCharges,
+  calculateSecuredLoanCost,
+  calculateCombinedDscr,
+  calculateMaxSecondChargeLoanFromRent,
+  ExistingCharge,
+  LandlordTaxStatus,
+  STANDARD_ICR_PERCENT_BY_TAX_STATUS,
+} from "@/lib/calc";
 import { formatGbp, formatPercent } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput, TextInput } from "@/components/Field";
@@ -9,6 +17,12 @@ import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 
 type RepaymentType = "repayment" | "interest-only";
+
+const TAX_STATUS_OPTIONS: { value: LandlordTaxStatus; label: string }[] = [
+  { value: "basic-rate", label: "Basic rate taxpayer" },
+  { value: "higher-additional-rate", label: "Higher / additional rate taxpayer" },
+  { value: "limited-company", label: "Limited company" },
+];
 
 export default function SecondChargeCalculatorClient() {
   const [propertyValue, setPropertyValue] = useState(400_000);
@@ -22,6 +36,17 @@ export default function SecondChargeCalculatorClient() {
   const [lenderFee, setLenderFee] = useState(750);
   const [brokerFee, setBrokerFee] = useState(500);
   const [valuationFee, setValuationFee] = useState(250);
+
+  const [isRental, setIsRental] = useState(false);
+  const [firstChargePayment, setFirstChargePayment] = useState(900);
+  const [monthlyRent, setMonthlyRent] = useState(1_600);
+  const [taxStatus, setTaxStatus] = useState<LandlordTaxStatus>("basic-rate");
+  const [requiredIcrPercent, setRequiredIcrPercent] = useState(STANDARD_ICR_PERCENT_BY_TAX_STATUS["basic-rate"]);
+
+  function handleTaxStatusChange(status: LandlordTaxStatus) {
+    setTaxStatus(status);
+    setRequiredIcrPercent(STANDARD_ICR_PERCENT_BY_TAX_STATUS[status]);
+  }
 
   const combined = useMemo(() => calculateCombinedCharges(propertyValue, charges, newChargeAmount), [propertyValue, charges, newChargeAmount]);
 
@@ -38,6 +63,16 @@ export default function SecondChargeCalculatorClient() {
         otherFees: 0,
       }),
     [newChargeAmount, monthlyRate, termMonths, repaymentType, lenderFee, brokerFee, valuationFee]
+  );
+
+  const combinedDscr = useMemo(
+    () => calculateCombinedDscr(firstChargePayment, cost?.monthlyPayment ?? 0, monthlyRent, requiredIcrPercent),
+    [firstChargePayment, cost, monthlyRent, requiredIcrPercent]
+  );
+
+  const maxSecondChargeLoanFromRent = useMemo(
+    () => calculateMaxSecondChargeLoanFromRent(firstChargePayment, monthlyRent, requiredIcrPercent, monthlyRate),
+    [firstChargePayment, monthlyRent, requiredIcrPercent, monthlyRate]
   );
 
   function updateCharge(index: number, patch: Partial<ExistingCharge>) {
@@ -120,6 +155,29 @@ export default function SecondChargeCalculatorClient() {
               </Field>
             </div>
           </Section>
+
+          <Section title="Rental coverage (buy-to-let)" className="mt-4">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input type="checkbox" checked={isRental} onChange={(e) => setIsRental(e.target.checked)} className="h-4 w-4" />
+              This is a buy-to-let / rental property
+            </label>
+            {isRental && (
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <Field label="Existing 1st charge payment" hint="The actual monthly payment currently being made">
+                  <NumberInput value={firstChargePayment} onChange={setFirstChargePayment} />
+                </Field>
+                <Field label="Monthly rent">
+                  <NumberInput value={monthlyRent} onChange={setMonthlyRent} />
+                </Field>
+                <Field label="Borrower's tax position">
+                  <SelectInput value={taxStatus} onChange={handleTaxStatusChange} options={TAX_STATUS_OPTIONS} />
+                </Field>
+                <Field label="Required ICR (%)" hint="Auto-filled — edit if the lender uses a different figure">
+                  <NumberInput value={requiredIcrPercent} onChange={setRequiredIcrPercent} step={1} />
+                </Field>
+              </div>
+            )}
+          </Section>
         </>
       }
       results={
@@ -173,6 +231,29 @@ export default function SecondChargeCalculatorClient() {
               <p className="text-sm text-[var(--bb-muted)]">Enter a valid loan amount, rate and term.</p>
             )}
           </Section>
+
+          {isRental && (
+            <Section title="Combined rental coverage (1st + 2nd charge)">
+              <div className="grid grid-cols-2 gap-3">
+                <StatTile label="Combined monthly payment" value={formatGbp(combinedDscr.monthlyPayment)} />
+                <StatTile label="DSCR" value={formatPercent(combinedDscr.dscrPercent)} accent={combinedDscr.passes ? "primary" : "warning"} />
+              </div>
+              <p className="mt-3 text-sm">
+                {combinedDscr.passes == null
+                  ? "Enter the 1st charge payment and rent to check combined coverage."
+                  : combinedDscr.passes
+                    ? `✓ Rent covers both charges combined, meeting the ${requiredIcrPercent}% requirement with ${formatGbp(combinedDscr.surplusOrShortfall)}/mo to spare.`
+                    : `✗ Rent does not cover both charges combined at the ${requiredIcrPercent}% requirement — short by ${formatGbp(-combinedDscr.surplusOrShortfall)}/mo.`}
+              </p>
+              <div className="mt-4 pt-4 border-t border-[var(--bb-border)]">
+                <StatTile
+                  label="Max 2nd charge loan this rent supports"
+                  value={formatGbp(maxSecondChargeLoanFromRent)}
+                  subValue="After accounting for the existing 1st charge payment, at the rate entered above"
+                />
+              </div>
+            </Section>
+          )}
         </>
       }
       explanation={
@@ -199,6 +280,11 @@ export default function SecondChargeCalculatorClient() {
           question: "Does the existing lender need to consent?",
           answer:
             "Usually yes — the first-charge lender typically needs to provide consent (a Deed of Postponement or similar) before a second charge can be registered.",
+        },
+        {
+          question: "For a BTL 2nd charge, is rental coverage checked against just the new payment?",
+          answer:
+            "No — rent has to service the combined cost of the existing 1st charge plus the new 2nd charge, which is what the rental coverage section above checks, rather than looking at the 2nd charge payment in isolation.",
         },
       ]}
     />
