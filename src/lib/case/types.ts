@@ -18,7 +18,6 @@ export interface CaseState {
   household: {
     adults: number;
     dependentChildren: number;
-    region: string;
     monthlyCreditCommitments: number;
     monthlyCouncilTax: number;
   };
@@ -50,7 +49,6 @@ export const DEFAULT_CASE: CaseState = {
   household: {
     adults: 1,
     dependentChildren: 0,
-    region: "",
     monthlyCreditCommitments: 0,
     monthlyCouncilTax: 0,
   },
