@@ -50,7 +50,7 @@ const SOURCES = [
     name: "ONS Family Spending (household expenditure benchmark)",
     status: "manual" as const,
     detail:
-      "Phase 1 uses a simplified, rule-based approximation modelled on published ONS Family Spending category patterns — clearly labelled as a benchmark, not your actual expenditure, and not a lender affordability assessment. It excludes mortgage/rent payments and Council Tax to avoid double-counting.",
+      "Phase 1 uses a simplified, rule-based approximation modelled on published ONS Family Spending category patterns — clearly labelled as a benchmark, not your actual expenditure, and not a lender affordability assessment. It excludes mortgage/rent payments and Council Tax to avoid double-counting. If a property postcode is entered, its region is derived from the postcode's area code and used to apply an illustrative regional cost-of-living adjustment (London/South East scaled up, North/Wales/NI scaled down) — this is a modelled adjustment based on general regional spending patterns, not the official ONS region-level Family Spending breakdown. With no postcode, the UK average is used.",
   },
   {
     name: "Council Tax",

@@ -10,11 +10,14 @@
  * categories are summed.
  */
 import { DataSourceKind } from "./types";
+import { UkRegion } from "@/lib/data/postcodeRegions";
 
 export interface HouseholdProfile {
   grossAnnualIncome: number;
   adults: number;
   dependentChildren: number;
+  /** Derived from the property postcode (see postcodeRegions.ts) — never free text. Null/undefined uses the UK average. */
+  region?: UkRegion | null;
 }
 
 export interface ExpenditureCategoryBreakdown {
@@ -34,6 +37,7 @@ export interface HouseholdExpenditureEstimate {
   weeklyBreakdown: ExpenditureCategoryBreakdown;
   benchmarkLabel: string;
   excludedCategories: string[];
+  regionUsed: UkRegion | "UK average";
 }
 
 export interface HouseholdExpenditureResult {
@@ -71,6 +75,27 @@ const BASE_WEEKLY_PER_ADULT: ExpenditureCategoryBreakdown = {
 
 const CHILD_MULTIPLIER = 0.55;
 
+/**
+ * Illustrative regional cost-of-living adjustment, modelled on well-known general regional
+ * spending patterns (London/South East higher, North/Wales/NI lower). These are NOT figures
+ * taken from ONS's regional Family Spending breakdown — that would need real region-level
+ * ONS data this Phase 1 model doesn't have. 1.0 = UK average.
+ */
+const REGION_COST_ADJUSTMENT: Record<UkRegion, number> = {
+  London: 1.25,
+  "South East": 1.1,
+  "East of England": 1.05,
+  "South West": 1.0,
+  "East Midlands": 0.95,
+  "West Midlands": 0.95,
+  "Yorkshire and the Humber": 0.9,
+  "North West": 0.9,
+  "North East": 0.85,
+  Wales: 0.9,
+  Scotland: 0.95,
+  "Northern Ireland": 0.9,
+};
+
 export class RuleBasedHouseholdExpenditureProvider implements HouseholdExpenditureProvider {
   async getBenchmark(profile: HouseholdProfile): Promise<HouseholdExpenditureResult> {
     const adults = Math.max(0, profile.adults || 0);
@@ -86,11 +111,13 @@ export class RuleBasedHouseholdExpenditureProvider implements HouseholdExpenditu
 
     const equivalentAdults = adults + children * CHILD_MULTIPLIER;
     const incomeScale = incomeAdjustmentFactor(profile.grossAnnualIncome);
+    const regionScale = profile.region ? REGION_COST_ADJUSTMENT[profile.region] : 1;
+    const regionUsed = profile.region ?? "UK average";
 
     const weeklyBreakdown = Object.fromEntries(
       Object.entries(BASE_WEEKLY_PER_ADULT).map(([key, value]) => [
         key,
-        Math.round(value * equivalentAdults * incomeScale),
+        Math.round(value * equivalentAdults * incomeScale * regionScale),
       ])
     ) as unknown as ExpenditureCategoryBreakdown;
 
@@ -104,8 +131,9 @@ export class RuleBasedHouseholdExpenditureProvider implements HouseholdExpenditu
         weeklyTotal,
         monthlyTotal: Math.round((weeklyTotal * 52) / 12),
         weeklyBreakdown,
-        benchmarkLabel: `${adults} adult${adults === 1 ? "" : "s"}, ${children} dependent child${children === 1 ? "" : "ren"}`,
+        benchmarkLabel: `${adults} adult${adults === 1 ? "" : "s"}, ${children} dependent child${children === 1 ? "" : "ren"}, ${regionUsed}`,
         excludedCategories: EXCLUDED_CATEGORIES,
+        regionUsed,
       },
     };
   }
