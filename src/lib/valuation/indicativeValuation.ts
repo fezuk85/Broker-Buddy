@@ -22,6 +22,9 @@ export interface ValuationInputs {
   comparableSales?: ComparableSaleInput[];
   subjectFloorAreaSqm?: number | null;
   subjectPropertyType?: string | null;
+  /** ISO date treated as "now" for recency filtering. Defaults to the real current date — only
+   * exposed so tests can use a fixed date instead of the real clock. */
+  asOfDate?: string;
 }
 
 export type ValuationConfidence = "LOW" | "MEDIUM" | "HIGH";
@@ -71,23 +74,44 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
 
   const comparables = (inputs.comparableSales ?? []).filter((c) => c.pricePaid > 0);
 
+  /**
+   * Sale prices from years ago are nominal, not adjusted for house-price growth since — blending
+   * them unfiltered into a median badly understates current value in a market with any real
+   * appreciation (e.g. 30 years of sales for one street dragging a ~£370k current value down to a
+   * £190k median). Prefer sales within the last 24 months; only fall back to the full unfiltered
+   * history (with an honest note) when there aren't enough recent sales to form a median.
+   */
+  const RECENCY_WINDOW_MONTHS = 24;
+  const asOf = inputs.asOfDate ? new Date(inputs.asOfDate) : new Date();
+  const cutoff = new Date(asOf);
+  cutoff.setMonth(cutoff.getMonth() - RECENCY_WINDOW_MONTHS);
+  const cutoffIso = cutoff.toISOString().slice(0, 10);
+
+  const recentComparables = comparables.filter((c) => c.saleDate >= cutoffIso);
+  const usedRecentOnly = recentComparables.length >= 3;
+  const comparablesForMedian = usedRecentOnly ? recentComparables : comparables;
+
   // Method 2: median of recent comparable sale prices
-  if (comparables.length >= 3) {
-    const med = median(comparables.map((c) => c.pricePaid));
+  if (comparablesForMedian.length >= 3) {
+    const med = median(comparablesForMedian.map((c) => c.pricePaid));
     if (med != null) {
       methods.push({
         method: "comparable-sales",
         label: "Comparable-sales estimate",
         estimate: med,
-        detail: `Median of ${comparables.length} comparable sale(s)`,
+        detail: usedRecentOnly
+          ? `Median of ${comparablesForMedian.length} comparable sale(s) in the last ${RECENCY_WINDOW_MONTHS} months`
+          : `Median of ${comparablesForMedian.length} comparable sale(s) — fewer than 3 in the last ${RECENCY_WINDOW_MONTHS} months, so older sales are included and this estimate may lag the current market`,
       });
     }
-  } else if (comparables.length > 0) {
-    notes.push(`Only ${comparables.length} comparable sale(s) found — too few for a comparable-sales estimate (minimum 3).`);
+  } else if (comparablesForMedian.length > 0) {
+    notes.push(
+      `Only ${comparablesForMedian.length} comparable sale(s) found — too few for a comparable-sales estimate (minimum 3).`
+    );
   }
 
   // Method 3: subject floor area x comparable median £/m²
-  const comparablesWithArea = comparables.filter((c) => c.floorAreaSqm && c.floorAreaSqm > 0);
+  const comparablesWithArea = comparablesForMedian.filter((c) => c.floorAreaSqm && c.floorAreaSqm > 0);
   if (inputs.subjectFloorAreaSqm && inputs.subjectFloorAreaSqm > 0 && comparablesWithArea.length >= 3) {
     const pricePerSqm = comparablesWithArea.map((c) => c.pricePaid / c.floorAreaSqm!);
     const medianPricePerSqm = median(pricePerSqm);
@@ -124,7 +148,7 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
 
   const confidence = scoreConfidence({
     methodCount: methods.length,
-    comparableCount: comparables.length,
+    comparableCount: comparablesForMedian.length,
     hasFloorArea: !!inputs.subjectFloorAreaSqm,
     relativeSpread,
   });

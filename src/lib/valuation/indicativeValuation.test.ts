@@ -55,4 +55,44 @@ describe("calculateIndicativeValuation", () => {
     });
     expect(r.rangeLow!).toBeGreaterThan(0);
   });
+
+  it("prefers recent comparables over decades of unadjusted nominal prices", () => {
+    // Regression test: a street with one recent high sale and many old, much lower nominal sales
+    // (e.g. from the 1990s-2010s) should not have its median dragged down by ancient prices when
+    // there are enough recent sales on their own to form a reliable median.
+    const r = calculateIndicativeValuation({
+      asOfDate: "2026-09-10",
+      comparableSales: [
+        { pricePaid: 370_000, saleDate: "2025-11-14" },
+        { pricePaid: 310_000, saleDate: "2025-05-09" },
+        { pricePaid: 250_000, saleDate: "2024-10-15" },
+        // Old sales that should be excluded from the recency-filtered median.
+        { pricePaid: 46_000, saleDate: "1996-04-02" },
+        { pricePaid: 58_000, saleDate: "1997-11-28" },
+        { pricePaid: 62_000, saleDate: "1999-02-05" },
+        { pricePaid: 77_000, saleDate: "2000-05-31" },
+        { pricePaid: 119_000, saleDate: "2006-01-31" },
+        { pricePaid: 134_500, saleDate: "2012-06-27" },
+      ],
+    });
+    expect(r.insufficientData).toBe(false);
+    expect(r.methods).toHaveLength(1);
+    expect(r.methods[0].estimate).toBe(310_000);
+    expect(r.methods[0].detail).toContain("in the last 24 months");
+  });
+
+  it("falls back to the full sale history when there are fewer than 3 recent comparables", () => {
+    const r = calculateIndicativeValuation({
+      asOfDate: "2026-09-10",
+      comparableSales: [
+        { pricePaid: 370_000, saleDate: "2025-11-14" },
+        { pricePaid: 134_500, saleDate: "2012-06-27" },
+        { pricePaid: 119_000, saleDate: "2006-01-31" },
+      ],
+    });
+    expect(r.insufficientData).toBe(false);
+    expect(r.methods).toHaveLength(1);
+    expect(r.methods[0].estimate).toBe(134_500);
+    expect(r.methods[0].detail).toContain("fewer than 3 in the last 24 months");
+  });
 });
