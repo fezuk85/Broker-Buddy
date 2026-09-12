@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { CaseProvider } from "@/lib/case/CaseProvider";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -17,6 +18,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2645011735403572"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <CaseProvider>
           <SiteHeader />
           <main className="flex-1">{children}</main>
