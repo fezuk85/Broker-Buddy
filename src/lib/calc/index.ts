@@ -8,3 +8,4 @@ export * from "./tax";
 export * from "./secondCharge";
 export * from "./benefits";
 export * from "./dscr";
+export * from "./fees";

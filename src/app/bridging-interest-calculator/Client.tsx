@@ -15,6 +15,7 @@ export default function BridgingCalculatorClient() {
   const [interestType, setInterestType] = useState<BridgingInterestType>("retained");
   const [arrangementFeePercent, setArrangementFeePercent] = useState(2);
   const [brokerFee, setBrokerFee] = useState(1_000);
+  const [valuationFee, setValuationFee] = useState(350);
   const [otherFees, setOtherFees] = useState(500);
 
   const result = useMemo(
@@ -26,9 +27,10 @@ export default function BridgingCalculatorClient() {
         interestType,
         arrangementFeePercent,
         brokerFee,
+        valuationFee,
         otherFees,
       }),
-    [netLoan, monthlyRate, termMonths, interestType, arrangementFeePercent, brokerFee, otherFees]
+    [netLoan, monthlyRate, termMonths, interestType, arrangementFeePercent, brokerFee, valuationFee, otherFees]
   );
 
   return (
@@ -64,7 +66,10 @@ export default function BridgingCalculatorClient() {
             <Field label="Broker fee">
               <NumberInput value={brokerFee} onChange={setBrokerFee} />
             </Field>
-            <Field label="Other fees">
+            <Field label="Valuation fee">
+              <NumberInput value={valuationFee} onChange={setValuationFee} />
+            </Field>
+            <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
               <NumberInput value={otherFees} onChange={setOtherFees} />
             </Field>
           </div>

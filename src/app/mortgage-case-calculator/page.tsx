@@ -6,7 +6,7 @@ import { useCaseCalculations } from "@/lib/case/useCaseCalculations";
 import { CaseInputs } from "./CaseInputs";
 import { OverviewPanel, MortgagePanel, PropertyPanel, AffordabilityPanel, RentalPanel } from "./panels";
 import { CaseCalculatorSidebar } from "@/components/CaseCalculatorSidebar";
-import { PieChart, Home, Building2, TrendingUp, Wallet, RotateCcw } from "lucide-react";
+import { PieChart, Home, Building2, TrendingUp, Wallet, RotateCcw, FileDown } from "lucide-react";
 
 const TABS = [
   { key: "overview", label: "Overview", icon: PieChart },
@@ -22,6 +22,17 @@ export default function MortgageCaseCalculatorPage() {
   const { caseState, updateCase, resetCase } = useCase();
   const calc = useCaseCalculations(caseState);
   const [tab, setTab] = useState<TabKey>("overview");
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    setGeneratingPdf(true);
+    try {
+      const { downloadCaseSummaryPdf } = await import("@/lib/pdf/caseSummaryPdf");
+      downloadCaseSummaryPdf(caseState, calc);
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
@@ -35,16 +46,28 @@ export default function MortgageCaseCalculatorPage() {
             Enter your property and borrower details once — every calculation updates instantly.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            if (window.confirm("Reset the case and clear all entered details?")) resetCase();
-          }}
-          className="bb-tap-target inline-flex items-center gap-1.5 text-sm font-medium rounded-lg border border-[var(--bb-border)] px-4 py-2"
-        >
-          <RotateCcw size={15} strokeWidth={2.25} />
-          Reset case
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            disabled={generatingPdf}
+            className="bb-tap-target inline-flex items-center gap-1.5 text-sm font-medium rounded-lg px-4 py-2 text-white disabled:opacity-60"
+            style={{ background: "var(--bb-primary)" }}
+          >
+            <FileDown size={15} strokeWidth={2.25} />
+            {generatingPdf ? "Generating…" : "Download PDF summary"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm("Reset the case and clear all entered details?")) resetCase();
+            }}
+            className="bb-tap-target inline-flex items-center gap-1.5 text-sm font-medium rounded-lg border border-[var(--bb-border)] px-4 py-2"
+          >
+            <RotateCcw size={15} strokeWidth={2.25} />
+            Reset case
+          </button>
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_280px] gap-6">

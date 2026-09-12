@@ -15,6 +15,8 @@ export interface BridgingInputs {
   interestType: BridgingInterestType;
   arrangementFeePercent: number;
   brokerFee: number;
+  /** Optional — defaults to 0 so existing callers that don't pass it are unaffected. */
+  valuationFee?: number;
   otherFees: number;
 }
 
@@ -35,6 +37,7 @@ export function calculateBridgingLoan(inputs: BridgingInputs): BridgingResult | 
     interestType,
     arrangementFeePercent,
     brokerFee,
+    valuationFee,
     otherFees,
   } = inputs;
 
@@ -52,7 +55,7 @@ export function calculateBridgingLoan(inputs: BridgingInputs): BridgingResult | 
   }
 
   const monthlyRate = monthlyInterestRatePercent / 100;
-  const flatFees = Math.max(0, brokerFee || 0) + Math.max(0, otherFees || 0);
+  const flatFees = Math.max(0, brokerFee || 0) + Math.max(0, valuationFee || 0) + Math.max(0, otherFees || 0);
 
   if (interestType === "serviced") {
     const grossLoan = netLoanRequired;

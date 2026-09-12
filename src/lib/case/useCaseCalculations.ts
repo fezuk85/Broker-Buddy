@@ -19,6 +19,7 @@ import {
   calculateIcrExamples,
   calculateMaxLoanFromRent,
   calculateSalaryTakeHome,
+  calculateFees,
 } from "@/lib/calc";
 import { calculateIndicativeValuation } from "@/lib/valuation/indicativeValuation";
 import {
@@ -52,6 +53,48 @@ export function useCaseCalculations(caseState: CaseState) {
   const maxLoanBands = useMemo(
     () => calculateMaxLoanAtLtvBands(property.value, mortgage.currentBalance),
     [property.value, mortgage.currentBalance]
+  );
+
+  const fees = useMemo(
+    () =>
+      calculateFees({
+        productFee: mortgage.productFee,
+        addProductFeeToLoan: mortgage.addProductFeeToLoan,
+        valuationFee: mortgage.valuationFee,
+        applicationFee: mortgage.applicationFee,
+        brokerFee: mortgage.brokerFee,
+        otherFees: mortgage.otherFees,
+      }),
+    [
+      mortgage.productFee,
+      mortgage.addProductFeeToLoan,
+      mortgage.valuationFee,
+      mortgage.applicationFee,
+      mortgage.brokerFee,
+      mortgage.otherFees,
+    ]
+  );
+
+  /**
+   * The loan amount actually charged interest on and repaid — equal to the requested borrowing
+   * unless a product fee is added to the loan, in which case the fee is capitalised into it. Every
+   * payment/rate calculation below uses this (not ltv.totalProposedBorrowing) so "monthly payment"
+   * always reflects what will really be repaid; when addedToLoan is 0 (the default) this is
+   * identical to ltv.totalProposedBorrowing, so cases without fees are unaffected.
+   */
+  const loanAmountIncludingFees = ltv.totalProposedBorrowing + fees.addedToLoan;
+
+  /** Same LTV maths as `ltv`, but reflecting a product fee added to the loan, for display alongside it. */
+  const ltvIncludingFees = useMemo(
+    () =>
+      fees.addedToLoan > 0
+        ? calculateLtv({
+            propertyValue: property.value,
+            currentMortgageBalance: mortgage.currentBalance,
+            additionalBorrowingRequired: mortgage.additionalBorrowing + fees.addedToLoan,
+          })
+        : null,
+    [property.value, mortgage.currentBalance, mortgage.additionalBorrowing, fees.addedToLoan]
   );
 
   const totalIncome = useMemo(
@@ -89,27 +132,27 @@ export function useCaseCalculations(caseState: CaseState) {
   const repayment = useMemo(
     () =>
       calculateRepaymentPayment({
-        loanAmount: ltv.totalProposedBorrowing,
+        loanAmount: loanAmountIncludingFees,
         annualInterestRatePercent: mortgage.interestRatePercent,
         termMonths,
       }),
-    [ltv.totalProposedBorrowing, mortgage.interestRatePercent, termMonths]
+    [loanAmountIncludingFees, mortgage.interestRatePercent, termMonths]
   );
 
   const interestOnlyPayment = useMemo(
-    () => calculateInterestOnlyPayment(ltv.totalProposedBorrowing, mortgage.interestRatePercent),
-    [ltv.totalProposedBorrowing, mortgage.interestRatePercent]
+    () => calculateInterestOnlyPayment(loanAmountIncludingFees, mortgage.interestRatePercent),
+    [loanAmountIncludingFees, mortgage.interestRatePercent]
   );
 
   const rateComparison = useMemo(
     () =>
       calculateRateComparison(
-        ltv.totalProposedBorrowing,
+        loanAmountIncludingFees,
         mortgage.interestRatePercent,
         termMonths,
         mortgage.repaymentType
       ),
-    [ltv.totalProposedBorrowing, mortgage.interestRatePercent, termMonths, mortgage.repaymentType]
+    [loanAmountIncludingFees, mortgage.interestRatePercent, termMonths, mortgage.repaymentType]
   );
 
   const rentalYield = useMemo(() => calculateGrossYield(property.value, rental.monthlyRent), [property.value, rental.monthlyRent]);
@@ -311,6 +354,9 @@ export function useCaseCalculations(caseState: CaseState) {
   return {
     termMonths,
     ltv,
+    fees,
+    loanAmountIncludingFees,
+    ltvIncludingFees,
     maxLoanBands,
     totalIncome,
     lti,
