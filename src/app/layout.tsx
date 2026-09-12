@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   },
   description:
     "Free UK mortgage and property-finance calculators: LTV, loan-to-income, repayments, BTL ICR, rental yield, bridging and more — all in one place.",
+  other: {
+    "google-adsense-account": "ca-pub-2645011735403572",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
