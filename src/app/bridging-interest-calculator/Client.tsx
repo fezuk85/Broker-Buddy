@@ -4,11 +4,16 @@ import { useMemo, useState } from "react";
 import { calculateBridgingLoan, BridgingInterestType } from "@/lib/calc";
 import { formatGbp } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
-import { Field, NumberInput, SelectInput } from "@/components/Field";
+import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { FileDown } from "lucide-react";
 
 export default function BridgingCalculatorClient() {
+  const [clientReference, setClientReference] = useState("");
+  const [quotationDate, setQuotationDate] = useState("");
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
   const [netLoan, setNetLoan] = useState(200_000);
   const [monthlyRate, setMonthlyRate] = useState(0.75);
   const [termMonths, setTermMonths] = useState(9);
@@ -33,47 +38,92 @@ export default function BridgingCalculatorClient() {
     [netLoan, monthlyRate, termMonths, interestType, arrangementFeePercent, brokerFee, valuationFee, otherFees]
   );
 
+  async function handleDownloadPdf() {
+    setGeneratingPdf(true);
+    try {
+      const { downloadBridgingQuotationPdf } = await import("@/lib/pdf/bridgingQuotationPdf");
+      downloadBridgingQuotationPdf({
+        clientReference,
+        quotationDate,
+        netLoan,
+        monthlyRate,
+        termMonths,
+        interestType,
+        arrangementFeePercent,
+        brokerFee,
+        valuationFee,
+        otherFees,
+        result,
+      });
+    } finally {
+      setGeneratingPdf(false);
+    }
+  }
+
   return (
     <CalculatorPage
       h1="Bridging Loan Interest Calculator"
       intro="Estimate the gross loan, total interest, fees and total cost of a bridging loan, with retained or serviced interest."
       disclaimer="Generic maths only — not specific to any lender's product. Always confirm exact terms, fees and interest calculation method with the lender."
       inputs={
-        <Section title="Your details">
-          <div className="grid grid-cols-1 gap-3">
-            <Field label="Net loan required">
-              <NumberInput value={netLoan} onChange={setNetLoan} />
-            </Field>
-            <Field label="Monthly interest rate (%)">
-              <NumberInput value={monthlyRate} onChange={setMonthlyRate} step={0.01} />
-            </Field>
-            <Field label="Term (months)">
-              <NumberInput value={termMonths} onChange={setTermMonths} min={1} step={1} />
-            </Field>
-            <Field label="Interest type">
-              <SelectInput
-                value={interestType}
-                onChange={setInterestType}
-                options={[
-                  { value: "retained", label: "Retained (deducted from advance)" },
-                  { value: "serviced", label: "Serviced (paid monthly)" },
-                ]}
-              />
-            </Field>
-            <Field label="Arrangement fee (%)">
-              <NumberInput value={arrangementFeePercent} onChange={setArrangementFeePercent} step={0.1} />
-            </Field>
-            <Field label="Broker fee">
-              <NumberInput value={brokerFee} onChange={setBrokerFee} />
-            </Field>
-            <Field label="Valuation fee">
-              <NumberInput value={valuationFee} onChange={setValuationFee} />
-            </Field>
-            <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
-              <NumberInput value={otherFees} onChange={setOtherFees} />
-            </Field>
-          </div>
-        </Section>
+        <>
+          <Section title="Quotation details (optional)">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Client reference / surname">
+                <TextInput value={clientReference} onChange={setClientReference} placeholder="e.g. Smith" />
+              </Field>
+              <Field label="Quotation date" hint="Defaults to today if left blank">
+                <DateInput value={quotationDate} onChange={setQuotationDate} />
+              </Field>
+            </div>
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={generatingPdf}
+              className="bb-tap-target mt-3 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              style={{ background: "var(--bb-primary)" }}
+            >
+              <FileDown size={15} strokeWidth={2.25} />
+              {generatingPdf ? "Generating…" : "Download PDF quotation"}
+            </button>
+          </Section>
+
+          <Section title="Your details">
+            <div className="grid grid-cols-1 gap-3">
+              <Field label="Net loan required">
+                <NumberInput value={netLoan} onChange={setNetLoan} />
+              </Field>
+              <Field label="Monthly interest rate (%)">
+                <NumberInput value={monthlyRate} onChange={setMonthlyRate} step={0.01} />
+              </Field>
+              <Field label="Term (months)">
+                <NumberInput value={termMonths} onChange={setTermMonths} min={1} step={1} />
+              </Field>
+              <Field label="Interest type">
+                <SelectInput
+                  value={interestType}
+                  onChange={setInterestType}
+                  options={[
+                    { value: "retained", label: "Retained (deducted from advance)" },
+                    { value: "serviced", label: "Serviced (paid monthly)" },
+                  ]}
+                />
+              </Field>
+              <Field label="Arrangement fee (%)">
+                <NumberInput value={arrangementFeePercent} onChange={setArrangementFeePercent} step={0.1} />
+              </Field>
+              <Field label="Broker fee">
+                <NumberInput value={brokerFee} onChange={setBrokerFee} />
+              </Field>
+              <Field label="Valuation fee">
+                <NumberInput value={valuationFee} onChange={setValuationFee} />
+              </Field>
+              <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
+                <NumberInput value={otherFees} onChange={setOtherFees} />
+              </Field>
+            </div>
+          </Section>
+        </>
       }
       results={
         <Section title="Results">

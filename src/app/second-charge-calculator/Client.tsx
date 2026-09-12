@@ -12,9 +12,10 @@ import {
 } from "@/lib/calc";
 import { formatGbp, formatPercent } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
-import { Field, NumberInput, SelectInput, TextInput } from "@/components/Field";
+import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { FileDown } from "lucide-react";
 
 type RepaymentType = "repayment" | "interest-only";
 
@@ -25,12 +26,16 @@ const TAX_STATUS_OPTIONS: { value: LandlordTaxStatus; label: string }[] = [
 ];
 
 export default function SecondChargeCalculatorClient() {
+  const [clientReference, setClientReference] = useState("");
+  const [quotationDate, setQuotationDate] = useState("");
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
   const [propertyValue, setPropertyValue] = useState(400_000);
   const [charges, setCharges] = useState<ExistingCharge[]>([
     { label: "1st charge (existing mortgage)", balance: 180_000 },
   ]);
   const [newChargeAmount, setNewChargeAmount] = useState(40_000);
-  const [monthlyRate, setMonthlyRate] = useState(0.65);
+  const [annualRatePercent, setAnnualRatePercent] = useState(9.5);
   const [termMonths, setTermMonths] = useState(60);
   const [repaymentType, setRepaymentType] = useState<RepaymentType>("interest-only");
   const [lenderFee, setLenderFee] = useState(750);
@@ -51,11 +56,15 @@ export default function SecondChargeCalculatorClient() {
 
   const combined = useMemo(() => calculateCombinedCharges(propertyValue, charges, newChargeAmount), [propertyValue, charges, newChargeAmount]);
 
+  // The calculation engine works in monthly rate terms (matching the bridging calculator's
+  // convention); the second-charge market quotes rates annually, so convert at the boundary.
+  const monthlyRateForCalc = annualRatePercent / 12;
+
   const cost = useMemo(
     () =>
       calculateSecuredLoanCost({
         loanAmount: newChargeAmount,
-        monthlyInterestRatePercent: monthlyRate,
+        monthlyInterestRatePercent: monthlyRateForCalc,
         termMonths,
         repaymentType,
         lenderFee,
@@ -63,7 +72,7 @@ export default function SecondChargeCalculatorClient() {
         valuationFee,
         otherFees,
       }),
-    [newChargeAmount, monthlyRate, termMonths, repaymentType, lenderFee, brokerFee, valuationFee, otherFees]
+    [newChargeAmount, monthlyRateForCalc, termMonths, repaymentType, lenderFee, brokerFee, valuationFee, otherFees]
   );
 
   const combinedDscr = useMemo(
@@ -72,8 +81,8 @@ export default function SecondChargeCalculatorClient() {
   );
 
   const maxSecondChargeLoanFromRent = useMemo(
-    () => calculateMaxSecondChargeLoanFromRent(firstChargePayment, monthlyRent, requiredIcrPercent, monthlyRate),
-    [firstChargePayment, monthlyRent, requiredIcrPercent, monthlyRate]
+    () => calculateMaxSecondChargeLoanFromRent(firstChargePayment, monthlyRent, requiredIcrPercent, monthlyRateForCalc),
+    [firstChargePayment, monthlyRent, requiredIcrPercent, monthlyRateForCalc]
   );
 
   function updateCharge(index: number, patch: Partial<ExistingCharge>) {
@@ -88,6 +97,37 @@ export default function SecondChargeCalculatorClient() {
     setCharges((prev) => prev.filter((_, i) => i !== index));
   }
 
+  async function handleDownloadPdf() {
+    setGeneratingPdf(true);
+    try {
+      const { downloadSecondChargeQuotationPdf } = await import("@/lib/pdf/secondChargeQuotationPdf");
+      downloadSecondChargeQuotationPdf({
+        clientReference,
+        quotationDate,
+        propertyValue,
+        charges,
+        newChargeAmount,
+        annualRatePercent,
+        termMonths,
+        repaymentType,
+        lenderFee,
+        brokerFee,
+        valuationFee,
+        otherFees,
+        combined,
+        cost,
+        isRental,
+        firstChargePayment,
+        monthlyRent,
+        requiredIcrPercent,
+        combinedDscr,
+        maxSecondChargeLoanFromRent,
+      });
+    } finally {
+      setGeneratingPdf(false);
+    }
+  }
+
   return (
     <CalculatorPage
       h1="Second & Third Charge Loan Calculator"
@@ -95,6 +135,27 @@ export default function SecondChargeCalculatorClient() {
       disclaimer="Generic maths only — not specific to any lender's criteria, product or APRC. Second/third charge lending criteria (maximum combined LTV, consent from the prior charge holder, etc.) vary by lender. Always confirm with the lender's own illustration."
       inputs={
         <>
+          <Section title="Quotation details (optional)">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Client reference / surname">
+                <TextInput value={clientReference} onChange={setClientReference} placeholder="e.g. Smith" />
+              </Field>
+              <Field label="Quotation date" hint="Defaults to today if left blank">
+                <DateInput value={quotationDate} onChange={setQuotationDate} />
+              </Field>
+            </div>
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={generatingPdf}
+              className="bb-tap-target mt-3 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              style={{ background: "var(--bb-primary)" }}
+            >
+              <FileDown size={15} strokeWidth={2.25} />
+              {generatingPdf ? "Generating…" : "Download PDF quotation"}
+            </button>
+          </Section>
+
           <Section title="Property & existing charges">
             <Field label="Property value">
               <NumberInput value={propertyValue} onChange={setPropertyValue} />
@@ -129,8 +190,8 @@ export default function SecondChargeCalculatorClient() {
               <Field label="New loan amount">
                 <NumberInput value={newChargeAmount} onChange={setNewChargeAmount} />
               </Field>
-              <Field label="Monthly interest rate (%)">
-                <NumberInput value={monthlyRate} onChange={setMonthlyRate} step={0.01} />
+              <Field label="Annual interest rate (%)">
+                <NumberInput value={annualRatePercent} onChange={setAnnualRatePercent} step={0.01} />
               </Field>
               <Field label="Term (months)">
                 <NumberInput value={termMonths} onChange={setTermMonths} min={1} step={1} />
