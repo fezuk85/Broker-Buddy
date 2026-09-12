@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 export function Field({
   label,
   hint,
@@ -19,6 +23,14 @@ export function Field({
 const baseInputClass =
   "mt-1 w-full rounded-lg border border-[var(--bb-border)] bg-white px-3 py-2 text-sm bb-tap-target focus:outline-none focus:ring-2 focus:ring-[var(--bb-primary)]/40 focus:border-[var(--bb-primary)]";
 
+/**
+ * A plain controlled `<input type="number" value={value}>` can't be cleared by backspacing: the
+ * moment the box goes empty, onChange fires with 0, the parent re-renders with value=0, and React
+ * immediately writes "0" back into the DOM — so the field appears to "eat" backspaces on a zero.
+ * Tracking the raw typed text locally (synced from the numeric prop only when not focused) lets
+ * the box actually go empty while the user is editing, while still reporting a live number to the
+ * parent on every keystroke for calculations to update instantly.
+ */
 export function NumberInput({
   value,
   onChange,
@@ -32,15 +44,33 @@ export function NumberInput({
   step?: number | "any";
   placeholder?: string;
 }) {
+  const [text, setText] = useState(() => (Number.isFinite(value) ? String(value) : ""));
+  const focused = useRef(false);
+
+  useEffect(() => {
+    if (!focused.current) setText(Number.isFinite(value) ? String(value) : "");
+  }, [value]);
+
   return (
     <input
       type="number"
       className={baseInputClass}
-      value={Number.isFinite(value) ? value : ""}
+      value={text}
       min={min}
       step={step}
       placeholder={placeholder}
-      onChange={(e) => onChange(e.target.value === "" ? 0 : Number(e.target.value))}
+      onFocus={() => {
+        focused.current = true;
+      }}
+      onBlur={() => {
+        focused.current = false;
+        setText(Number.isFinite(value) ? String(value) : "");
+      }}
+      onChange={(e) => {
+        const raw = e.target.value;
+        setText(raw);
+        onChange(raw === "" ? 0 : Number(raw));
+      }}
     />
   );
 }
