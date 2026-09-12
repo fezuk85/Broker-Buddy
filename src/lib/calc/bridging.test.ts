@@ -92,4 +92,32 @@ describe("calculateBridgingLoan - invalid inputs", () => {
     });
     expect(r?.totalFees).toBe(0);
   });
+
+  it("treats a missing valuationFee the same as zero (existing callers unaffected)", () => {
+    const r = calculateBridgingLoan({
+      netLoanRequired: 100_000,
+      monthlyInterestRatePercent: 1,
+      termMonths: 6,
+      interestType: "serviced",
+      arrangementFeePercent: 0,
+      brokerFee: 0,
+      otherFees: 0,
+    });
+    expect(r?.totalFees).toBe(0);
+  });
+
+  it("includes the valuation fee in total fees and effective cost", () => {
+    const r = calculateBridgingLoan({
+      netLoanRequired: 200_000,
+      monthlyInterestRatePercent: 0.75,
+      termMonths: 9,
+      interestType: "serviced",
+      arrangementFeePercent: 2,
+      brokerFee: 1_000,
+      valuationFee: 350,
+      otherFees: 500,
+    });
+    expect(r?.totalFees).toBeCloseTo(4_000 + 1_850, 5);
+    expect(r?.totalRepayment).toBeCloseTo(200_000 + 5_850, 5);
+  });
 });

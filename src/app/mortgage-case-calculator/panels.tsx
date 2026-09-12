@@ -44,7 +44,24 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
           <StatTile label="Equity now" value={formatGbp(calc.ltv.equity)} />
           <StatTile label="Equity after borrowing" value={formatGbp(calc.ltv.equityAfterProposedBorrowing)} />
         </div>
+        {calc.ltvIncludingFees && (
+          <p className="mt-3 text-xs text-[var(--bb-muted)]">
+            Including the lender/product fee added to the loan: proposed LTV{" "}
+            {formatPercent(calc.ltvIncludingFees.proposedLtvPercent)}, borrowing{" "}
+            {formatGbp(calc.ltvIncludingFees.totalProposedBorrowing)}.
+          </p>
+        )}
       </Section>
+
+      {calc.fees.totalFees > 0 && (
+        <Section title="Fees">
+          <div className="grid grid-cols-2 gap-3 min-w-0">
+            <StatTile label="Total fees" value={formatGbp(calc.fees.totalFees)} accent="primary" />
+            <StatTile label="Payable upfront" value={formatGbp(calc.fees.payableUpfront)} />
+            {calc.fees.addedToLoan > 0 && <StatTile label="Added to loan" value={formatGbp(calc.fees.addedToLoan)} />}
+          </div>
+        </Section>
+      )}
 
       <Section title="Maximum loan by LTV band">
         <div className="overflow-x-auto">

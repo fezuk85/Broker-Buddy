@@ -2,7 +2,7 @@
 
 import { CaseState, ApplicantInput } from "@/lib/case/types";
 import { Section } from "@/components/Section";
-import { Field, NumberInput, TextInput, DateInput, SelectInput } from "@/components/Field";
+import { Field, NumberInput, TextInput, DateInput, SelectInput, CheckboxInput } from "@/components/Field";
 
 type Updater = (patch: Partial<CaseState> | ((prev: CaseState) => CaseState)) => void;
 
@@ -114,6 +114,31 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
             />
           </Field>
         </div>
+      </Section>
+
+      <Section title="Fees (optional)">
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Lender/product fee">
+            <NumberInput value={mortgage.productFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, productFee: v } }))} />
+          </Field>
+          <Field label="Valuation fee">
+            <NumberInput value={mortgage.valuationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, valuationFee: v } }))} />
+          </Field>
+          <Field label="Application fee">
+            <NumberInput value={mortgage.applicationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, applicationFee: v } }))} />
+          </Field>
+          <Field label="Broker fee">
+            <NumberInput value={mortgage.brokerFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, brokerFee: v } }))} />
+          </Field>
+          <Field label="Other fees" hint="e.g. booking fee, telegraphic transfer fee">
+            <NumberInput value={mortgage.otherFees} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, otherFees: v } }))} />
+          </Field>
+        </div>
+        <CheckboxInput
+          checked={mortgage.addProductFeeToLoan}
+          onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addProductFeeToLoan: v } }))}
+          label="Add lender/product fee to the loan (increases the loan amount and monthly payment)"
+        />
       </Section>
 
       <Section title="Rental (for BTL)">

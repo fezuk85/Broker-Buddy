@@ -28,6 +28,13 @@ export interface CaseState {
     repaymentType: "repayment" | "interest-only";
     termYears: number;
     lenderMaxAge: number;
+    /** Lender's product/arrangement fee — the only fee here that can be added to the loan. */
+    productFee: number;
+    addProductFeeToLoan: boolean;
+    valuationFee: number;
+    applicationFee: number;
+    brokerFee: number;
+    otherFees: number;
   };
   rental: {
     monthlyRent: number;
@@ -59,6 +66,12 @@ export const DEFAULT_CASE: CaseState = {
     repaymentType: "repayment",
     termYears: 25,
     lenderMaxAge: 75,
+    productFee: 0,
+    addProductFeeToLoan: false,
+    valuationFee: 0,
+    applicationFee: 0,
+    brokerFee: 0,
+    otherFees: 0,
   },
   rental: {
     monthlyRent: 0,

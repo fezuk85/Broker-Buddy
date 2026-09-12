@@ -36,6 +36,7 @@ export default function SecondChargeCalculatorClient() {
   const [lenderFee, setLenderFee] = useState(750);
   const [brokerFee, setBrokerFee] = useState(500);
   const [valuationFee, setValuationFee] = useState(250);
+  const [otherFees, setOtherFees] = useState(0);
 
   const [isRental, setIsRental] = useState(false);
   const [firstChargePayment, setFirstChargePayment] = useState(900);
@@ -60,9 +61,9 @@ export default function SecondChargeCalculatorClient() {
         lenderFee,
         brokerFee,
         valuationFee,
-        otherFees: 0,
+        otherFees,
       }),
-    [newChargeAmount, monthlyRate, termMonths, repaymentType, lenderFee, brokerFee, valuationFee]
+    [newChargeAmount, monthlyRate, termMonths, repaymentType, lenderFee, brokerFee, valuationFee, otherFees]
   );
 
   const combinedDscr = useMemo(
@@ -152,6 +153,9 @@ export default function SecondChargeCalculatorClient() {
               </Field>
               <Field label="Valuation fee">
                 <NumberInput value={valuationFee} onChange={setValuationFee} />
+              </Field>
+              <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
+                <NumberInput value={otherFees} onChange={setOtherFees} />
               </Field>
             </div>
           </Section>

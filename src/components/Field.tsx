@@ -71,6 +71,28 @@ export function DateInput({ value, onChange }: { value: string; onChange: (value
   );
 }
 
+export function CheckboxInput({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label: string;
+}) {
+  return (
+    <label className="mt-1 flex items-center gap-2 text-sm bb-tap-target">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="h-4 w-4 rounded border-[var(--bb-border)]"
+      />
+      {label}
+    </label>
+  );
+}
+
 export function SelectInput<T extends string>({
   value,
   onChange,

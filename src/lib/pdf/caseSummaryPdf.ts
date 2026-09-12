@@ -207,6 +207,19 @@ export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc): jsPDF 
     );
   }
 
+  if (calc.fees.totalFees > 0) {
+    c.gap(2);
+    c.row("Total fees", formatGbp(calc.fees.totalFees));
+    c.row("Payable upfront", formatGbp(calc.fees.payableUpfront));
+    if (calc.fees.addedToLoan > 0) {
+      c.row("Lender/product fee added to loan", formatGbp(calc.fees.addedToLoan));
+      if (calc.ltvIncludingFees) {
+        c.row("Loan amount including added fee", formatGbp(calc.ltvIncludingFees.totalProposedBorrowing));
+        c.row("Proposed LTV including added fee", formatPercent(calc.ltvIncludingFees.proposedLtvPercent));
+      }
+    }
+  }
+
   // --- Borrowing power ---
   c.sectionHeading("Borrowing Power (illustrative)");
   c.row("Total household gross income", formatGbp(calc.totalIncome));
