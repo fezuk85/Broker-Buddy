@@ -5,7 +5,6 @@ import { useCase } from "@/lib/case/CaseProvider";
 import { useCaseCalculations } from "@/lib/case/useCaseCalculations";
 import { CaseInputs } from "./CaseInputs";
 import { OverviewPanel, MortgagePanel, PropertyPanel, AffordabilityPanel, RentalPanel } from "./panels";
-import { AdSlot } from "@/components/AdSlot";
 import { CaseCalculatorSidebar } from "@/components/CaseCalculatorSidebar";
 import { PieChart, Home, Building2, TrendingUp, Wallet, RotateCcw } from "lucide-react";
 
@@ -76,10 +75,6 @@ export default function MortgageCaseCalculatorPage() {
             {tab === "property" && <PropertyPanel calc={calc} caseState={caseState} />}
             {tab === "affordability" && <AffordabilityPanel calc={calc} caseState={caseState} />}
             {tab === "rental" && <RentalPanel calc={calc} caseState={caseState} />}
-          </div>
-
-          <div className="mt-6">
-            <AdSlot />
           </div>
         </div>
 

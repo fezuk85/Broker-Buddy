@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AdSlot } from "@/components/AdSlot";
 
 const TOOLS = [
   { href: "/ltv-calculator", title: "LTV Calculator", desc: "Loan-to-value, equity and additional borrowing at a glance." },
@@ -60,10 +59,6 @@ export default function Home() {
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
-        <AdSlot />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-16">
