@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { CaseProvider } from "@/lib/case/CaseProvider";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1">{children}</main>
           <SiteFooter />
         </CaseProvider>
+        <Analytics />
       </body>
     </html>
   );
