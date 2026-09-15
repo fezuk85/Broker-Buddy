@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { CaseProvider } from "@/lib/case/CaseProvider";
+import { ConsentProvider } from "@/lib/consent/ConsentProvider";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CookieBanner } from "@/components/CookieBanner";
+import { AdSenseScript } from "@/components/AdSenseScript";
 
 export const metadata: Metadata = {
   title: {
@@ -22,17 +24,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2645011735403572"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        <CaseProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </CaseProvider>
+        <ConsentProvider>
+          <AdSenseScript />
+          <CaseProvider>
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </CaseProvider>
+          <CookieBanner />
+        </ConsentProvider>
         <Analytics />
       </body>
     </html>

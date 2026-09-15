@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 export function SiteFooter() {
   return (
@@ -13,6 +14,10 @@ export function SiteFooter() {
           <Link href="/" className="hover:text-[var(--bb-foreground)]">Home</Link>
           <Link href="/mortgage-case-calculator" className="hover:text-[var(--bb-foreground)]">Case Calculator</Link>
           <Link href="/data-sources" className="hover:text-[var(--bb-foreground)]">Data Sources</Link>
+          <Link href="/about-us" className="hover:text-[var(--bb-foreground)]">About Us</Link>
+          <Link href="/contact-us" className="hover:text-[var(--bb-foreground)]">Contact Us</Link>
+          <Link href="/privacy-policy" className="hover:text-[var(--bb-foreground)]">Privacy Policy</Link>
+          <CookieSettingsButton className="hover:text-[var(--bb-foreground)]" />
         </div>
         <p className="mt-6 text-xs">&copy; {new Date().getFullYear()} Lending Calculator. All calculations are illustrative.</p>
       </div>
