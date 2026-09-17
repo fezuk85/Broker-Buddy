@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Salary + Dividend Tax Calculator",
   description:
     "Free UK salary and dividend tax calculator for company directors. See combined net take-home pay from salary plus dividends.",
+  alternates: { canonical: "/dividend-calculator" },
 };
 
 export default function Page() {

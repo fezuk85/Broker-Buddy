@@ -4,6 +4,7 @@ import { Section } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Data Sources",
   description: "What data Lending Calculator's calculations and property information are based on — and what's real vs. illustrative in Phase 1.",
+  alternates: { canonical: "/data-sources" },
 };
 
 function StatusPill({ status }: { status: "live" | "manual" | "planned" }) {

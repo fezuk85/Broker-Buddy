@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Bridging Loan Interest Calculator",
   description:
     "Free bridging loan calculator. Estimate gross loan, total interest, fees and total cost for retained or serviced bridging finance.",
+  alternates: { canonical: "/bridging-interest-calculator" },
 };
 
 export default function Page() {
