@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { LtvGuide } from "@/content/guides/ltv";
 
 export default function LtvCalculatorClient() {
   const [propertyValue, setPropertyValue] = useState(300_000);
@@ -27,6 +28,7 @@ export default function LtvCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="ltv-calculator"
       h1="LTV Calculator"
       intro="Work out your current and proposed loan-to-value (LTV), equity, and how much extra you could borrow at each LTV band."
       disclaimer="Lending Calculator provides calculations only. LTV bands and lending limits vary by lender — always confirm with a lender or adviser."
@@ -92,6 +94,7 @@ export default function LtvCalculatorClient() {
           </p>
         </>
       }
+      guide={<LtvGuide />}
       faqs={[
         {
           question: "What is a good LTV for a mortgage?",
@@ -107,6 +110,11 @@ export default function LtvCalculatorClient() {
           question: "Does this include fees added to the loan?",
           answer:
             "No — this calculator uses the balance and property value you enter. If fees are added to the loan, include them in your mortgage balance figure.",
+        },
+        {
+          question: "Does LTV use the purchase price or the valuation?",
+          answer:
+            "When buying, lenders normally use the lower of the purchase price and their own valuation. When remortgaging, they use their valuation of the property.",
         },
       ]}
     />

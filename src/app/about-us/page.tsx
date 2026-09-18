@@ -5,6 +5,7 @@ import { Section } from "@/components/Section";
 export const metadata: Metadata = {
   title: "About Us",
   description: "About Lending Calculator — free, transparent UK mortgage and property-finance calculators built on real published data.",
+  alternates: { canonical: "/about-us" },
 };
 
 export default function AboutUsPage() {

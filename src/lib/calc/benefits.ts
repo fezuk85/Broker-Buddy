@@ -5,13 +5,13 @@
  * specific components (housing element, work allowances, taper against multiple income types)
  * to model reliably here.
  *
- * Rates are 2025/26 figures — Child Benefit is typically uprated every April, so re-verify
+ * Rates are 2026/27 figures (verified against gov.uk) — Child Benefit is typically uprated every April, so re-verify
  * before relying on this long-term (same caveat as tax.ts).
  */
 
 import { PERSONAL_ALLOWANCE, BASIC_RATE_LIMIT } from "./tax";
 
-export const BENEFITS_YEAR_LABEL = "2025/26";
+export const BENEFITS_YEAR_LABEL = "2026/27";
 
 export interface ChildBenefitRates {
   eldestWeekly: number;
@@ -19,8 +19,8 @@ export interface ChildBenefitRates {
 }
 
 export const CHILD_BENEFIT_RATES: ChildBenefitRates = {
-  eldestWeekly: 26.05,
-  additionalWeekly: 17.25,
+  eldestWeekly: 27.05,
+  additionalWeekly: 17.9,
 };
 
 /** Gross annual Child Benefit before any High Income Child Benefit Charge. */

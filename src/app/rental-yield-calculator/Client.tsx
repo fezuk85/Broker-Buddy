@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { RentalYieldGuide } from "@/content/guides/rentalYield";
 
 export default function RentalYieldCalculatorClient() {
   const [propertyValue, setPropertyValue] = useState(250_000);
@@ -16,6 +17,7 @@ export default function RentalYieldCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="rental-yield-calculator"
       h1="Rental Yield Calculator"
       intro="Calculate the gross rental yield on a property from its value and monthly rent."
       disclaimer="Gross yield only — it does not account for costs such as mortgage interest, void periods, management fees, maintenance or tax."
@@ -47,6 +49,7 @@ export default function RentalYieldCalculatorClient() {
           net yield.
         </p>
       }
+      guide={<RentalYieldGuide />}
       faqs={[
         {
           question: "What is a good rental yield?",
@@ -56,6 +59,11 @@ export default function RentalYieldCalculatorClient() {
         {
           question: "Is this gross or net yield?",
           answer: "This calculator shows gross yield only — before costs, fees, tax and void periods.",
+        },
+        {
+          question: "How do I calculate net rental yield?",
+          answer:
+            "Subtract annual running costs (such as management fees, maintenance, insurance and void periods) from annual rent, then divide by the property value and multiply by 100. What counts as a cost, for example mortgage interest, varies between calculations.",
         },
       ]}
     />

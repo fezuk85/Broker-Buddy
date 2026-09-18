@@ -2,7 +2,7 @@
  * UK income tax, National Insurance and dividend tax maths (England, Wales & Northern Ireland
  * rates — Scotland uses different income tax bands and is out of scope for Phase 1).
  *
- * Rates/thresholds below are the 2025/26 tax year figures. Personal allowance and the basic/
+ * Rates/thresholds below are the 2026/27 tax year figures (verified against gov.uk). Personal allowance and the basic/
  * higher rate thresholds have been frozen by government policy since 2021/22 (through at least
  * 2027/28), so these are expected to hold for several years, but should be re-verified against
  * HMRC's published rates before relying on them long-term.
@@ -12,7 +12,7 @@
  * no marriage allowance, no benefits-in-kind. These are illustrative estimates, not tax advice.
  */
 
-export const TAX_YEAR_LABEL = "2025/26 (England, Wales & Northern Ireland)";
+export const TAX_YEAR_LABEL = "2026/27 (England, Wales & Northern Ireland)";
 
 export const PERSONAL_ALLOWANCE = 12_570;
 const PA_TAPER_START = 100_000; // PA reaches £0 at £125,140 (reduced £1 per £2 over this)
@@ -30,8 +30,8 @@ const NI_MAIN_RATE = 0.08;
 const NI_UPPER_RATE = 0.02;
 
 const DIVIDEND_ALLOWANCE = 500;
-const DIVIDEND_BASIC_RATE = 0.0875;
-const DIVIDEND_HIGHER_RATE = 0.3375;
+const DIVIDEND_BASIC_RATE = 0.1075;
+const DIVIDEND_HIGHER_RATE = 0.3575;
 const DIVIDEND_ADDITIONAL_RATE = 0.3935;
 
 /** Personal allowance after the £100k-£125,140 taper (£1 lost per £2 of income over £100k). */

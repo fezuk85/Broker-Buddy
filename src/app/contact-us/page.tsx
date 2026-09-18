@@ -4,6 +4,7 @@ import ContactUsClient from "./Client";
 export const metadata: Metadata = {
   title: "Contact Us",
   description: "Get in touch with Lending Calculator.",
+  alternates: { canonical: "/contact-us" },
 };
 
 export default function ContactUsPage() {

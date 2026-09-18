@@ -4,6 +4,7 @@ import { Section } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Data Sources",
   description: "What data Lending Calculator's calculations and property information are based on — and what's real vs. illustrative in Phase 1.",
+  alternates: { canonical: "/data-sources" },
 };
 
 function StatusPill({ status }: { status: "live" | "manual" | "planned" }) {
@@ -18,21 +19,27 @@ function StatusPill({ status }: { status: "live" | "manual" | "planned" }) {
 
 const SOURCES = [
   {
-    name: "Mortgage & property maths (LTV, LTI, repayments, age/term, ICR, yield, bridging, second/third charge)",
+    name: "Mortgage & property maths (LTV, LTI, repayments, overpayments, affordability, age/term, ICR, yield, bridging, second/third charge)",
     status: "live" as const,
     detail: "Calculated directly from the numbers you enter using standard, published formulae. No external data required.",
+  },
+  {
+    name: "Stamp Duty Land Tax (SDLT) calculator",
+    status: "live" as const,
+    detail:
+      "Uses the residential SDLT rates and thresholds published on GOV.UK for England & Northern Ireland (standard rates, first-time buyer relief, the additional-property surcharge and the non-UK resident surcharge), last checked September 2026. Rates are entered manually and reviewed periodically, not pulled from a live feed. Wales (Land Transaction Tax) and Scotland (LBTT) are not covered.",
   },
   {
     name: "Salary & dividend tax calculators (income tax, National Insurance, dividend tax)",
     status: "live" as const,
     detail:
-      "Calculated using published HMRC rates and thresholds for the 2025/26 tax year (England, Wales & Northern Ireland — Scotland has different bands). Rates are reviewed periodically rather than pulled from a live feed; see the calculator pages for the exact assumptions used.",
+      "Calculated using published HMRC rates and thresholds for the 2026/27 tax year (England, Wales & Northern Ireland — Scotland has different bands). Rates are reviewed periodically rather than pulled from a live feed; see the calculator pages for the exact assumptions used.",
   },
   {
     name: "Child Benefit & Marriage Allowance",
     status: "live" as const,
     detail:
-      "Calculated using published 2025/26 Child Benefit rates and the High Income Child Benefit Charge thresholds (£60,000–£80,000), and the standard Marriage Allowance transfer rules. Deterministic, rule-based calculations — not means-tested benefits like Universal Credit, which are out of scope due to their many household-specific components.",
+      "Calculated using published 2026/27 Child Benefit rates and the High Income Child Benefit Charge thresholds (£60,000–£80,000), and the standard Marriage Allowance transfer rules. Deterministic, rule-based calculations — not means-tested benefits like Universal Credit, which are out of scope due to their many household-specific components.",
   },
   {
     name: "Illustrative household cash-flow snapshot (net income vs. outgoings)",
@@ -50,7 +57,7 @@ const SOURCES = [
     name: "HM Land Registry UK House Price Index (indicative valuation)",
     status: "live" as const,
     detail:
-      "Powers part of the 'Indicative Property Estimate' on the Property tab. When a house name/number is entered and matched to the property's own HM Land Registry sale history, the indexed estimate takes that last sale price and applies the real price movement since then for the property's local authority, from HM Land Registry's UK House Price Index (local authority level, England & Wales; base January 2015 = 100). This only runs when a specific past sale for that exact property was found — without an address match there's no single 'last sale' to index from, so it's correctly omitted rather than indexing an arbitrary sale from elsewhere at the postcode. The comparable-sales method (median of nearby sale prices) runs independently and doesn't need an address match. Open Government Licence.",
+      "Powers part of the 'Indicative Property Estimate' on the Property tab. When a house name/number is entered and matched to the property's own HM Land Registry sale history, the indexed estimate takes that last sale price and applies the real price movement since then for the property's local authority, from HM Land Registry's UK House Price Index (local authority level, England & Wales). The movement compares the average of the latest three months with the average of the three months up to the sale, rather than two single months, because one month's figure for a single local authority is noisy. The house name/number must match a single property exactly (whole words, so 16 does not match 162) — if it matches several properties you are asked to be more specific. This only runs when a specific past sale for that exact property was found — without an address match there's no single 'last sale' to index from, so it's correctly omitted rather than indexing an arbitrary sale from elsewhere at the postcode. The comparable-sales method (median of nearby sale prices) runs independently and doesn't need an address match. Open Government Licence.",
   },
   {
     name: "ONS Family Spending (household expenditure benchmark)",

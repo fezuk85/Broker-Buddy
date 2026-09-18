@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getIndexMovement } from "./ukhpiClient";
+import ukhpiData from "@/lib/data/ukhpi/localAuthorityIndex.json";
 
 describe("getIndexMovement", () => {
   it("computes real percentage movement for Derby between a real sale date and the latest available month", () => {
@@ -23,5 +24,19 @@ describe("getIndexMovement", () => {
   it("returns null for a local authority code not in the dataset (e.g. Scotland/NI, or an unknown code)", () => {
     expect(getIndexMovement("S12000034", "2020-01-01")).toBeNull();
     expect(getIndexMovement("Z99999999", "2020-01-01")).toBeNull();
+  });
+
+  it("compares trailing three-month averages at both ends, not single noisy months", () => {
+    const derby = (ukhpiData as [string, string, number][]).filter((r) => r[0] === "E06000015");
+    const value = (ym: string) => derby.find((r) => r[1] === ym)![2];
+    const from = (value("2024-04") + value("2024-05") + value("2024-06")) / 3;
+    const to = (value("2026-04") + value("2026-05") + value("2026-06")) / 3;
+
+    const result = getIndexMovement("E06000015", "2024-06-14");
+    expect(result?.movementPercent).toBeCloseTo((to / from - 1) * 100, 6);
+  });
+
+  it("gives a positive movement for a real rising market (Derby, 2021 to latest)", () => {
+    expect(getIndexMovement("E06000015", "2021-01-15")!.movementPercent).toBeGreaterThan(10);
   });
 });

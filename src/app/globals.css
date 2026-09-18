@@ -36,3 +36,68 @@ body {
 .bb-tap-target {
   min-height: 44px;
 }
+
+/* Long-form calculator guides (plain semantic HTML rendered inside .guide-content). */
+.guide-content h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+.guide-content h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+}
+.guide-content p,
+.guide-content li {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--bb-muted);
+}
+.guide-content p {
+  margin: 0.5rem 0;
+}
+.guide-content ul,
+.guide-content ol {
+  margin: 0.5rem 0 0.5rem 1.25rem;
+  list-style: revert;
+}
+.guide-content li {
+  margin: 0.25rem 0;
+}
+.guide-content strong {
+  color: var(--bb-foreground);
+  font-weight: 600;
+}
+.guide-content a {
+  color: var(--bb-primary);
+  text-decoration: underline;
+}
+.guide-content .worked-example {
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--bb-primary) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bb-primary) 20%, transparent);
+}
+.guide-content .worked-example p,
+.guide-content .worked-example li {
+  color: var(--bb-foreground);
+}
+.guide-content table {
+  width: 100%;
+  margin: 0.75rem 0;
+  font-size: 0.8125rem;
+  border-collapse: collapse;
+}
+.guide-content th,
+.guide-content td {
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--bb-border);
+  color: var(--bb-muted);
+}
+.guide-content th {
+  color: var(--bb-foreground);
+  font-weight: 600;
+}

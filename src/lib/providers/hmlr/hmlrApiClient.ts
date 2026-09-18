@@ -66,11 +66,26 @@ const PROPERTY_TYPE_MAP: Record<string, PropertySale["propertyType"]> = {
   Other: "other",
 };
 
-/** Parses the API's non-ISO transactionDate strings, e.g. "Fri, 14 Jun 2024", into ISO (YYYY-MM-DD). */
+const MONTHS: Record<string, number> = {
+  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+};
+
+/**
+ * Parses the API's non-ISO transactionDate strings, e.g. "Fri, 14 Jun 2024", into ISO (YYYY-MM-DD).
+ * Parsed from the calendar parts directly: `new Date(raw).toISOString()` reads the string as local
+ * midnight and then converts to UTC, which shifts the date back a day whenever the server runs in a
+ * timezone ahead of UTC (e.g. UK summer time).
+ */
 function parseTransactionDate(raw: string): string | undefined {
-  const parsed = new Date(raw);
-  if (Number.isNaN(parsed.getTime())) return undefined;
-  return parsed.toISOString().slice(0, 10);
+  const match = /(\d{1,2})\s+([A-Za-z]{3})[a-z]*\s+(\d{4})/.exec(raw);
+  if (match) {
+    const month = MONTHS[match[2].slice(0, 1).toUpperCase() + match[2].slice(1).toLowerCase()];
+    if (month) {
+      return `${match[3]}-${String(month).padStart(2, "0")}-${match[1].padStart(2, "0")}`;
+    }
+  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
+  return undefined;
 }
 
 function mapTransactionRecord(raw: RawTransactionRecord): PropertySale | null {

@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { LoanToIncomeGuide } from "@/content/guides/loanToIncome";
 
 export default function LtiCalculatorClient() {
   const [loanAmount, setLoanAmount] = useState(200_000);
@@ -17,6 +18,7 @@ export default function LtiCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="loan-to-income-calculator"
       h1="Loan-to-Income (LTI) Calculator"
       intro="See your mortgage as a multiple of household income, and compare it against common illustrative income multiples from 4x to 6x."
       disclaimer="Income multiples are mathematical illustrations only. Lender affordability criteria vary and depend on far more than a simple multiple."
@@ -54,6 +56,7 @@ export default function LtiCalculatorClient() {
           rates and more — rather than a simple multiple, but LTI is a useful first sense-check.
         </p>
       }
+      guide={<LoanToIncomeGuide />}
       faqs={[
         {
           question: "What income multiple can I borrow in the UK?",
@@ -63,6 +66,11 @@ export default function LtiCalculatorClient() {
         {
           question: "Does LTI include a second applicant's income?",
           answer: "Yes — enter the combined gross annual income of all applicants.",
+        },
+        {
+          question: "Is loan-to-income the same as affordability?",
+          answer:
+            "No. LTI is a simple multiple of income. Lenders also assess outgoings, credit commitments and how payments would cope with higher rates.",
         },
       ]}
     />

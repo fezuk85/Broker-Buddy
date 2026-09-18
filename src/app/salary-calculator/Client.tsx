@@ -8,6 +8,7 @@ import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { BenefitsSection } from "@/components/BenefitsSection";
+import { SalaryGuide } from "@/content/guides/salary";
 
 export default function SalaryCalculatorClient() {
   const [grossSalary, setGrossSalary] = useState(50_000);
@@ -16,6 +17,7 @@ export default function SalaryCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="salary-calculator"
       h1="Salary Take-Home Pay Calculator"
       intro={`Work out income tax, National Insurance and net take-home pay from a gross salary — annual, monthly and weekly. Uses ${TAX_YEAR_LABEL} rates.`}
       disclaimer={`Estimates only, based on published HMRC rates for ${TAX_YEAR_LABEL}. Assumes no pension contributions, student loan or benefits-in-kind, and standard tax code. Net take-home figures above do not include Child Benefit or Marriage Allowance shown below. Not tax advice — for an exact figure, check your payslip or consult an accountant.`}
@@ -93,6 +95,7 @@ export default function SalaryCalculatorClient() {
           </p>
         </>
       }
+      guide={<SalaryGuide />}
       faqs={[
         {
           question: "Does this include pension contributions?",

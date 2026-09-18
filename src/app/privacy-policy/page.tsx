@@ -5,6 +5,7 @@ import { Section } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Lending Calculator handles your data, cookies and advertising.",
+  alternates: { canonical: "/privacy-policy" },
 };
 
 export default function PrivacyPolicyPage() {
