@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { BridgingGuide } from "@/content/guides/bridging";
 import { FileDown } from "lucide-react";
 
 export default function BridgingCalculatorClient() {
@@ -62,6 +63,7 @@ export default function BridgingCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="bridging-interest-calculator"
       h1="Bridging Loan Interest Calculator"
       intro="Estimate the gross loan, total interest, fees and total cost of a bridging loan, with retained or serviced interest."
       disclaimer="Generic maths only — not specific to any lender's product. Always confirm exact terms, fees and interest calculation method with the lender."
@@ -153,6 +155,7 @@ export default function BridgingCalculatorClient() {
           </p>
         </>
       }
+      guide={<BridgingGuide />}
       faqs={[
         {
           question: "What's the difference between retained and serviced interest?",
@@ -162,6 +165,11 @@ export default function BridgingCalculatorClient() {
         {
           question: "Does this include exit fees?",
           answer: "No — enter any exit fee as part of 'other fees' if known, since terms vary by lender.",
+        },
+        {
+          question: "What is rolled-up interest?",
+          answer:
+            "With rolled-up interest there are no monthly payments; the interest is added to the loan balance and repaid, with the loan, at the end of the term. This calculator covers retained and serviced interest only.",
         },
       ]}
     />

@@ -9,3 +9,6 @@ export * from "./secondCharge";
 export * from "./benefits";
 export * from "./dscr";
 export * from "./fees";
+export * from "./stampDuty";
+export * from "./affordability";
+export * from "./overpayment";

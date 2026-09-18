@@ -131,7 +131,7 @@ describe("calculateDividendTax", () => {
   it("taxes dividends at basic rate above the allowance when salary is within basic band", () => {
     const r = calculateDividendTax(20_000, 5_000);
     const taxableAfterAllowance = 5_000 - 500;
-    expect(r.totalDividendTax).toBeCloseTo(taxableAfterAllowance * 0.0875, 2);
+    expect(r.totalDividendTax).toBeCloseTo(taxableAfterAllowance * 0.1075, 2);
   });
 
   it("pushes dividends into higher rate once salary + dividends cross the basic band", () => {

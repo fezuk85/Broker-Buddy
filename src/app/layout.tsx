@@ -42,10 +42,23 @@ export const metadata: Metadata = {
   },
 };
 
+const siteJsonLd = [
+  { "@context": "https://schema.org", "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    inLanguage: "en-GB",
+  },
+];
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} />
         <ConsentProvider>
           <AdSenseScript />
           <CaseProvider>

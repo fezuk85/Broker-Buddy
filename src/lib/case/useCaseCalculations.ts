@@ -267,26 +267,37 @@ export function useCaseCalculations(caseState: CaseState) {
     return mostRecent ? { price: mostRecent.pricePaid, date: mostRecent.saleDate } : null;
   }, [property.addressLine1, salesHistory]);
 
-  const [indexMovementFetchResult, setIndexMovementFetchResult] = useState<{ movementPercent: number } | null>(null);
+  /**
+   * The fetched movement is stored together with the postcode+date it was fetched for and only used
+   * while those still match the current property. Otherwise, switching to a different property
+   * would keep applying the previous property's movement until the new request resolved (or
+   * forever, if it failed).
+   */
+  const indexMovementKey = completePostcode && lastKnownSale ? `${completePostcode}|${lastKnownSale.date}` : null;
+  const [indexMovementFetchResult, setIndexMovementFetchResult] = useState<{
+    key: string;
+    movementPercent: number | null;
+  } | null>(null);
   useEffect(() => {
-    if (!completePostcode || !lastKnownSale) return;
+    if (!indexMovementKey) return;
+    const [postcode, sinceDate] = indexMovementKey.split("|");
     let cancelled = false;
-    fetch(`/api/house-price-index?postcode=${encodeURIComponent(completePostcode)}&sinceDate=${lastKnownSale.date}`)
+    fetch(`/api/house-price-index?postcode=${encodeURIComponent(postcode)}&sinceDate=${sinceDate}`)
       .then((res) => (res.ok ? res.json() : { movement: null }))
       .then((body: { movement: { movementPercent: number } | null }) => {
-        if (!cancelled) setIndexMovementFetchResult(body.movement);
+        if (!cancelled) setIndexMovementFetchResult({ key: indexMovementKey, movementPercent: body.movement?.movementPercent ?? null });
       })
       .catch(() => {
-        if (!cancelled) setIndexMovementFetchResult(null);
+        if (!cancelled) setIndexMovementFetchResult({ key: indexMovementKey, movementPercent: null });
       });
     return () => {
       cancelled = true;
     };
-  }, [completePostcode, lastKnownSale]);
+  }, [indexMovementKey]);
 
   const indexMovement = useMemo(
-    () => (completePostcode && lastKnownSale ? indexMovementFetchResult : null),
-    [completePostcode, lastKnownSale, indexMovementFetchResult]
+    () => (indexMovementKey && indexMovementFetchResult?.key === indexMovementKey ? indexMovementFetchResult : null),
+    [indexMovementKey, indexMovementFetchResult]
   );
 
   /**

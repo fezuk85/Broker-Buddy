@@ -15,6 +15,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { SecondChargeGuide } from "@/content/guides/secondCharge";
 import { FileDown } from "lucide-react";
 
 type RepaymentType = "repayment" | "interest-only";
@@ -130,6 +131,7 @@ export default function SecondChargeCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="second-charge-calculator"
       h1="Second & Third Charge Loan Calculator"
       intro="For loans secured behind an existing mortgage (or an existing second charge): see the combined LTV across all charges, the new loan's monthly cost, and total cost including typical secured-loan fees."
       disclaimer="Generic maths only — not specific to any lender's criteria, product or APRC. Second/third charge lending criteria (maximum combined LTV, consent from the prior charge holder, etc.) vary by lender. Always confirm with the lender's own illustration."
@@ -330,6 +332,7 @@ export default function SecondChargeCalculatorClient() {
           allow behind an existing charge.
         </p>
       }
+      guide={<SecondChargeGuide />}
       faqs={[
         {
           question: "What's the difference between a second charge and remortgaging?",
@@ -350,6 +353,11 @@ export default function SecondChargeCalculatorClient() {
           question: "For a BTL 2nd charge, is rental coverage checked against just the new payment?",
           answer:
             "No — rent has to service the combined cost of the existing 1st charge plus the new 2nd charge, which is what the rental coverage section above checks, rather than looking at the 2nd charge payment in isolation.",
+        },
+        {
+          question: "What is combined LTV?",
+          answer:
+            "Combined loan-to-value is the total of all loans secured on the property, including the proposed new charge, divided by the property value. Maximum combined LTV varies by lender and product.",
         },
       ]}
     />

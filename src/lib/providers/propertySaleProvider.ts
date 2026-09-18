@@ -49,6 +49,48 @@ export class UnavailablePropertySaleProvider implements PropertySaleProvider {
 
 const HMLR_SOURCE_LABEL = "HM Land Registry Price Paid Data (England & Wales)";
 
+function addressTokens(address: string): string[] {
+  return address
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+}
+
+export type AddressMatch =
+  | { status: "matched"; sales: PropertySale[] }
+  | { status: "none" }
+  | { status: "ambiguous"; addresses: string[] };
+
+/**
+ * Narrows a postcode's sales to one specific property. Every word the user typed must appear as a
+ * whole word in the sale's address ("16" matches "16 Pear Tree Street" but NOT "162" or "164" —
+ * a plain substring match used to pick up neighbouring houses and index the wrong property's
+ * price). If the words match more than one distinct address (e.g. "Pear Tree Street" alone, or a
+ * block of flats), the result is "ambiguous" rather than silently choosing one.
+ */
+export function matchSalesToAddress(sales: PropertySale[], addressLine1: string): AddressMatch {
+  const queryTokens = addressTokens(addressLine1);
+  if (queryTokens.length === 0) return { status: "matched", sales };
+
+  const byAddress = new Map<string, PropertySale[]>();
+  for (const sale of sales) {
+    const tokens = addressTokens(sale.addressLine1);
+    if (!queryTokens.every((t) => tokens.includes(t))) continue;
+    const key = tokens.join(" ");
+    const list = byAddress.get(key);
+    if (list) list.push(sale);
+    else byAddress.set(key, [sale]);
+  }
+
+  if (byAddress.size === 0) return { status: "none" };
+  if (byAddress.size > 1) {
+    return { status: "ambiguous", addresses: [...byAddress.values()].map((list) => list[0].addressLine1) };
+  }
+  return { status: "matched", sales: [...byAddress.values()][0] };
+}
+
 async function lookupSalesByPostcode(postcode: string): Promise<PropertySale[] | null> {
   let res: Response;
   try {
@@ -81,11 +123,18 @@ export class RealPropertySaleProvider implements PropertySaleProvider {
       return { source: "unavailable", sourceLabel: "HM Land Registry Price Paid Data — lookup failed", sales: [] };
     }
 
-    const matched = query.addressLine1
-      ? sales.filter((s) => s.addressLine1.toLowerCase().includes(query.addressLine1!.toLowerCase()))
-      : sales;
+    const match = query.addressLine1 ? matchSalesToAddress(sales, query.addressLine1) : { status: "matched" as const, sales };
 
-    if (matched.length === 0) {
+    if (match.status === "ambiguous") {
+      const examples = match.addresses.slice(0, 3).join("; ");
+      return {
+        source: "unavailable",
+        sourceLabel: `HM Land Registry Price Paid Data — several properties match "${query.addressLine1}" (e.g. ${examples}). Enter the full house number or name to pick one.`,
+        sales: [],
+      };
+    }
+
+    if (match.status === "none" || match.sales.length === 0) {
       return {
         source: "unavailable",
         sourceLabel: query.addressLine1
@@ -95,6 +144,7 @@ export class RealPropertySaleProvider implements PropertySaleProvider {
       };
     }
 
+    const matched = match.sales;
     return { source: "public-open-data", sourceLabel: HMLR_SOURCE_LABEL, sales: matched };
   }
 

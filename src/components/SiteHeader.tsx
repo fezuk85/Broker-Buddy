@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Home, Percent, Layers, CalendarDays, Building2, User, ArrowRight } from "lucide-react";
+import { Home, Percent, Layers, CalendarDays, Building2, User, ArrowRight, Landmark } from "lucide-react";
 
 const NAV_LINKS = [
+  { href: "/stamp-duty-calculator", label: "Stamp Duty", icon: Landmark },
   { href: "/ltv-calculator", label: "LTV", icon: Percent },
   { href: "/second-charge-calculator", label: "2nd Charge", icon: Layers },
   { href: "/mortgage-repayment-calculator", label: "Repayments", icon: CalendarDays },

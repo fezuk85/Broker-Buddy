@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, DateInput, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { AgeTermGuide } from "@/content/guides/ageTerm";
 
 export default function AgeTermCalculatorClient() {
   const [dob, setDob] = useState("1990-01-01");
@@ -23,6 +24,7 @@ export default function AgeTermCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="mortgage-term-age-calculator"
       h1="Mortgage Age & Maximum Term Calculator"
       intro="See your current age, your age at the end of a chosen mortgage term, and the maximum term available under common lender maximum-age limits."
       disclaimer="Maximum ages and mortgage terms vary by lender and individual circumstances. This is a mathematical illustration only."
@@ -72,6 +74,7 @@ export default function AgeTermCalculatorClient() {
           applications, use the oldest applicant&apos;s date of birth.
         </p>
       }
+      guide={<AgeTermGuide />}
       faqs={[
         {
           question: "What is the maximum age for a mortgage in the UK?",
@@ -82,6 +85,11 @@ export default function AgeTermCalculatorClient() {
           question: "Which applicant's age is used for joint mortgages?",
           answer:
             "Typically the oldest applicant, since they reach the lender's maximum age limit first.",
+        },
+        {
+          question: "Does the age limit apply when I apply or at the end of the term?",
+          answer:
+            "Lender limits normally refer to your age at the end of the mortgage term, not your age when you apply.",
         },
       ]}
     />

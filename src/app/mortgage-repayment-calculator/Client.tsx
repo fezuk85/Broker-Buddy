@@ -7,6 +7,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { RepaymentGuide } from "@/content/guides/repayment";
 
 export default function RepaymentCalculatorClient() {
   const [loanAmount, setLoanAmount] = useState(200_000);
@@ -21,6 +22,7 @@ export default function RepaymentCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="mortgage-repayment-calculator"
       h1="Mortgage Repayment Calculator"
       intro="Calculate your monthly mortgage payment for repayment or interest-only, plus total interest over the term and a quick rate-rise comparison."
       disclaimer="Illustrative figures only. Your actual payment will depend on the exact product, fees and how interest is calculated by your lender."
@@ -91,6 +93,7 @@ export default function RepaymentCalculatorClient() {
           </p>
         </>
       }
+      guide={<RepaymentGuide />}
       faqs={[
         {
           question: "How is the monthly repayment calculated?",
@@ -101,6 +104,11 @@ export default function RepaymentCalculatorClient() {
           question: "Why is interest-only cheaper per month?",
           answer:
             "Because none of the payment reduces the capital balance — you're only paying the interest due each month.",
+        },
+        {
+          question: "What is not included in the monthly payment shown?",
+          answer:
+            "Only mortgage capital and interest are included. Fees (unless added to the loan), insurance, service charges and any change in rate after a fixed period are not.",
         },
       ]}
     />

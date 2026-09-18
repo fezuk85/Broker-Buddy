@@ -13,6 +13,7 @@ import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { BtlIcrGuide } from "@/content/guides/btlIcr";
 
 type Mode = "actual" | "estimate";
 
@@ -48,6 +49,7 @@ export default function BtlIcrCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="btl-icr-calculator"
       h1="BTL ICR / DSCR Calculator"
       intro="Check whether rental income covers the mortgage payment at the coverage ratio lenders require for the borrower's tax position — or estimate the maximum loan before a rate is quoted."
       disclaimer="Mathematical tool only, not lender criteria. Required ICR, stress rates and how the payment is calculated vary by lender — always confirm with the lender's own criteria."
@@ -165,6 +167,7 @@ export default function BtlIcrCalculatorClient() {
           </p>
         </>
       }
+      guide={<BtlIcrGuide />}
       faqs={[
         {
           question: "Why does the required ICR depend on tax status?",
@@ -179,6 +182,11 @@ export default function BtlIcrCalculatorClient() {
         {
           question: "What ICR do BTL lenders require?",
           answer: "Commonly 125%–145% as described above, but this varies by lender — always confirm with their current criteria.",
+        },
+        {
+          question: "What is the difference between ICR and DSCR?",
+          answer:
+            "ICR usually tests rent against interest-only payments calculated at a notional stress rate, while DSCR compares rent with the actual monthly mortgage payment. Which one a lender uses varies, and some use both.",
         },
       ]}
     />

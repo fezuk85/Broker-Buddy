@@ -8,6 +8,7 @@ import { Field, NumberInput } from "@/components/Field";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { BenefitsSection } from "@/components/BenefitsSection";
+import { DividendGuide } from "@/content/guides/dividend";
 
 export default function DividendCalculatorClient() {
   const [grossSalary, setGrossSalary] = useState(12_570);
@@ -17,6 +18,7 @@ export default function DividendCalculatorClient() {
 
   return (
     <CalculatorPage
+      slug="dividend-calculator"
       h1="Salary + Dividend Take-Home Calculator"
       intro={`Common for limited company directors: combine a salary and dividends and see the net take-home. Dividends are taxed correctly on top of salary, using ${TAX_YEAR_LABEL} rates.`}
       disclaimer={`Estimates only, based on published HMRC rates for ${TAX_YEAR_LABEL}. Assumes no other income, pension contributions or student loan. Does not cover Corporation Tax on the company's profits before dividends are declared. Net take-home figures above do not include Child Benefit or Marriage Allowance shown below. Not tax advice — consult an accountant for company tax planning.`}
@@ -89,12 +91,13 @@ export default function DividendCalculatorClient() {
           <p>
             Dividends are taxed as the &quot;top slice&quot; of your income — after your salary
             has used up your Personal Allowance and any basic/higher-rate band. A £500 dividend
-            allowance applies at 0%, then dividends are taxed at 8.75% (basic rate), 33.75%
+            allowance applies at 0%, then dividends are taxed at 10.75% (basic rate), 35.75%
             (higher rate) or 39.35% (additional rate) depending which band they fall into.
           </p>
           <p>Dividends are not subject to National Insurance, unlike salary.</p>
         </>
       }
+      guide={<DividendGuide />}
       faqs={[
         {
           question: "Why do directors often take a small salary plus dividends?",
