@@ -106,3 +106,62 @@ export const CALCULATORS: CalculatorInfo[] = [
 export function getCalculator(slug: string): CalculatorInfo | undefined {
   return CALCULATORS.find((c) => c.slug === slug);
 }
+
+/**
+ * How the calculators are grouped in the site navigation (header menu, calculator sidebar, home page and footer).
+ * Every calculator must appear in exactly one group — calculators.test.ts enforces this.
+ */
+export interface CalculatorGroup {
+  id: string;
+  title: string;
+  blurb: string;
+  slugs: string[];
+}
+
+export const CALCULATOR_GROUPS: CalculatorGroup[] = [
+  {
+    id: "income",
+    title: "Income",
+    blurb: "Work out take-home pay from salary and dividends.",
+    slugs: ["salary-calculator", "dividend-calculator"],
+  },
+  {
+    id: "affordability",
+    title: "Affordability & the deal",
+    blurb: "How much can be borrowed, and what the purchase looks like.",
+    slugs: [
+      "mortgage-affordability-calculator",
+      "loan-to-income-calculator",
+      "ltv-calculator",
+      "mortgage-term-age-calculator",
+      "stamp-duty-calculator",
+    ],
+  },
+  {
+    id: "repayments",
+    title: "Repayments",
+    blurb: "Monthly cost, and the effect of overpaying.",
+    slugs: ["mortgage-repayment-calculator", "mortgage-overpayment-calculator"],
+  },
+  {
+    id: "buy-to-let",
+    title: "Buy-to-let",
+    blurb: "Rental coverage and yield for investment properties.",
+    slugs: ["btl-icr-calculator", "rental-yield-calculator"],
+  },
+  {
+    id: "secured",
+    title: "Short-term & secured lending",
+    blurb: "Bridging finance and second or third charges.",
+    slugs: ["bridging-interest-calculator", "second-charge-calculator"],
+  },
+];
+
+export function getGroupedCalculators(): { group: CalculatorGroup; calculators: CalculatorInfo[] }[] {
+  return CALCULATOR_GROUPS.map((group) => ({
+    group,
+    calculators: group.slugs
+      .map((s) => getCalculator(s))
+      .filter((c): c is CalculatorInfo => Boolean(c)),
+  }));
+}
