@@ -24,10 +24,10 @@ const SOURCES = [
     detail: "Calculated directly from the numbers you enter using standard, published formulae. No external data required.",
   },
   {
-    name: "Stamp Duty Land Tax (SDLT) calculator",
+    name: "Stamp Duty calculator (SDLT, Wales LTT and Scotland LBTT)",
     status: "live" as const,
     detail:
-      "Uses the residential SDLT rates and thresholds published on GOV.UK for England & Northern Ireland (standard rates, first-time buyer relief, the additional-property surcharge and the non-UK resident surcharge), last checked September 2026. Rates are entered manually and reviewed periodically, not pulled from a live feed. Wales (Land Transaction Tax) and Scotland (LBTT) are not covered.",
+      "Uses the residential rates and thresholds published by GOV.UK for England & Northern Ireland (SDLT: standard rates, first-time buyer relief, the additional-property surcharge and the non-UK resident surcharge), by GOV.WALES for Wales (Land Transaction Tax: main and higher residential rates) and by Revenue Scotland for Scotland (LBTT: standard rates, first-time buyer relief and the Additional Dwelling Supplement), last checked September 2026. Rates are entered manually and reviewed periodically, not pulled from a live feed.",
   },
   {
     name: "Salary & dividend tax calculators (income tax, National Insurance, dividend tax)",

@@ -14,7 +14,7 @@ export const CALCULATORS: CalculatorInfo[] = [
     slug: "stamp-duty-calculator",
     title: "Stamp Duty Calculator",
     shortTitle: "Stamp Duty",
-    desc: "SDLT for England & NI — standard, first-time buyer and additional-property rates.",
+    desc: "SDLT, Land Transaction Tax (Wales) and LBTT (Scotland) — standard, first-time buyer and additional-property rates.",
     related: ["mortgage-affordability-calculator", "ltv-calculator", "mortgage-repayment-calculator"],
   },
   {
