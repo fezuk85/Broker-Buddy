@@ -1,53 +1,42 @@
 import Link from "next/link";
-import { CALCULATORS } from "@/lib/seo/calculators";
-
-const TOOLS = CALCULATORS.map((c) => ({ href: `/${c.slug}`, title: c.title, desc: c.desc }));
+import { ScenarioPicker } from "@/components/ScenarioPicker";
 
 export default function Home() {
   return (
     <div>
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 pt-14 pb-10 sm:pt-20 sm:pb-14">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pt-12 pb-6 sm:pt-16">
         <div className="max-w-2xl">
           <p className="text-sm font-medium" style={{ color: "var(--bb-primary)" }}>
             Free · No account · UK-focused
           </p>
-          <h1 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">
-            Every mortgage &amp; property calculation, in one place.
-          </h1>
+          <h1 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">What are you working on?</h1>
           <p className="mt-4 text-lg text-[var(--bb-muted)]">
-            Enter your property and borrower details once, and get LTV, affordability
-            illustrations, repayment figures, rental coverage and more — instantly, without
-            repeating yourself across ten different calculators.
+            Free UK mortgage and property calculators for brokers. Choose the kind of case and we&apos;ll show
+            only the tools that fit it, in the order you&apos;d usually use them.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/mortgage-case-calculator"
-              className="bb-tap-target inline-flex items-center rounded-lg px-5 py-3 text-sm font-medium text-white"
-              style={{ background: "var(--bb-primary)" }}
-            >
-              Open the Case Calculator
-            </Link>
-            <Link
-              href="/ltv-calculator"
-              className="bb-tap-target inline-flex items-center rounded-lg px-5 py-3 text-sm font-medium border border-[var(--bb-border)]"
-            >
-              Try the LTV Calculator
-            </Link>
-          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-6">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-[var(--bb-muted)] mb-4">
-          Standalone calculators
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {TOOLS.map((t) => (
-            <Link key={t.href} href={t.href} className="bb-card p-5 hover:shadow-md transition-shadow">
-              <div className="font-medium">{t.title}</div>
-              <div className="mt-1 text-sm text-[var(--bb-muted)]">{t.desc}</div>
-            </Link>
-          ))}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
+        <ScenarioPicker />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
+        <div className="bb-card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="font-semibold">Prefer to enter the case once?</h2>
+            <p className="mt-1 text-sm text-[var(--bb-muted)] max-w-2xl">
+              The Mortgage Case Calculator takes the property and borrower details a single time and works out
+              LTV, repayments, loan-to-income, affordability and buy-to-let coverage together.
+            </p>
+          </div>
+          <Link
+            href="/mortgage-case-calculator"
+            className="bb-tap-target inline-flex shrink-0 items-center justify-center rounded-lg px-5 py-3 text-sm font-medium text-white"
+            style={{ background: "var(--bb-primary)" }}
+          >
+            Open the Case Calculator
+          </Link>
         </div>
       </section>
 

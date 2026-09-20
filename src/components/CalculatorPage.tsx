@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Disclaimer } from "./Disclaimer";
 import { BrokerCta } from "./BrokerCta";
+import { CalculatorNav } from "./CalculatorNav";
 import { CALCULATORS, getCalculator } from "@/lib/seo/calculators";
 import { SITE_URL } from "@/lib/seo/routes";
 
@@ -70,7 +71,11 @@ export function CalculatorPage({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
+      <aside>
+        <CalculatorNav currentSlug={slug} />
+      </aside>
+      <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }} />
@@ -135,6 +140,7 @@ export function CalculatorPage({
         <Link href="/mortgage-case-calculator" className="font-medium underline" style={{ color: "var(--bb-primary)" }}>
           Open the full Mortgage Case Calculator →
         </Link>
+      </div>
       </div>
     </div>
   );
