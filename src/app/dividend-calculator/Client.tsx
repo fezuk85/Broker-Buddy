@@ -26,10 +26,10 @@ export default function DividendCalculatorClient() {
         <Section title="Your income">
           <div className="grid grid-cols-1 gap-3">
             <Field label="Gross annual salary" hint="Often set at the NI/PA threshold for directors, but enter your actual figure">
-              <NumberInput value={grossSalary} onChange={setGrossSalary} />
+              <NumberInput prefix="£" value={grossSalary} onChange={setGrossSalary} />
             </Field>
             <Field label="Gross annual dividends">
-              <NumberInput value={grossDividends} onChange={setGrossDividends} />
+              <NumberInput prefix="£" value={grossDividends} onChange={setGrossDividends} />
             </Field>
           </div>
         </Section>
@@ -55,9 +55,9 @@ export default function DividendCalculatorClient() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-[var(--bb-muted)]">
-                    <th className="font-medium py-1 pr-4">Dividend band</th>
-                    <th className="font-medium py-1 pr-4">Amount in band</th>
-                    <th className="font-medium py-1">Tax due</th>
+                    <th scope="col" className="font-medium py-1 pr-4">Dividend band</th>
+                    <th scope="col" className="font-medium py-1 pr-4">Amount in band</th>
+                    <th scope="col" className="font-medium py-1">Tax due</th>
                   </tr>
                 </thead>
                 <tbody>

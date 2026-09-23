@@ -7,7 +7,7 @@ function GroupedLinks({ currentSlug }: { currentSlug?: string }) {
     <div className="space-y-5">
       {getGroupedCalculators().map(({ group, calculators }) => (
         <div key={group.id}>
-          <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--bb-muted)] mb-1.5 px-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--bb-muted)] mb-1.5 px-2">
             {group.title}
           </h3>
           <ul className="space-y-0.5">
@@ -18,7 +18,7 @@ function GroupedLinks({ currentSlug }: { currentSlug?: string }) {
                   <Link
                     href={`/${c.slug}`}
                     aria-current={current ? "page" : undefined}
-                    className={`block rounded-lg px-2 py-1.5 text-sm ${
+                    className={`flex min-h-11 items-center rounded-lg px-2 lg:min-h-0 lg:py-1.5 text-sm ${
                       current
                         ? "font-medium text-[var(--bb-primary)] bg-[color-mix(in_srgb,var(--bb-primary)_10%,transparent)]"
                         : "text-[var(--bb-foreground)] hover:bg-[var(--bb-bg)]"

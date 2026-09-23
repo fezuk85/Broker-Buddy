@@ -52,25 +52,25 @@ export default function AffordabilityCalculatorClient() {
         <Section title="Your details">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Applicant 1 gross annual income">
-              <NumberInput value={incomeApplicant1} onChange={setIncomeApplicant1} />
+              <NumberInput prefix="£" value={incomeApplicant1} onChange={setIncomeApplicant1} />
             </Field>
             <Field label="Applicant 2 gross annual income" hint="Leave at 0 for a single applicant">
-              <NumberInput value={incomeApplicant2} onChange={setIncomeApplicant2} />
+              <NumberInput prefix="£" value={incomeApplicant2} onChange={setIncomeApplicant2} />
             </Field>
             <Field label="Monthly credit commitments" hint="Loans, credit cards, car finance">
-              <NumberInput value={monthlyCommitments} onChange={setMonthlyCommitments} />
+              <NumberInput prefix="£" value={monthlyCommitments} onChange={setMonthlyCommitments} />
             </Field>
             <Field label="Deposit">
-              <NumberInput value={deposit} onChange={setDeposit} />
+              <NumberInput prefix="£" value={deposit} onChange={setDeposit} />
             </Field>
             <Field label="Income multiple" hint="Typically 4x to 4.5x; up to 5.5x for some borrowers">
               <NumberInput value={incomeMultiple} onChange={setIncomeMultiple} step={0.25} />
             </Field>
             <Field label="Interest rate (%)">
-              <NumberInput value={rate} onChange={setRate} step={0.05} />
+              <NumberInput suffix="%" value={rate} onChange={setRate} step={0.05} />
             </Field>
             <Field label="Term (years)">
-              <NumberInput value={termYears} onChange={setTermYears} step={1} />
+              <NumberInput suffix="years" value={termYears} onChange={setTermYears} step={1} />
             </Field>
           </div>
         </Section>
@@ -109,10 +109,10 @@ export default function AffordabilityCalculatorClient() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-[var(--bb-muted)]">
-                  <th className="font-medium py-1 pr-3">Multiple</th>
-                  <th className="font-medium py-1 pr-3">Max loan</th>
-                  <th className="font-medium py-1 pr-3">Property price</th>
-                  <th className="font-medium py-1 text-right">Monthly</th>
+                  <th scope="col" className="font-medium py-1 pr-3">Multiple</th>
+                  <th scope="col" className="font-medium py-1 pr-3">Max loan</th>
+                  <th scope="col" className="font-medium py-1 pr-3">Property price</th>
+                  <th scope="col" className="font-medium py-1 text-right">Monthly</th>
                 </tr>
               </thead>
               <tbody>

@@ -36,13 +36,13 @@ export default function LtvCalculatorClient() {
         <Section title="Your details">
           <div className="grid grid-cols-1 gap-3">
             <Field label="Property value">
-              <NumberInput value={propertyValue} onChange={setPropertyValue} />
+              <NumberInput prefix="£" value={propertyValue} onChange={setPropertyValue} />
             </Field>
             <Field label="Current mortgage balance">
-              <NumberInput value={currentBalance} onChange={setCurrentBalance} />
+              <NumberInput prefix="£" value={currentBalance} onChange={setCurrentBalance} />
             </Field>
             <Field label="Additional borrowing required">
-              <NumberInput value={additionalBorrowing} onChange={setAdditionalBorrowing} />
+              <NumberInput prefix="£" value={additionalBorrowing} onChange={setAdditionalBorrowing} />
             </Field>
           </div>
         </Section>
@@ -62,9 +62,9 @@ export default function LtvCalculatorClient() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-[var(--bb-muted)]">
-                    <th className="font-medium py-1 pr-4">LTV</th>
-                    <th className="font-medium py-1 pr-4">Max loan</th>
-                    <th className="font-medium py-1">Additional available</th>
+                    <th scope="col" className="font-medium py-1 pr-4">LTV</th>
+                    <th scope="col" className="font-medium py-1 pr-4">Max loan</th>
+                    <th scope="col" className="font-medium py-1">Additional available</th>
                   </tr>
                 </thead>
                 <tbody>

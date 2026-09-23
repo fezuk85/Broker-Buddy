@@ -9,7 +9,7 @@ export function CookieBanner() {
   if (!bannerOpen) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--bb-border)] bg-white">
+    <div role="region" aria-label="Cookie preferences" className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--bb-border)] bg-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <p className="text-sm text-[var(--bb-muted)] flex-1">
           We use cookies to show ads and measure site usage. You can accept or reject non-essential

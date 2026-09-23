@@ -9,7 +9,7 @@ export function BrokerCta() {
 
   return (
     <aside className="bb-card p-5 sm:p-6" aria-label="Sponsored: speak to a mortgage broker">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--bb-muted)]">Advertisement</p>
+      <p className="text-xs font-semibold uppercase tracking-widest text-[var(--bb-muted)]">Advertisement</p>
       <h2 className="mt-1 text-base font-semibold">Want a broker to check these numbers?</h2>
       <p className="mt-1 text-sm text-[var(--bb-muted)]">
         A whole-of-market mortgage broker can compare lenders, confirm what you can really borrow and manage the

@@ -101,3 +101,26 @@ body {
   color: var(--bb-foreground);
   font-weight: 600;
 }
+
+/* Visible keyboard focus everywhere (inputs keep their own ring + border change). */
+:focus-visible {
+  outline: 3px solid var(--bb-primary);
+  outline-offset: 2px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+/* Respect the visitor's reduced-motion setting. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

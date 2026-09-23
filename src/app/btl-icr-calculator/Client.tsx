@@ -71,28 +71,28 @@ export default function BtlIcrCalculatorClient() {
 
           <div className="grid grid-cols-1 gap-3">
             <Field label="Monthly rent">
-              <NumberInput value={monthlyRent} onChange={setMonthlyRent} />
+              <NumberInput prefix="£" value={monthlyRent} onChange={setMonthlyRent} />
             </Field>
 
             {mode === "actual" ? (
               <>
                 <Field label="Monthly mortgage payment" hint="The actual (or lender-quoted) payment — not a notional stressed figure">
-                  <NumberInput value={monthlyPayment} onChange={setMonthlyPayment} />
+                  <NumberInput prefix="£" value={monthlyPayment} onChange={setMonthlyPayment} />
                 </Field>
                 <Field label="Borrower's tax position">
                   <SelectInput value={taxStatus} onChange={handleTaxStatusChange} options={TAX_STATUS_OPTIONS} />
                 </Field>
                 <Field label="Required ICR (%)" hint="Auto-filled from tax position above — edit if the lender uses a different figure">
-                  <NumberInput value={requiredIcrPercent} onChange={setRequiredIcrPercent} step={1} />
+                  <NumberInput suffix="%" value={requiredIcrPercent} onChange={setRequiredIcrPercent} step={1} />
                 </Field>
               </>
             ) : (
               <>
                 <Field label="Loan amount">
-                  <NumberInput value={loanAmount} onChange={setLoanAmount} />
+                  <NumberInput prefix="£" value={loanAmount} onChange={setLoanAmount} />
                 </Field>
                 <Field label="Stress rate (%)">
-                  <NumberInput value={stressRate} onChange={setStressRate} step={0.01} />
+                  <NumberInput suffix="%" value={stressRate} onChange={setStressRate} step={0.01} />
                 </Field>
               </>
             )}

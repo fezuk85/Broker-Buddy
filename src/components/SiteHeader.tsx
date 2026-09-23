@@ -17,7 +17,7 @@ export function SiteHeader() {
             <span className="block font-semibold text-[15px] tracking-tight">
               Lending<span style={{ color: "var(--bb-primary)" }}> Calculator</span>
             </span>
-            <span className="hidden sm:block text-[10px] font-medium uppercase tracking-widest text-[var(--bb-muted)]">
+            <span className="hidden sm:block text-xs font-medium uppercase tracking-wider text-[var(--bb-muted)]">
               Smarter lending decisions
             </span>
           </span>

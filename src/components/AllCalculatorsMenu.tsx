@@ -51,7 +51,7 @@ export function AllCalculatorsMenu() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             {getGroupedCalculators().map(({ group, calculators }) => (
               <div key={group.id}>
-                <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--bb-muted)] mb-1.5">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--bb-muted)] mb-1.5">
                   {group.title}
                 </h3>
                 <ul className="space-y-0.5">
@@ -59,7 +59,7 @@ export function AllCalculatorsMenu() {
                     <li key={c.slug}>
                       <Link
                         href={`/${c.slug}`}
-                        className="block rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--bb-bg)]"
+                        className="flex min-h-11 items-center rounded-lg px-2 sm:min-h-0 sm:py-1.5 text-sm hover:bg-[var(--bb-bg)]"
                       >
                         {c.title}
                       </Link>

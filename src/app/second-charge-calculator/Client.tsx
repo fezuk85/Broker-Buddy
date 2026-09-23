@@ -160,7 +160,7 @@ export default function SecondChargeCalculatorClient() {
 
           <Section title="Property & existing charges">
             <Field label="Property value">
-              <NumberInput value={propertyValue} onChange={setPropertyValue} />
+              <NumberInput prefix="£" value={propertyValue} onChange={setPropertyValue} />
             </Field>
             <div className="mt-4 space-y-3">
               {charges.map((c, i) => (
@@ -190,13 +190,13 @@ export default function SecondChargeCalculatorClient() {
           <Section title="New charge requested" className="mt-4">
             <div className="grid grid-cols-2 gap-3">
               <Field label="New loan amount">
-                <NumberInput value={newChargeAmount} onChange={setNewChargeAmount} />
+                <NumberInput prefix="£" value={newChargeAmount} onChange={setNewChargeAmount} />
               </Field>
               <Field label="Annual interest rate (%)">
-                <NumberInput value={annualRatePercent} onChange={setAnnualRatePercent} step={0.01} />
+                <NumberInput suffix="%" value={annualRatePercent} onChange={setAnnualRatePercent} step={0.01} />
               </Field>
               <Field label="Term (months)">
-                <NumberInput value={termMonths} onChange={setTermMonths} min={1} step={1} />
+                <NumberInput suffix="months" value={termMonths} onChange={setTermMonths} min={1} step={1} />
               </Field>
               <Field label="Repayment type">
                 <SelectInput
@@ -209,16 +209,16 @@ export default function SecondChargeCalculatorClient() {
                 />
               </Field>
               <Field label="Lender fee">
-                <NumberInput value={lenderFee} onChange={setLenderFee} />
+                <NumberInput prefix="£" value={lenderFee} onChange={setLenderFee} />
               </Field>
               <Field label="Broker fee">
-                <NumberInput value={brokerFee} onChange={setBrokerFee} />
+                <NumberInput prefix="£" value={brokerFee} onChange={setBrokerFee} />
               </Field>
               <Field label="Valuation fee">
-                <NumberInput value={valuationFee} onChange={setValuationFee} />
+                <NumberInput prefix="£" value={valuationFee} onChange={setValuationFee} />
               </Field>
               <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
-                <NumberInput value={otherFees} onChange={setOtherFees} />
+                <NumberInput prefix="£" value={otherFees} onChange={setOtherFees} />
               </Field>
             </div>
           </Section>
@@ -231,16 +231,16 @@ export default function SecondChargeCalculatorClient() {
             {isRental && (
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <Field label="Existing 1st charge payment" hint="The actual monthly payment currently being made">
-                  <NumberInput value={firstChargePayment} onChange={setFirstChargePayment} />
+                  <NumberInput prefix="£" value={firstChargePayment} onChange={setFirstChargePayment} />
                 </Field>
                 <Field label="Monthly rent">
-                  <NumberInput value={monthlyRent} onChange={setMonthlyRent} />
+                  <NumberInput prefix="£" value={monthlyRent} onChange={setMonthlyRent} />
                 </Field>
                 <Field label="Borrower's tax position">
                   <SelectInput value={taxStatus} onChange={handleTaxStatusChange} options={TAX_STATUS_OPTIONS} />
                 </Field>
                 <Field label="Required ICR (%)" hint="Auto-filled — edit if the lender uses a different figure">
-                  <NumberInput value={requiredIcrPercent} onChange={setRequiredIcrPercent} step={1} />
+                  <NumberInput suffix="%" value={requiredIcrPercent} onChange={setRequiredIcrPercent} step={1} />
                 </Field>
               </div>
             )}

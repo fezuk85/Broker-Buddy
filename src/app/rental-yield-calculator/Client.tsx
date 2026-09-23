@@ -25,10 +25,10 @@ export default function RentalYieldCalculatorClient() {
         <Section title="Your details">
           <div className="grid grid-cols-1 gap-3">
             <Field label="Property value">
-              <NumberInput value={propertyValue} onChange={setPropertyValue} />
+              <NumberInput prefix="£" value={propertyValue} onChange={setPropertyValue} />
             </Field>
             <Field label="Monthly rent">
-              <NumberInput value={monthlyRent} onChange={setMonthlyRent} />
+              <NumberInput prefix="£" value={monthlyRent} onChange={setMonthlyRent} />
             </Field>
           </div>
         </Section>
