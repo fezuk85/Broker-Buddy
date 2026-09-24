@@ -175,7 +175,6 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
 }
 
 export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: CaseState }) {
-  const v = calc.valuation;
   return (
     <div className="space-y-4">
       <Section title="Property snapshot">
@@ -224,36 +223,6 @@ export function PropertyPanel({ calc, caseState }: { calc: Calc; caseState: Case
           Contains HM Land Registry data © Crown copyright and database right. Licensed under the
           Open Government Licence v3.0. Matched by postcode, not full address/UPRN — this is all
           sales recorded at this postcode, which may include neighbouring properties.
-        </p>
-      </Section>
-
-      <Section title="Lending Calculator Indicative Property Estimate">
-        {v.insufficientData ? (
-          <p className="text-sm text-[var(--bb-muted)]">Insufficient data for a reliable indicative estimate.</p>
-        ) : (
-          <>
-            <div className="space-y-2 text-sm">
-              {v.methods.map((m) => (
-                <div key={m.method}>
-                  <div className="flex justify-between">
-                    <span className="text-[var(--bb-muted)]">{m.label}</span>
-                    <span className="font-medium">{formatGbp(m.estimate)}</span>
-                  </div>
-                  <div className="text-xs text-[var(--bb-muted)]">{m.detail}</div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 pt-4 border-t border-[var(--bb-border)]">
-              <StatTile label="Lending Calculator indicative estimate" value={formatGbp(v.combinedEstimate)} accent="primary" />
-              <p className="mt-2 text-sm text-[var(--bb-muted)]">
-                Range: {formatGbp(v.rangeLow)} – {formatGbp(v.rangeHigh)} · Confidence: {v.confidence}
-              </p>
-            </div>
-          </>
-        )}
-        <p className="mt-3 text-xs text-[var(--bb-muted)]">
-          Indicative estimate only. Not a formal valuation and should not be relied upon for
-          lending, purchase or sale decisions.
         </p>
       </Section>
     </div>
