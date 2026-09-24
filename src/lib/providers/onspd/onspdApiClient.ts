@@ -1,8 +1,8 @@
 /**
  * Client for ONS Geography's live Postcode Directory query service (ArcGIS REST, no auth) —
  * verified live via direct requests before building. Resolves a postcode to its local authority
- * district and LSOA (2021), which Council Tax's charge-by-band and area-typical-band lookups are
- * keyed on.
+ * district and LSOA (2021), which Council Tax's charge-by-band and area-typical-band lookups,
+ * and the UK HPI index-movement lookup, are keyed on.
  *
  * This calls the live query layer rather than importing the ~242MB quarterly ONSPD bulk file —
  * the data only changes four times a year, so results are safe to cache aggressively, but a
@@ -10,12 +10,18 @@
  *
  * Field names on the live layer are UPPERCASE (PCDS, LAD25CD, LSOA21CD) — different casing from
  * the downloadable CSVs (pcds, lad25cd, lsoa21cd). Normalised to our own lowerCamelCase shape here.
+ *
+ * This used to also resolve a human-readable local authority name via a second ArcGIS query
+ * (LAD_APR_2025_UK_NC_v2), and failed the whole lookup if that second call didn't return a name —
+ * even though nothing downstream (Council Tax, the UK HPI index-movement join) actually used the
+ * name, only the LAD code. That meant a hiccup on that unrelated second endpoint silently killed
+ * a perfectly good local authority code, breaking Council Tax estimates and the indexed property
+ * valuation for postcodes that resolved fine. Removed — the postcode directory query alone is
+ * both necessary and sufficient here.
  */
 
 const POSTCODE_DIRECTORY_BASE =
   "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Online_ONS_Postcode_Directory_Live/FeatureServer/1/query";
-const LAD_NAMES_BASE =
-  "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD_APR_2025_UK_NC_v2/FeatureServer/0/query";
 
 interface ArcGisQueryResponse<T> {
   features: Array<{ attributes: T }>;
@@ -31,15 +37,9 @@ interface PostcodeDirectoryAttributes {
   DOTERM?: string | null;
 }
 
-interface LadNameAttributes {
-  LAD25CD: string;
-  LAD25NM: string;
-}
-
 export interface PostcodeGeography {
   postcode: string;
   localAuthorityCode: string;
-  localAuthorityName: string;
   lsoa2021Code?: string;
   lsoa2011Code?: string;
   /** True if this postcode has been officially terminated (ONSPD's DOTERM field is set) — still resolvable, but flagged. */
@@ -51,18 +51,6 @@ function normalizePostcode(postcode: string): string {
   const compact = postcode.replace(/\s+/g, "").toUpperCase();
   if (compact.length < 5) return compact;
   return `${compact.slice(0, -3)} ${compact.slice(-3)}`;
-}
-
-async function queryLadName(ladCode: string, fetchImpl: typeof fetch): Promise<string | undefined> {
-  const params = new URLSearchParams({
-    where: `LAD25CD='${ladCode}'`,
-    outFields: "LAD25CD,LAD25NM",
-    f: "json",
-  });
-  const res = await fetchImpl(`${LAD_NAMES_BASE}?${params.toString()}`);
-  if (!res.ok) return undefined;
-  const body = (await res.json()) as ArcGisQueryResponse<LadNameAttributes>;
-  return body.features?.[0]?.attributes?.LAD25NM;
 }
 
 /**
@@ -88,13 +76,9 @@ export async function fetchPostcodeGeography(
   const attrs = body.features?.[0]?.attributes;
   if (!attrs?.LAD25CD) return null;
 
-  const localAuthorityName = await queryLadName(attrs.LAD25CD, fetchImpl);
-  if (!localAuthorityName) return null;
-
   return {
     postcode: normalized,
     localAuthorityCode: attrs.LAD25CD,
-    localAuthorityName,
     lsoa2021Code: attrs.LSOA21CD ?? undefined,
     lsoa2011Code: attrs.LSOA11CD ?? undefined,
     terminated: Boolean(attrs.DOTERM),
