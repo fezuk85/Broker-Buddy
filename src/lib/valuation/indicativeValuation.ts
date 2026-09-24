@@ -53,9 +53,26 @@ function median(values: number[]): number | null {
   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
+/**
+ * How much weight the indexed estimate carries relative to a comparable/floor-area method (each
+ * fixed at weight 1) when blending them into the combined estimate. A very recent sale is strong,
+ * specific evidence for this exact property, so it dominates; but the multiplier is just one
+ * area-wide average movement applied to an increasingly old, single data point, so its reliability
+ * decays with age — an old sale is let the current, local comparable-sales evidence pull the
+ * estimate up or down rather than anchoring it rigidly. Never fully dismissed (floors at 0.5) since
+ * it's still real evidence of what this exact property is worth, just weighted well below a single
+ * comparable once well over a decade old.
+ */
+function indexedMethodWeight(saleDateIso: string, asOf: Date): number {
+  const saleDate = new Date(saleDateIso);
+  const ageYears = (asOf.getTime() - saleDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+  return Math.max(0.5, 6 / (1 + Math.max(0, ageYears) / 2));
+}
+
 export function calculateIndicativeValuation(inputs: ValuationInputs): ValuationResult {
   const methods: MethodEstimate[] = [];
   const notes: string[] = [];
+  const asOf = inputs.asOfDate ? new Date(inputs.asOfDate) : new Date();
 
   // Method 1: historic sale x index movement
   if (inputs.lastKnownSale && inputs.indexMovementPercent != null) {
@@ -82,7 +99,6 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
    * history (with an honest note) when there aren't enough recent sales to form a median.
    */
   const RECENCY_WINDOW_MONTHS = 24;
-  const asOf = inputs.asOfDate ? new Date(inputs.asOfDate) : new Date();
   const cutoff = new Date(asOf);
   cutoff.setMonth(cutoff.getMonth() - RECENCY_WINDOW_MONTHS);
   const cutoffIso = cutoff.toISOString().slice(0, 10);
@@ -138,22 +154,30 @@ export function calculateIndicativeValuation(inputs: ValuationInputs): Valuation
   }
 
   /**
-   * historic-sale-indexation is anchored to the subject property's own real, recent transaction —
-   * just carried forward by real market movement since — which is categorically stronger evidence
-   * than comparable-sales or floor-area-comparison, both based on *other* properties nearby.
-   * Blending it with those (even weighted) could still pull the combined figure below a price the
-   * property itself achieved months earlier, which misrepresents what we actually know. So when
-   * the indexed estimate is available, it *is* the combined estimate; comparable-sales/floor-area
-   * are still shown as separate method rows for context, but don't drag the headline figure down.
-   * Without an indexed estimate (no address entered, or no matching sale), there's no single
-   * property to anchor to, so the combined estimate falls back to an average across whatever
-   * comparable-based methods are available — that's the best a postcode-wide estimate can do.
+   * historic-sale-indexation is anchored to the subject property's own real transaction, which is
+   * stronger evidence than comparable-sales/floor-area-comparison (based on *other* properties)
+   * when that sale is recent — but it's still just one old price times one area-wide average
+   * movement, so a sale from years ago can lag what current local sales actually show (a street
+   * outperforming/underperforming its borough, a renovation, or simply the index being a blunt
+   * instrument over a long gap). So it's blended with the other methods rather than overriding them
+   * outright, weighted by how recent the underlying sale is (see indexedMethodWeight) — dominant for
+   * a sale from the last year or two, but letting current comparable evidence pull the estimate up
+   * or down for an old one. Without an indexed estimate (no address entered, or no matching sale),
+   * there's no single property to anchor to, so the combined estimate is a plain average across
+   * whatever comparable-based methods are available.
    */
   const indexedMethod = methods.find((m) => m.method === "historic-sale-indexation");
   const estimates = methods.map((m) => m.estimate);
-  const combinedEstimate = indexedMethod
-    ? indexedMethod.estimate
-    : estimates.reduce((sum, v) => sum + v, 0) / estimates.length;
+  let combinedEstimate: number;
+  if (indexedMethod && inputs.lastKnownSale) {
+    const weight = indexedMethodWeight(inputs.lastKnownSale.date, asOf);
+    const otherMethods = methods.filter((m) => m !== indexedMethod);
+    const weightedSum = indexedMethod.estimate * weight + otherMethods.reduce((sum, m) => sum + m.estimate, 0);
+    const totalWeight = weight + otherMethods.length;
+    combinedEstimate = weightedSum / totalWeight;
+  } else {
+    combinedEstimate = estimates.reduce((sum, v) => sum + v, 0) / estimates.length;
+  }
 
   // Spread between methods (relative to the combined estimate) drives the indicative range.
   const maxEstimate = Math.max(...estimates);

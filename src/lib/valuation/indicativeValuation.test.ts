@@ -96,11 +96,11 @@ describe("calculateIndicativeValuation", () => {
     expect(r.methods[0].detail).toContain("fewer than 3 in the last 24 months");
   });
 
-  it("anchors the combined estimate to the indexed estimate when a specific property is matched, rather than averaging it down with comparables", () => {
-    // Regression test for a real user-reported case: once a house number is entered and matched
-    // to the property's own real, very recent (10 months ago) sale, the combined estimate should
-    // reflect that known trajectory — certainly not fall below the price the property itself just
-    // achieved — even though nearby but different comparable properties sold for less.
+  it("weights the indexed estimate heavily (not exclusively) for a very recent matched sale", () => {
+    // Once a house number is entered and matched to the property's own real, very recent (10
+    // months ago) sale, that sale should dominate the combined estimate — it's the strongest
+    // evidence available — but it's now blended rather than treated as gospel, so a much lower
+    // set of comparables still pulls the figure down slightly rather than being ignored outright.
     const r = calculateIndicativeValuation({
       asOfDate: "2026-09-10",
       lastKnownSale: { price: 370_000, date: "2025-11-14" },
@@ -114,13 +114,37 @@ describe("calculateIndicativeValuation", () => {
     });
     expect(r.methods).toHaveLength(2);
     const indexedEstimate = r.methods.find((m) => m.method === "historic-sale-indexation")!.estimate;
-    // The combined estimate should equal the indexed estimate exactly — not be diluted by
-    // averaging with the comparable-sales figure — and, since the index movement was positive,
-    // it comes out above the last known sale price.
-    expect(r.combinedEstimate).toBe(indexedEstimate);
-    expect(r.combinedEstimate!).toBeGreaterThan(370_000);
-    // The range should still bracket the property's own real, recent sale price.
-    expect(r.rangeLow!).toBeLessThanOrEqual(370_000);
+    const comparableEstimate = r.methods.find((m) => m.method === "comparable-sales")!.estimate;
+    // Blended, not exactly equal to either input method...
+    expect(r.combinedEstimate).not.toBe(indexedEstimate);
+    expect(r.combinedEstimate).not.toBe(comparableEstimate);
+    // ...but much closer to the recent indexed estimate than to the weaker comparables.
+    expect(r.combinedEstimate!).toBeGreaterThan((indexedEstimate + comparableEstimate) / 2);
+    expect(r.combinedEstimate!).toBeGreaterThan(340_000);
+  });
+
+  it("lets current comparable sales pull the combined estimate up when the matched sale is old and stale", () => {
+    // The reported case this change addresses: a property's own last known sale was 15 years ago,
+    // and the area-wide index multiplier alone landed well below what recent local sales show. The
+    // stale indexed estimate should now be outweighed by current comparable evidence, not treated
+    // as the final answer.
+    const r = calculateIndicativeValuation({
+      asOfDate: "2026-09-24",
+      lastKnownSale: { price: 140_000, date: "2011-02-11" },
+      indexMovementPercent: 31.5, // roughly matches the real Tower Hamlets movement since 2011
+      comparableSales: [
+        { pricePaid: 430_000, saleDate: "2025-09-03" },
+        { pricePaid: 460_000, saleDate: "2024-03-01" },
+        { pricePaid: 450_000, saleDate: "2021-09-29" },
+      ],
+    });
+    const indexedEstimate = r.methods.find((m) => m.method === "historic-sale-indexation")!.estimate;
+    const comparableEstimate = r.methods.find((m) => m.method === "comparable-sales")!.estimate;
+    expect(indexedEstimate).toBeCloseTo(184_100, -2);
+    // The stale index alone would say ~£184k; blending with current comparables should pull the
+    // combined figure up substantially above that, not leave it stuck near the stale number.
+    expect(r.combinedEstimate!).toBeGreaterThan(indexedEstimate * 1.3);
+    expect(r.combinedEstimate!).toBeLessThan(comparableEstimate);
   });
 
   it("falls back to averaging comparable-based methods when no specific property is matched (no indexed estimate)", () => {
