@@ -8,8 +8,8 @@
  * the data only changes four times a year, so results are safe to cache aggressively, but a
  * live call avoids shipping/refreshing a large dataset for Phase 1.
  *
- * Field names on the live layer are UPPERCASE (PCDS, LAD25CD, LSOA21CD) — different casing from
- * the downloadable CSVs (pcds, lad25cd, lsoa21cd). Normalised to our own lowerCamelCase shape here.
+ * Field names on the live layer are UPPERCASE (PCDS, LAD26CD, LSOA21CD) — different casing from
+ * the downloadable CSVs (pcds, lad26cd, lsoa21cd). Normalised to our own lowerCamelCase shape here.
  *
  * This used to also resolve a human-readable local authority name via a second ArcGIS query
  * (LAD_APR_2025_UK_NC_v2), and failed the whole lookup if that second call didn't return a name —
@@ -18,10 +18,17 @@
  * a perfectly good local authority code, breaking Council Tax estimates and the indexed property
  * valuation for postcodes that resolved fine. Removed — the postcode directory query alone is
  * both necessary and sufficient here.
+ *
+ * Both the layer index and the LAD field name have since moved: the service's queryable layer is
+ * 0 ("ONSPD_LATEST_UK_Live"), not 1 (querying layer 1 returns a generic {"error":{"code":400,
+ * "message":"Invalid URL"}} rather than a normal empty result, which silently broke every lookup);
+ * and ONS's annual boundary refresh has rolled the local authority field from LAD25CD to LAD26CD
+ * (confirmed against the live layer's own schema — GET .../FeatureServer/0?f=json — since this
+ * field gets renamed every year, expect it to need updating again for LAD27CD etc.).
  */
 
 const POSTCODE_DIRECTORY_BASE =
-  "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Online_ONS_Postcode_Directory_Live/FeatureServer/1/query";
+  "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Online_ONS_Postcode_Directory_Live/FeatureServer/0/query";
 
 interface ArcGisQueryResponse<T> {
   features: Array<{ attributes: T }>;
@@ -29,7 +36,7 @@ interface ArcGisQueryResponse<T> {
 
 interface PostcodeDirectoryAttributes {
   PCDS: string;
-  LAD25CD?: string;
+  LAD26CD?: string;
   LSOA21CD?: string;
   LSOA11CD?: string;
   LAT?: number;
@@ -65,7 +72,7 @@ export async function fetchPostcodeGeography(
   const normalized = normalizePostcode(postcode);
   const params = new URLSearchParams({
     where: `PCDS='${normalized}'`,
-    outFields: "PCDS,LAD25CD,LSOA21CD,LSOA11CD,LAT,LONG,DOTERM",
+    outFields: "PCDS,LAD26CD,LSOA21CD,LSOA11CD,LAT,LONG,DOTERM",
     f: "json",
   });
 
@@ -74,11 +81,11 @@ export async function fetchPostcodeGeography(
 
   const body = (await res.json()) as ArcGisQueryResponse<PostcodeDirectoryAttributes>;
   const attrs = body.features?.[0]?.attributes;
-  if (!attrs?.LAD25CD) return null;
+  if (!attrs?.LAD26CD) return null;
 
   return {
     postcode: normalized,
-    localAuthorityCode: attrs.LAD25CD,
+    localAuthorityCode: attrs.LAD26CD,
     lsoa2021Code: attrs.LSOA21CD ?? undefined,
     lsoa2011Code: attrs.LSOA11CD ?? undefined,
     terminated: Boolean(attrs.DOTERM),
