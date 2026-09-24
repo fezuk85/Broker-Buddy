@@ -51,13 +51,7 @@ const SOURCES = [
     name: "HM Land Registry Price Paid Data",
     status: "live" as const,
     detail:
-      "Historic sale prices for England & Wales (from 1995, updated monthly) via HM Land Registry's live, unauthenticated Linked Data API — no bulk file import. Matched by postcode only, not full address/UPRN (the API has no UPRN field), so results shown for a property are best-effort address-text matches within that postcode's sales, and 'comparable sales' means other sales at the same postcode rather than a true geographic radius search. Open Government Licence for prices; the address fields carry a separate Royal Mail/Ordnance Survey restriction limiting use to displaying residential property price information, which is what this does — see the attribution note below.",
-  },
-  {
-    name: "HM Land Registry UK House Price Index (indicative valuation)",
-    status: "live" as const,
-    detail:
-      "Powers part of the 'Indicative Property Estimate' on the Property tab. When a house name/number is entered and matched to the property's own HM Land Registry sale history, the indexed estimate takes that last sale price and applies the real price movement since then for the property's local authority, from HM Land Registry's UK House Price Index (local authority level, England & Wales). The movement compares the average of the latest three months with the average of the three months up to the sale, rather than two single months, because one month's figure for a single local authority is noisy. The house name/number must match a single property exactly (whole words, so 16 does not match 162) — if it matches several properties you are asked to be more specific. This only runs when a specific past sale for that exact property was found — without an address match there's no single 'last sale' to index from, so it's correctly omitted rather than indexing an arbitrary sale from elsewhere at the postcode. The comparable-sales method (median of nearby sale prices) runs independently and doesn't need an address match. Open Government Licence.",
+      "Historic sale prices for England & Wales (from 1995, updated monthly) via HM Land Registry's live, unauthenticated Linked Data API — no bulk file import. Shown as a straight sale-history table on the Property tab, matched by postcode only, not full address/UPRN (the API has no UPRN field), so results are best-effort address-text matches within that postcode's sales rather than a true geographic radius search. This is real, unmodified transaction history only — Lending Calculator does not compute an indicative valuation or estimate from it. Open Government Licence for prices; the address fields carry a separate Royal Mail/Ordnance Survey restriction limiting use to displaying residential property price information, which is what this does — see the attribution note below.",
   },
   {
     name: "ONS Family Spending (household expenditure benchmark)",
@@ -124,7 +118,7 @@ export default function DataSourcesPage() {
       <Section className="mt-8" title="What we will never do">
         <ul className="list-disc pl-5 text-sm text-[var(--bb-muted)] space-y-1">
           <li>Scrape Rightmove, Zoopla, or council-tax websites</li>
-          <li>Present an indicative estimate as a formal valuation or lender AVM</li>
+          <li>Compute or guess a property valuation/AVM — sale history is shown as real, unmodified data only</li>
           <li>Invent missing property data</li>
           <li>Disguise public-data outputs as proprietary Lending Calculator data</li>
         </ul>

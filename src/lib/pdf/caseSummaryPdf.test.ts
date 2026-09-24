@@ -46,15 +46,6 @@ function buildCalc(overrides: Partial<Calc> = {}): Calc {
       },
     ],
     maxLoanFromRent: null,
-    valuation: {
-      methods: [],
-      combinedEstimate: null,
-      rangeLow: null,
-      rangeHigh: null,
-      confidence: null,
-      insufficientData: true,
-      notes: [],
-    },
     derivedRegion: null,
     expenditure: null,
     councilTax: null,
@@ -102,17 +93,6 @@ describe("generateCaseSummaryPdf", () => {
         netMonthlyIncome: 4200,
         remainingAfterOutgoings: 2072.87,
         outgoingsPercentOfNetIncome: 50.6,
-      },
-      valuation: {
-        methods: [
-          { method: "historic-sale-indexation", label: "Indexed estimate", estimate: 372_194, detail: "Last sale £370,000 indexed by 0.6%" },
-        ],
-        combinedEstimate: 372_194,
-        rangeLow: 316_365,
-        rangeHigh: 427_823,
-        confidence: "LOW",
-        insufficientData: false,
-        notes: [],
       },
     });
 

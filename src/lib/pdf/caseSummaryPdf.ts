@@ -6,14 +6,14 @@
  * image of the page.
  *
  * Deliberately mirrors the app's own "never fabricate" rule: a section whose underlying data hasn't
- * loaded yet or is unavailable (e.g. affordability, council tax, indicative valuation) says so
- * plainly rather than being silently omitted or showing a stale/zero figure.
+ * loaded yet or is unavailable (e.g. affordability, council tax) says so plainly rather than being
+ * silently omitted or showing a stale/zero figure.
  */
 import { jsPDF } from "jspdf";
 import { CaseState } from "@/lib/case/types";
 import { useCaseCalculations } from "@/lib/case/useCaseCalculations";
 import { formatGbp, formatPercent, formatMultiple } from "@/lib/format";
-import { PdfCursor, renderFooterOnEveryPage, INK } from "./pdfCursor";
+import { PdfCursor, renderFooterOnEveryPage } from "./pdfCursor";
 
 type Calc = ReturnType<typeof useCaseCalculations>;
 
@@ -38,26 +38,6 @@ export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc): jsPDF 
   c.sectionHeading("Property");
   c.row("Property value entered", formatGbp(caseState.property.value));
   c.row("Postcode", caseState.property.postcode || "Not entered");
-
-  const v = calc.valuation;
-  if (v.insufficientData) {
-    c.gap(1);
-    c.paragraph("Lending Calculator Indicative Property Estimate: insufficient public data for this property to offer an estimate.");
-  } else {
-    c.gap(1);
-    c.paragraph(
-      `Lending Calculator indicative estimate: ${formatGbp(v.combinedEstimate)} (range ${formatGbp(v.rangeLow)} – ${formatGbp(
-        v.rangeHigh
-      )}, confidence: ${v.confidence ?? "—"}).`,
-      { color: INK, size: 9.5 }
-    );
-    for (const m of v.methods) {
-      c.paragraph(`• ${m.label}: ${formatGbp(m.estimate)} — ${m.detail}`);
-    }
-    c.paragraph("Indicative estimate only. Not a formal valuation and should not be relied upon for lending, purchase or sale decisions.", {
-      italic: true,
-    });
-  }
 
   // --- Mortgage & LTV ---
   c.sectionHeading("Mortgage & Loan-to-Value");
