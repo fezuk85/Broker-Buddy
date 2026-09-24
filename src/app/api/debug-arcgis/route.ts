@@ -7,8 +7,9 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function GET(request: NextRequest) {
   const postcode = request.nextUrl.searchParams.get("postcode") ?? "SW1A 1AA";
+  const layer = request.nextUrl.searchParams.get("layer") ?? "1";
   const url =
-    "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Online_ONS_Postcode_Directory_Live/FeatureServer/1/query?" +
+    `https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Online_ONS_Postcode_Directory_Live/FeatureServer/${layer}/query?` +
     new URLSearchParams({ where: `PCDS='${postcode}'`, outFields: "PCDS,LAD25CD,LSOA21CD,LSOA11CD,LAT,LONG,DOTERM", f: "json" }).toString();
 
   try {
