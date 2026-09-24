@@ -1,13 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
 import { fetchPostcodeGeography } from "./onspdApiClient";
 
-// Sample shape taken from a real request against the live ONS Postcode Directory query service.
+// Sample shape taken from a real request against the live ONS Postcode Directory query service
+// (layer 0, "ONSPD_LATEST_UK_Live" — its schema renames the local authority field yearly, e.g.
+// LAD25CD -> LAD26CD, so confirm this against the layer's own schema if lookups start failing).
 const SAMPLE_POSTCODE_RESPONSE = {
   features: [
     {
       attributes: {
         PCDS: "DE23 8PL",
-        LAD25CD: "E06000015",
+        LAD26CD: "E06000015",
         LSOA21CD: "E01013567",
         LSOA11CD: "E01013567",
         LAT: 52.90237,
