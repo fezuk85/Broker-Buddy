@@ -37,12 +37,18 @@ export function NumberInput({
   min = 0,
   step = "any",
   placeholder,
+  prefix,
+  suffix,
 }: {
   value: number;
   onChange: (value: number) => void;
   min?: number;
   step?: number | "any";
   placeholder?: string;
+  /** Unit shown inside the box before the number, e.g. "£". Decorative: the field's label carries the meaning. */
+  prefix?: string;
+  /** Unit shown inside the box after the number, e.g. "%" or "years". */
+  suffix?: string;
 }) {
   const [text, setText] = useState(() => (Number.isFinite(value) ? String(value) : ""));
   const focused = useRef(false);
@@ -51,10 +57,11 @@ export function NumberInput({
     if (!focused.current) setText(Number.isFinite(value) ? String(value) : "");
   }, [value]);
 
-  return (
+  const input = (
     <input
       type="number"
-      className={baseInputClass}
+      inputMode="decimal"
+      className={`${baseInputClass}${prefix ? " pl-7" : ""}${suffix ? " pr-14" : ""}`}
       value={text}
       min={min}
       step={step}
@@ -72,6 +79,30 @@ export function NumberInput({
         onChange(raw === "" ? 0 : Number(raw));
       }}
     />
+  );
+
+  if (!prefix && !suffix) return input;
+
+  return (
+    <span className="relative block">
+      {input}
+      {prefix && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute left-3 top-1/2 mt-0.5 -translate-y-1/2 text-sm text-[var(--bb-muted)]"
+        >
+          {prefix}
+        </span>
+      )}
+      {suffix && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-3 top-1/2 mt-0.5 -translate-y-1/2 text-sm text-[var(--bb-muted)]"
+        >
+          {suffix}
+        </span>
+      )}
+    </span>
   );
 }
 

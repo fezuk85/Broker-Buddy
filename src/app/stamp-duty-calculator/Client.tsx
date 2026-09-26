@@ -50,7 +50,7 @@ export default function StampDutyCalculatorClient() {
               />
             </Field>
             <Field label="Purchase price">
-              <NumberInput value={price} onChange={setPrice} />
+              <NumberInput prefix="£" value={price} onChange={setPrice} />
             </Field>
             <Field label="Who is buying?">
               <SelectInput
@@ -112,10 +112,10 @@ export default function StampDutyCalculatorClient() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-[var(--bb-muted)]">
-                  <th className="font-medium py-1 pr-3">Band</th>
-                  <th className="font-medium py-1 pr-3">Rate</th>
-                  <th className="font-medium py-1 pr-3">Taxable</th>
-                  <th className="font-medium py-1 text-right">Tax</th>
+                  <th scope="col" className="font-medium py-1 pr-3">Band</th>
+                  <th scope="col" className="font-medium py-1 pr-3">Rate</th>
+                  <th scope="col" className="font-medium py-1 pr-3">Taxable</th>
+                  <th scope="col" className="font-medium py-1 text-right">Tax</th>
                 </tr>
               </thead>
               <tbody>

@@ -35,7 +35,7 @@ export default function AgeTermCalculatorClient() {
               <DateInput value={dob} onChange={setDob} />
             </Field>
             <Field label="Requested term (years)">
-              <NumberInput value={termYears} onChange={setTermYears} min={1} step={1} />
+              <NumberInput suffix="years" value={termYears} onChange={setTermYears} min={1} step={1} />
             </Field>
           </div>
         </Section>

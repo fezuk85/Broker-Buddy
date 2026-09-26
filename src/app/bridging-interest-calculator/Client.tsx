@@ -93,13 +93,13 @@ export default function BridgingCalculatorClient() {
           <Section title="Your details">
             <div className="grid grid-cols-1 gap-3">
               <Field label="Net loan required">
-                <NumberInput value={netLoan} onChange={setNetLoan} />
+                <NumberInput prefix="£" value={netLoan} onChange={setNetLoan} />
               </Field>
               <Field label="Monthly interest rate (%)">
-                <NumberInput value={monthlyRate} onChange={setMonthlyRate} step={0.01} />
+                <NumberInput suffix="%" value={monthlyRate} onChange={setMonthlyRate} step={0.01} />
               </Field>
               <Field label="Term (months)">
-                <NumberInput value={termMonths} onChange={setTermMonths} min={1} step={1} />
+                <NumberInput suffix="months" value={termMonths} onChange={setTermMonths} min={1} step={1} />
               </Field>
               <Field label="Interest type">
                 <SelectInput
@@ -112,16 +112,16 @@ export default function BridgingCalculatorClient() {
                 />
               </Field>
               <Field label="Arrangement fee (%)">
-                <NumberInput value={arrangementFeePercent} onChange={setArrangementFeePercent} step={0.1} />
+                <NumberInput suffix="%" value={arrangementFeePercent} onChange={setArrangementFeePercent} step={0.1} />
               </Field>
               <Field label="Broker fee">
-                <NumberInput value={brokerFee} onChange={setBrokerFee} />
+                <NumberInput prefix="£" value={brokerFee} onChange={setBrokerFee} />
               </Field>
               <Field label="Valuation fee">
-                <NumberInput value={valuationFee} onChange={setValuationFee} />
+                <NumberInput prefix="£" value={valuationFee} onChange={setValuationFee} />
               </Field>
               <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
-                <NumberInput value={otherFees} onChange={setOtherFees} />
+                <NumberInput prefix="£" value={otherFees} onChange={setOtherFees} />
               </Field>
             </div>
           </Section>

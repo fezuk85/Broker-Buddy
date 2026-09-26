@@ -30,13 +30,13 @@ export default function RepaymentCalculatorClient() {
         <Section title="Your mortgage">
           <div className="grid grid-cols-1 gap-3">
             <Field label="Loan amount">
-              <NumberInput value={loanAmount} onChange={setLoanAmount} />
+              <NumberInput prefix="£" value={loanAmount} onChange={setLoanAmount} />
             </Field>
             <Field label="Interest rate (%)">
-              <NumberInput value={rate} onChange={setRate} step={0.01} />
+              <NumberInput suffix="%" value={rate} onChange={setRate} step={0.01} />
             </Field>
             <Field label="Term (years)">
-              <NumberInput value={termYears} onChange={setTermYears} min={1} step={1} />
+              <NumberInput suffix="years" value={termYears} onChange={setTermYears} min={1} step={1} />
             </Field>
             <Field label="Repayment type">
               <SelectInput

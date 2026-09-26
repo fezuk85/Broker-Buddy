@@ -26,10 +26,10 @@ export default function LtiCalculatorClient() {
         <Section title="Your details">
           <div className="grid grid-cols-1 gap-3">
             <Field label="Loan amount required">
-              <NumberInput value={loanAmount} onChange={setLoanAmount} />
+              <NumberInput prefix="£" value={loanAmount} onChange={setLoanAmount} />
             </Field>
             <Field label="Total gross household income">
-              <NumberInput value={income} onChange={setIncome} />
+              <NumberInput prefix="£" value={income} onChange={setIncome} />
             </Field>
           </div>
         </Section>

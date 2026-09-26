@@ -14,7 +14,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
       <Section title="Property">
         <div className="grid grid-cols-2 gap-3">
           <Field label="Property value">
-            <NumberInput value={property.value} onChange={(v) => updateCase((p) => ({ ...p, property: { ...p.property, value: v } }))} />
+            <NumberInput prefix="£" value={property.value} onChange={(v) => updateCase((p) => ({ ...p, property: { ...p.property, value: v } }))} />
           </Field>
           <Field label="Postcode (optional)">
             <TextInput value={property.postcode} onChange={(v) => updateCase((p) => ({ ...p, property: { ...p.property, postcode: v } }))} />
@@ -26,10 +26,10 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
             />
           </Field>
           <Field label="Current mortgage balance">
-            <NumberInput value={mortgage.currentBalance} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, currentBalance: v } }))} />
+            <NumberInput prefix="£" value={mortgage.currentBalance} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, currentBalance: v } }))} />
           </Field>
           <Field label="Additional borrowing required">
-            <NumberInput value={mortgage.additionalBorrowing} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, additionalBorrowing: v } }))} />
+            <NumberInput prefix="£" value={mortgage.additionalBorrowing} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, additionalBorrowing: v } }))} />
           </Field>
         </div>
       </Section>
@@ -40,7 +40,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
             <DateInput value={applicants.applicant1.dob} onChange={(v) => updateCase((p) => ({ ...p, applicants: { ...p.applicants, applicant1: { ...p.applicants.applicant1, dob: v } } }))} />
           </Field>
           <Field label="Applicant 1 gross annual income">
-            <NumberInput value={applicants.applicant1.grossIncome} onChange={(v) => updateCase((p) => ({ ...p, applicants: { ...p.applicants, applicant1: { ...p.applicants.applicant1, grossIncome: v } } }))} />
+            <NumberInput prefix="£" value={applicants.applicant1.grossIncome} onChange={(v) => updateCase((p) => ({ ...p, applicants: { ...p.applicants, applicant1: { ...p.applicants.applicant1, grossIncome: v } } }))} />
           </Field>
         </div>
         {applicants.applicant2 ? (
@@ -49,7 +49,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
               <DateInput value={applicants.applicant2.dob} onChange={(v) => updateCase((p) => ({ ...p, applicants: { ...p.applicants, applicant2: { ...(p.applicants.applicant2 as ApplicantInput), dob: v } } }))} />
             </Field>
             <Field label="Applicant 2 gross annual income">
-              <NumberInput value={applicants.applicant2.grossIncome} onChange={(v) => updateCase((p) => ({ ...p, applicants: { ...p.applicants, applicant2: { ...(p.applicants.applicant2 as ApplicantInput), grossIncome: v } } }))} />
+              <NumberInput prefix="£" value={applicants.applicant2.grossIncome} onChange={(v) => updateCase((p) => ({ ...p, applicants: { ...p.applicants, applicant2: { ...(p.applicants.applicant2 as ApplicantInput), grossIncome: v } } }))} />
             </Field>
             <button
               type="button"
@@ -80,7 +80,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
             <NumberInput value={household.dependentChildren} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, dependentChildren: v } }))} min={0} step={1} />
           </Field>
           <Field label="Monthly credit commitments">
-            <NumberInput value={household.monthlyCreditCommitments} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, monthlyCreditCommitments: v } }))} />
+            <NumberInput prefix="£" value={household.monthlyCreditCommitments} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, monthlyCreditCommitments: v } }))} />
           </Field>
           <Field label="Council tax (£/month, optional — auto-estimated from postcode if left blank)">
             <NumberInput value={household.monthlyCouncilTax} onChange={(v) => updateCase((p) => ({ ...p, household: { ...p.household, monthlyCouncilTax: v } }))} />
@@ -91,7 +91,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
       <Section title="Mortgage">
         <div className="grid grid-cols-2 gap-3">
           <Field label="Proposed interest rate (%)">
-            <NumberInput value={mortgage.interestRatePercent} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, interestRatePercent: v } }))} step={0.01} />
+            <NumberInput suffix="%" value={mortgage.interestRatePercent} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, interestRatePercent: v } }))} step={0.01} />
           </Field>
           <Field label="Repayment type">
             <SelectInput
@@ -104,7 +104,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
             />
           </Field>
           <Field label="Requested term (years)">
-            <NumberInput value={mortgage.termYears} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, termYears: v } }))} min={1} step={1} />
+            <NumberInput suffix="years" value={mortgage.termYears} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, termYears: v } }))} min={1} step={1} />
           </Field>
           <Field label="Lender max age assumption">
             <SelectInput
@@ -119,19 +119,19 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
       <Section title="Fees (optional)">
         <div className="grid grid-cols-2 gap-3">
           <Field label="Lender/product fee">
-            <NumberInput value={mortgage.productFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, productFee: v } }))} />
+            <NumberInput prefix="£" value={mortgage.productFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, productFee: v } }))} />
           </Field>
           <Field label="Valuation fee">
-            <NumberInput value={mortgage.valuationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, valuationFee: v } }))} />
+            <NumberInput prefix="£" value={mortgage.valuationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, valuationFee: v } }))} />
           </Field>
           <Field label="Application fee">
-            <NumberInput value={mortgage.applicationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, applicationFee: v } }))} />
+            <NumberInput prefix="£" value={mortgage.applicationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, applicationFee: v } }))} />
           </Field>
           <Field label="Broker fee">
-            <NumberInput value={mortgage.brokerFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, brokerFee: v } }))} />
+            <NumberInput prefix="£" value={mortgage.brokerFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, brokerFee: v } }))} />
           </Field>
           <Field label="Other fees" hint="e.g. booking fee, telegraphic transfer fee">
-            <NumberInput value={mortgage.otherFees} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, otherFees: v } }))} />
+            <NumberInput prefix="£" value={mortgage.otherFees} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, otherFees: v } }))} />
           </Field>
         </div>
         <CheckboxInput
@@ -147,7 +147,7 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
             <NumberInput value={rental.monthlyRent} onChange={(v) => updateCase((p) => ({ ...p, rental: { ...p.rental, monthlyRent: v } }))} />
           </Field>
           <Field label="Stress rate (%)">
-            <NumberInput value={rental.stressRatePercent} onChange={(v) => updateCase((p) => ({ ...p, rental: { ...p.rental, stressRatePercent: v } }))} step={0.01} />
+            <NumberInput suffix="%" value={rental.stressRatePercent} onChange={(v) => updateCase((p) => ({ ...p, rental: { ...p.rental, stressRatePercent: v } }))} step={0.01} />
           </Field>
         </div>
       </Section>

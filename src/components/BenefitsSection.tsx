@@ -39,7 +39,7 @@ export function BenefitsSection({ primaryIncome }: { primaryIncome: number }) {
             <NumberInput value={numberOfChildren} onChange={setNumberOfChildren} min={0} step={1} />
           </Field>
           <Field label="Partner's annual income (optional)" hint="Leave as 0 if not applicable">
-            <NumberInput value={partnerIncome} onChange={setPartnerIncome} />
+            <NumberInput prefix="£" value={partnerIncome} onChange={setPartnerIncome} />
           </Field>
         </div>
         <p className="mt-2 text-xs text-[var(--bb-muted)]">

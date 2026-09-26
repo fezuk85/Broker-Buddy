@@ -42,19 +42,19 @@ export default function OverpaymentCalculatorClient() {
         <Section title="Your mortgage">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Outstanding balance">
-              <NumberInput value={balance} onChange={setBalance} />
+              <NumberInput prefix="£" value={balance} onChange={setBalance} />
             </Field>
             <Field label="Interest rate (%)">
-              <NumberInput value={rate} onChange={setRate} step={0.05} />
+              <NumberInput suffix="%" value={rate} onChange={setRate} step={0.05} />
             </Field>
             <Field label="Remaining term (years)">
-              <NumberInput value={termYears} onChange={setTermYears} step={1} />
+              <NumberInput suffix="years" value={termYears} onChange={setTermYears} step={1} />
             </Field>
             <Field label="Monthly overpayment">
-              <NumberInput value={monthlyOverpayment} onChange={setMonthlyOverpayment} />
+              <NumberInput prefix="£" value={monthlyOverpayment} onChange={setMonthlyOverpayment} />
             </Field>
             <Field label="One-off lump sum now">
-              <NumberInput value={lumpSum} onChange={setLumpSum} />
+              <NumberInput prefix="£" value={lumpSum} onChange={setLumpSum} />
             </Field>
           </div>
         </Section>

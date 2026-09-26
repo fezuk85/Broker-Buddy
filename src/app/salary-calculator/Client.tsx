@@ -24,7 +24,7 @@ export default function SalaryCalculatorClient() {
       inputs={
         <Section title="Your salary">
           <Field label="Gross annual salary">
-            <NumberInput value={grossSalary} onChange={setGrossSalary} />
+            <NumberInput prefix="£" value={grossSalary} onChange={setGrossSalary} />
           </Field>
         </Section>
       }

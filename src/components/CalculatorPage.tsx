@@ -82,7 +82,7 @@ export function CalculatorPage({
       <nav aria-label="Breadcrumb" className="mb-3 text-xs text-[var(--bb-muted)]">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-1.5">/</span>
-        <span>{info?.title ?? h1}</span>
+        <span aria-current="page">{info?.title ?? h1}</span>
       </nav>
       <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">{h1}</h1>
       <p className="mt-2 max-w-2xl text-[var(--bb-muted)]">{intro}</p>
