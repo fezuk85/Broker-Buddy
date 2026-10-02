@@ -2,7 +2,8 @@
 
 import { CaseState, ApplicantInput } from "@/lib/case/types";
 import { Section } from "@/components/Section";
-import { Field, NumberInput, TextInput, DateInput, SelectInput, CheckboxInput } from "@/components/Field";
+import { Field, NumberInput, TextInput, DateInput, SelectInput } from "@/components/Field";
+import { FeeField } from "@/components/FeeField";
 
 type Updater = (patch: Partial<CaseState> | ((prev: CaseState) => CaseState)) => void;
 
@@ -117,28 +118,48 @@ export function CaseInputs({ caseState, updateCase }: { caseState: CaseState; up
       </Section>
 
       <Section title="Fees (optional)">
+        <p className="mb-3 text-xs text-[var(--bb-muted)]">
+          For each fee, choose whether it is paid upfront or added to the loan. Fees added to the loan
+          increase the loan amount, the monthly payment and the LTV.
+        </p>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Lender/product fee">
-            <NumberInput prefix="£" value={mortgage.productFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, productFee: v } }))} />
-          </Field>
-          <Field label="Valuation fee">
-            <NumberInput prefix="£" value={mortgage.valuationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, valuationFee: v } }))} />
-          </Field>
-          <Field label="Application fee">
-            <NumberInput prefix="£" value={mortgage.applicationFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, applicationFee: v } }))} />
-          </Field>
-          <Field label="Broker fee">
-            <NumberInput prefix="£" value={mortgage.brokerFee} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, brokerFee: v } }))} />
-          </Field>
-          <Field label="Other fees" hint="e.g. booking fee, telegraphic transfer fee">
-            <NumberInput prefix="£" value={mortgage.otherFees} onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, otherFees: v } }))} />
-          </Field>
+          <FeeField
+            label="Lender/product fee"
+            amount={mortgage.productFee}
+            onAmountChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, productFee: v } }))}
+            addedToLoan={mortgage.addProductFeeToLoan}
+            onAddedToLoanChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addProductFeeToLoan: v } }))}
+          />
+          <FeeField
+            label="Valuation fee"
+            amount={mortgage.valuationFee}
+            onAmountChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, valuationFee: v } }))}
+            addedToLoan={mortgage.addValuationFeeToLoan}
+            onAddedToLoanChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addValuationFeeToLoan: v } }))}
+          />
+          <FeeField
+            label="Application fee"
+            amount={mortgage.applicationFee}
+            onAmountChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, applicationFee: v } }))}
+            addedToLoan={mortgage.addApplicationFeeToLoan}
+            onAddedToLoanChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addApplicationFeeToLoan: v } }))}
+          />
+          <FeeField
+            label="Broker fee"
+            amount={mortgage.brokerFee}
+            onAmountChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, brokerFee: v } }))}
+            addedToLoan={mortgage.addBrokerFeeToLoan}
+            onAddedToLoanChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addBrokerFeeToLoan: v } }))}
+          />
+          <FeeField
+            label="Other fees"
+            hint="e.g. booking fee, telegraphic transfer fee"
+            amount={mortgage.otherFees}
+            onAmountChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, otherFees: v } }))}
+            addedToLoan={mortgage.addOtherFeesToLoan}
+            onAddedToLoanChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addOtherFeesToLoan: v } }))}
+          />
         </div>
-        <CheckboxInput
-          checked={mortgage.addProductFeeToLoan}
-          onChange={(v) => updateCase((p) => ({ ...p, mortgage: { ...p.mortgage, addProductFeeToLoan: v } }))}
-          label="Add lender/product fee to the loan (increases the loan amount and monthly payment)"
-        />
       </Section>
 
       <Section title="Rental (for BTL)">

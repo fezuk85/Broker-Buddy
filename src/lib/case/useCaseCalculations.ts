@@ -60,30 +60,38 @@ export function useCaseCalculations(caseState: CaseState) {
         productFee: mortgage.productFee,
         addProductFeeToLoan: mortgage.addProductFeeToLoan,
         valuationFee: mortgage.valuationFee,
+        addValuationFeeToLoan: mortgage.addValuationFeeToLoan,
         applicationFee: mortgage.applicationFee,
+        addApplicationFeeToLoan: mortgage.addApplicationFeeToLoan,
         brokerFee: mortgage.brokerFee,
+        addBrokerFeeToLoan: mortgage.addBrokerFeeToLoan,
         otherFees: mortgage.otherFees,
+        addOtherFeesToLoan: mortgage.addOtherFeesToLoan,
       }),
     [
       mortgage.productFee,
       mortgage.addProductFeeToLoan,
       mortgage.valuationFee,
+      mortgage.addValuationFeeToLoan,
       mortgage.applicationFee,
+      mortgage.addApplicationFeeToLoan,
       mortgage.brokerFee,
+      mortgage.addBrokerFeeToLoan,
       mortgage.otherFees,
+      mortgage.addOtherFeesToLoan,
     ]
   );
 
   /**
    * The loan amount actually charged interest on and repaid — equal to the requested borrowing
-   * unless a product fee is added to the loan, in which case the fee is capitalised into it. Every
+   * unless any fees are added to the loan, in which case they are capitalised into it. Every
    * payment/rate calculation below uses this (not ltv.totalProposedBorrowing) so "monthly payment"
    * always reflects what will really be repaid; when addedToLoan is 0 (the default) this is
    * identical to ltv.totalProposedBorrowing, so cases without fees are unaffected.
    */
   const loanAmountIncludingFees = ltv.totalProposedBorrowing + fees.addedToLoan;
 
-  /** Same LTV maths as `ltv`, but reflecting a product fee added to the loan, for display alongside it. */
+  /** Same LTV maths as `ltv`, but reflecting any fees added to the loan, for display alongside it. */
   const ltvIncludingFees = useMemo(
     () =>
       fees.addedToLoan > 0

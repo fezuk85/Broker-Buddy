@@ -9,6 +9,8 @@
  * the combined LTV builds up charge by charge.
  */
 
+import { summariseFees, type FeeLine } from "./fees";
+
 export interface ExistingCharge {
   label: string; // e.g. "1st charge (existing mortgage)", "2nd charge"
   balance: number;
@@ -79,6 +81,11 @@ export interface SecuredLoanCostInputs {
   brokerFee: number;
   valuationFee: number;
   otherFees: number;
+  /** Each is optional and defaults to false (paid upfront), so existing callers are unaffected. */
+  lenderFeeAddedToLoan?: boolean;
+  brokerFeeAddedToLoan?: boolean;
+  valuationFeeAddedToLoan?: boolean;
+  otherFeesAddedToLoan?: boolean;
 }
 
 export interface SecuredLoanCostResult {
@@ -86,47 +93,64 @@ export interface SecuredLoanCostResult {
   totalInterest: number;
   totalFees: number;
   totalCostOfBorrowing: number;
+  /** The fees broken down line by line, each marked as added to the loan or paid upfront. */
+  feeLines: FeeLine[];
+  feesAddedToLoan: number;
+  feesPayableUpfront: number;
+  /** The loan requested plus any fees added to it: the balance the payment and interest are worked out on. */
+  totalLoanIncludingFees: number;
 }
 
 /**
  * Total cost of a second/third charge loan: monthly payment (repayment or interest-only, same
- * amortisation maths as a first-charge mortgage) plus typical secured-loan fees. This is a
- * total-cost illustration, not a mandatory APRC calculation — quote the lender's own APRC for
- * regulatory disclosure.
+ * amortisation maths as a first-charge mortgage) plus typical secured-loan fees. Any fee marked as
+ * added to the loan is capitalised into the loan, so it raises the payment and the interest; fees
+ * not added are paid upfront. This is a total-cost illustration, not a mandatory APRC calculation —
+ * quote the lender's own APRC for regulatory disclosure.
  */
 export function calculateSecuredLoanCost(inputs: SecuredLoanCostInputs): SecuredLoanCostResult | null {
-  const { loanAmount, monthlyInterestRatePercent, termMonths, repaymentType, lenderFee, brokerFee, valuationFee, otherFees } = inputs;
+  const { loanAmount, monthlyInterestRatePercent, termMonths, repaymentType } = inputs;
   if (!Number.isFinite(loanAmount) || loanAmount < 0) return null;
   if (!Number.isFinite(termMonths) || termMonths <= 0) return null;
   if (!Number.isFinite(monthlyInterestRatePercent) || monthlyInterestRatePercent < 0) return null;
 
-  const totalFees = Math.max(0, lenderFee || 0) + Math.max(0, brokerFee || 0) + Math.max(0, valuationFee || 0) + Math.max(0, otherFees || 0);
+  const fees = summariseFees([
+    { label: "Lender fee", amount: inputs.lenderFee, addedToLoan: inputs.lenderFeeAddedToLoan ?? false },
+    { label: "Broker fee", amount: inputs.brokerFee, addedToLoan: inputs.brokerFeeAddedToLoan ?? false },
+    { label: "Valuation fee", amount: inputs.valuationFee, addedToLoan: inputs.valuationFeeAddedToLoan ?? false },
+    { label: "Other fees", amount: inputs.otherFees, addedToLoan: inputs.otherFeesAddedToLoan ?? false },
+  ]);
+  const totalLoanIncludingFees = loanAmount + fees.addedToLoan;
 
   let monthlyPayment: number;
   let totalInterest: number;
 
   if (repaymentType === "interest-only") {
-    monthlyPayment = loanAmount * (monthlyInterestRatePercent / 100);
+    monthlyPayment = totalLoanIncludingFees * (monthlyInterestRatePercent / 100);
     totalInterest = monthlyPayment * termMonths;
   } else {
     const monthlyRate = monthlyInterestRatePercent / 100;
-    if (loanAmount === 0) {
+    if (totalLoanIncludingFees === 0) {
       monthlyPayment = 0;
       totalInterest = 0;
     } else if (monthlyRate === 0) {
-      monthlyPayment = loanAmount / termMonths;
+      monthlyPayment = totalLoanIncludingFees / termMonths;
       totalInterest = 0;
     } else {
       const factor = Math.pow(1 + monthlyRate, termMonths);
-      monthlyPayment = (loanAmount * monthlyRate * factor) / (factor - 1);
-      totalInterest = monthlyPayment * termMonths - loanAmount;
+      monthlyPayment = (totalLoanIncludingFees * monthlyRate * factor) / (factor - 1);
+      totalInterest = monthlyPayment * termMonths - totalLoanIncludingFees;
     }
   }
 
   return {
     monthlyPayment,
     totalInterest,
-    totalFees,
-    totalCostOfBorrowing: totalInterest + totalFees,
+    totalFees: fees.totalFees,
+    totalCostOfBorrowing: totalInterest + fees.totalFees,
+    feeLines: fees.lines,
+    feesAddedToLoan: fees.addedToLoan,
+    feesPayableUpfront: fees.payableUpfront,
+    totalLoanIncludingFees,
   };
 }

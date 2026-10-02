@@ -6,6 +6,8 @@
  * interest is paid monthly and does not inflate the loan itself.
  */
 
+import { summariseFees, type FeeLine } from "./fees";
+
 export type BridgingInterestType = "retained" | "serviced";
 
 export interface BridgingInputs {
@@ -18,6 +20,15 @@ export interface BridgingInputs {
   /** Optional — defaults to 0 so existing callers that don't pass it are unaffected. */
   valuationFee?: number;
   otherFees: number;
+  /**
+   * Whether each fee is added to the loan (borrowed, so it is part of the gross loan and bears
+   * interest) or paid upfront by the borrower. Each is optional; when left out it follows the
+   * traditional behaviour: added to the loan with retained interest, paid upfront with serviced.
+   */
+  arrangementFeeAddedToLoan?: boolean;
+  brokerFeeAddedToLoan?: boolean;
+  valuationFeeAddedToLoan?: boolean;
+  otherFeesAddedToLoan?: boolean;
 }
 
 export interface BridgingResult {
@@ -25,8 +36,13 @@ export interface BridgingResult {
   totalInterest: number;
   arrangementFee: number;
   totalFees: number;
+  /** Retained: the gross loan. Serviced: the gross loan plus the fees paid upfront. */
   totalRepayment: number;
   effectiveCost: number;
+  /** The fees broken down line by line (the arrangement fee as an amount), each marked added or upfront. */
+  feeLines: FeeLine[];
+  feesAddedToLoan: number;
+  feesPayableUpfront: number;
 }
 
 export function calculateBridgingLoan(inputs: BridgingInputs): BridgingResult | null {
@@ -54,39 +70,46 @@ export function calculateBridgingLoan(inputs: BridgingInputs): BridgingResult | 
     return null;
   }
 
+  const defaultAdded = interestType === "retained";
+  const arrangementAdded = inputs.arrangementFeeAddedToLoan ?? defaultAdded;
+  const brokerAdded = inputs.brokerFeeAddedToLoan ?? defaultAdded;
+  const valuationAdded = inputs.valuationFeeAddedToLoan ?? defaultAdded;
+  const otherAdded = inputs.otherFeesAddedToLoan ?? defaultAdded;
+
   const monthlyRate = monthlyInterestRatePercent / 100;
-  const flatFees = Math.max(0, brokerFee || 0) + Math.max(0, valuationFee || 0) + Math.max(0, otherFees || 0);
+  const broker = Math.max(0, brokerFee || 0);
+  const valuation = Math.max(0, valuationFee || 0);
+  const other = Math.max(0, otherFees || 0);
+  const flatFees = broker + valuation + other;
+  const flatFeesAdded = (brokerAdded ? broker : 0) + (valuationAdded ? valuation : 0) + (otherAdded ? other : 0);
 
-  if (interestType === "serviced") {
-    const grossLoan = netLoanRequired;
-    const totalInterest = grossLoan * monthlyRate * termMonths;
-    const arrangementFee = grossLoan * (arrangementFeePercent / 100);
-    const totalFees = arrangementFee + flatFees;
-    return {
-      grossLoan,
-      totalInterest,
-      arrangementFee,
-      totalFees,
-      totalRepayment: grossLoan + totalFees,
-      effectiveCost: totalInterest + totalFees,
-    };
-  }
-
-  // Retained: gross = (net + flatFees) / (1 - monthlyRate*term - arrangementFeePercent/100)
-  const denominator = 1 - monthlyRate * termMonths - arrangementFeePercent / 100;
+  // gross = (net + flat fees added to the loan) / (1 - retained interest share - arrangement fee share if added)
+  // Retained interest is deducted from the gross loan; serviced interest is paid monthly and is not.
+  const denominator =
+    1 - (interestType === "retained" ? monthlyRate * termMonths : 0) - (arrangementAdded ? arrangementFeePercent / 100 : 0);
   if (denominator <= 0) return null; // rate/fees/term combination is not fundable
 
-  const grossLoan = (netLoanRequired + flatFees) / denominator;
+  const grossLoan = (netLoanRequired + flatFeesAdded) / denominator;
   const totalInterest = grossLoan * monthlyRate * termMonths;
   const arrangementFee = grossLoan * (arrangementFeePercent / 100);
   const totalFees = arrangementFee + flatFees;
+
+  const fees = summariseFees([
+    { label: "Arrangement fee", amount: arrangementFee, addedToLoan: arrangementAdded },
+    { label: "Broker fee", amount: broker, addedToLoan: brokerAdded },
+    { label: "Valuation fee", amount: valuation, addedToLoan: valuationAdded },
+    { label: "Other fees", amount: other, addedToLoan: otherAdded },
+  ]);
 
   return {
     grossLoan,
     totalInterest,
     arrangementFee,
     totalFees,
-    totalRepayment: grossLoan,
+    totalRepayment: interestType === "retained" ? grossLoan : grossLoan + fees.payableUpfront,
     effectiveCost: totalInterest + totalFees,
+    feeLines: fees.lines,
+    feesAddedToLoan: fees.addedToLoan,
+    feesPayableUpfront: fees.payableUpfront,
   };
 }

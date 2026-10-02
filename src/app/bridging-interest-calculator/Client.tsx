@@ -5,6 +5,7 @@ import { calculateBridgingLoan, BridgingInterestType } from "@/lib/calc";
 import { formatGbp } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
+import { FeeField } from "@/components/FeeField";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { BridgingGuide } from "@/content/guides/bridging";
@@ -23,6 +24,17 @@ export default function BridgingCalculatorClient() {
   const [brokerFee, setBrokerFee] = useState(1_000);
   const [valuationFee, setValuationFee] = useState(350);
   const [otherFees, setOtherFees] = useState(500);
+  // Which fees are added to the loan. null means "follow the interest type" (retained: added, serviced: paid upfront),
+  // so the results match the traditional behaviour until the user chooses.
+  const [arrangementFeeAdded, setArrangementFeeAdded] = useState<boolean | null>(null);
+  const [brokerFeeAdded, setBrokerFeeAdded] = useState<boolean | null>(null);
+  const [valuationFeeAdded, setValuationFeeAdded] = useState<boolean | null>(null);
+  const [otherFeesAdded, setOtherFeesAdded] = useState<boolean | null>(null);
+  const feeDefaultAdded = interestType === "retained";
+  const arrangementFeeAddedToLoan = arrangementFeeAdded ?? feeDefaultAdded;
+  const brokerFeeAddedToLoan = brokerFeeAdded ?? feeDefaultAdded;
+  const valuationFeeAddedToLoan = valuationFeeAdded ?? feeDefaultAdded;
+  const otherFeesAddedToLoan = otherFeesAdded ?? feeDefaultAdded;
 
   const result = useMemo(
     () =>
@@ -35,8 +47,25 @@ export default function BridgingCalculatorClient() {
         brokerFee,
         valuationFee,
         otherFees,
+        arrangementFeeAddedToLoan,
+        brokerFeeAddedToLoan,
+        valuationFeeAddedToLoan,
+        otherFeesAddedToLoan,
       }),
-    [netLoan, monthlyRate, termMonths, interestType, arrangementFeePercent, brokerFee, valuationFee, otherFees]
+    [
+      netLoan,
+      monthlyRate,
+      termMonths,
+      interestType,
+      arrangementFeePercent,
+      brokerFee,
+      valuationFee,
+      otherFees,
+      arrangementFeeAddedToLoan,
+      brokerFeeAddedToLoan,
+      valuationFeeAddedToLoan,
+      otherFeesAddedToLoan,
+    ]
   );
 
   async function handleDownloadPdf() {
@@ -54,6 +83,10 @@ export default function BridgingCalculatorClient() {
         brokerFee,
         valuationFee,
         otherFees,
+        arrangementFeeAddedToLoan,
+        brokerFeeAddedToLoan,
+        valuationFeeAddedToLoan,
+        otherFeesAddedToLoan,
         result,
       });
     } finally {
@@ -111,18 +144,17 @@ export default function BridgingCalculatorClient() {
                   ]}
                 />
               </Field>
-              <Field label="Arrangement fee (%)">
-                <NumberInput suffix="%" value={arrangementFeePercent} onChange={setArrangementFeePercent} step={0.1} />
-              </Field>
-              <Field label="Broker fee">
-                <NumberInput prefix="£" value={brokerFee} onChange={setBrokerFee} />
-              </Field>
-              <Field label="Valuation fee">
-                <NumberInput prefix="£" value={valuationFee} onChange={setValuationFee} />
-              </Field>
-              <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
-                <NumberInput prefix="£" value={otherFees} onChange={setOtherFees} />
-              </Field>
+              <FeeField label="Arrangement fee (%)" suffix="%" step={0.1} amount={arrangementFeePercent} onAmountChange={setArrangementFeePercent} addedToLoan={arrangementFeeAddedToLoan} onAddedToLoanChange={setArrangementFeeAdded} />
+              <FeeField label="Broker fee" amount={brokerFee} onAmountChange={setBrokerFee} addedToLoan={brokerFeeAddedToLoan} onAddedToLoanChange={setBrokerFeeAdded} />
+              <FeeField label="Valuation fee" amount={valuationFee} onAmountChange={setValuationFee} addedToLoan={valuationFeeAddedToLoan} onAddedToLoanChange={setValuationFeeAdded} />
+              <FeeField
+                label="Other fees"
+                hint="e.g. application/booking fee, telegraphic transfer fee, exit fee"
+                amount={otherFees}
+                onAmountChange={setOtherFees}
+                addedToLoan={otherFeesAddedToLoan}
+                onAddedToLoanChange={setOtherFeesAdded}
+              />
             </div>
           </Section>
         </>
@@ -134,6 +166,8 @@ export default function BridgingCalculatorClient() {
               <StatTile label="Gross loan" value={formatGbp(result.grossLoan)} accent="primary" />
               <StatTile label="Total interest" value={formatGbp(result.totalInterest)} />
               <StatTile label="Total fees" value={formatGbp(result.totalFees)} />
+              <StatTile label="Fees paid upfront" value={formatGbp(result.feesPayableUpfront)} />
+              <StatTile label="Fees added to the loan" value={formatGbp(result.feesAddedToLoan)} />
               <StatTile label="Total repayment" value={formatGbp(result.totalRepayment)} />
               <StatTile label="Effective cost" value={formatGbp(result.effectiveCost)} />
             </div>

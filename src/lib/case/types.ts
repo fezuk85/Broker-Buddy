@@ -28,13 +28,17 @@ export interface CaseState {
     repaymentType: "repayment" | "interest-only";
     termYears: number;
     lenderMaxAge: number;
-    /** Lender's product/arrangement fee — the only fee here that can be added to the loan. */
+    /** Every fee can be paid upfront (default) or added to the loan. */
     productFee: number;
     addProductFeeToLoan: boolean;
     valuationFee: number;
+    addValuationFeeToLoan: boolean;
     applicationFee: number;
+    addApplicationFeeToLoan: boolean;
     brokerFee: number;
+    addBrokerFeeToLoan: boolean;
     otherFees: number;
+    addOtherFeesToLoan: boolean;
   };
   rental: {
     monthlyRent: number;
@@ -69,9 +73,13 @@ export const DEFAULT_CASE: CaseState = {
     productFee: 0,
     addProductFeeToLoan: false,
     valuationFee: 0,
+    addValuationFeeToLoan: false,
     applicationFee: 0,
+    addApplicationFeeToLoan: false,
     brokerFee: 0,
+    addBrokerFeeToLoan: false,
     otherFees: 0,
+    addOtherFeesToLoan: false,
   },
   rental: {
     monthlyRent: 0,

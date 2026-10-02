@@ -69,14 +69,17 @@ export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc): jsPDF 
 
   if (calc.fees.totalFees > 0) {
     c.gap(2);
+    c.table(
+      ["Fee", "Amount", "How it is paid"],
+      calc.fees.lines.map((l) => [l.label, formatGbp(l.amount), l.addedToLoan ? "Added to the loan" : "Paid upfront"]),
+      [0.45, 0.25, 0.3]
+    );
     c.row("Total fees", formatGbp(calc.fees.totalFees));
     c.row("Payable upfront", formatGbp(calc.fees.payableUpfront));
-    if (calc.fees.addedToLoan > 0) {
-      c.row("Lender/product fee added to loan", formatGbp(calc.fees.addedToLoan));
-      if (calc.ltvIncludingFees) {
-        c.row("Loan amount including added fee", formatGbp(calc.ltvIncludingFees.totalProposedBorrowing));
-        c.row("Proposed LTV including added fee", formatPercent(calc.ltvIncludingFees.proposedLtvPercent));
-      }
+    c.row("Added to the loan", formatGbp(calc.fees.addedToLoan));
+    if (calc.fees.addedToLoan > 0 && calc.ltvIncludingFees) {
+      c.row("Loan amount including added fees", formatGbp(calc.ltvIncludingFees.totalProposedBorrowing));
+      c.row("Proposed LTV including added fees", formatPercent(calc.ltvIncludingFees.proposedLtvPercent));
     }
   }
 

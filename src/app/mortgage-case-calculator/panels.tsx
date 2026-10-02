@@ -46,7 +46,7 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
         </div>
         {calc.ltvIncludingFees && (
           <p className="mt-3 text-xs text-[var(--bb-muted)]">
-            Including the lender/product fee added to the loan: proposed LTV{" "}
+            Including the fees added to the loan: proposed LTV{" "}
             {formatPercent(calc.ltvIncludingFees.proposedLtvPercent)}, borrowing{" "}
             {formatGbp(calc.ltvIncludingFees.totalProposedBorrowing)}.
           </p>
@@ -58,8 +58,26 @@ export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: Case
           <div className="grid grid-cols-2 gap-3 min-w-0">
             <StatTile label="Total fees" value={formatGbp(calc.fees.totalFees)} accent="primary" />
             <StatTile label="Payable upfront" value={formatGbp(calc.fees.payableUpfront)} />
-            {calc.fees.addedToLoan > 0 && <StatTile label="Added to loan" value={formatGbp(calc.fees.addedToLoan)} />}
+            <StatTile label="Added to loan" value={formatGbp(calc.fees.addedToLoan)} />
           </div>
+          <table className="mt-3 w-full text-sm">
+            <thead>
+              <tr className="text-left text-[var(--bb-muted)]">
+                <th scope="col" className="font-medium py-1 pr-3">Fee</th>
+                <th scope="col" className="font-medium py-1 pr-3">Amount</th>
+                <th scope="col" className="font-medium py-1">How it is paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              {calc.fees.lines.map((l) => (
+                <tr key={l.label} className="border-t border-[var(--bb-border)]">
+                  <td className="py-1.5 pr-3">{l.label}</td>
+                  <td className="py-1.5 pr-3">{formatGbp(l.amount)}</td>
+                  <td className="py-1.5">{l.addedToLoan ? "Added to the loan" : "Paid upfront"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Section>
       )}
 

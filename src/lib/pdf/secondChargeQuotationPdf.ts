@@ -28,6 +28,10 @@ export interface SecondChargeQuotationInputs {
   brokerFee: number;
   valuationFee: number;
   otherFees: number;
+  lenderFeeAddedToLoan: boolean;
+  brokerFeeAddedToLoan: boolean;
+  valuationFeeAddedToLoan: boolean;
+  otherFeesAddedToLoan: boolean;
   combined: CombinedChargeResult;
   cost: SecuredLoanCostResult | null;
   isRental: boolean;
@@ -74,6 +78,10 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   // --- Combined LTV ---
   c.sectionHeading("Combined Loan-to-Value");
   c.row("New charge requested", formatGbp(inputs.newChargeAmount));
+  if (inputs.cost && inputs.cost.feesAddedToLoan > 0) {
+    c.row("Fees added to the loan", formatGbp(inputs.cost.feesAddedToLoan));
+    c.row("New charge including added fees", formatGbp(inputs.cost.totalLoanIncludingFees));
+  }
   c.row("Current combined LTV", formatPercent(inputs.combined.currentCombinedLtvPercent));
   c.row("Proposed combined LTV", formatPercent(inputs.combined.proposedCombinedLtvPercent));
   c.row("Equity now", formatGbp(inputs.combined.equity));
@@ -81,7 +89,10 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
 
   // --- New charge details ---
   c.sectionHeading("New Charge Details");
-  c.row("Loan amount", formatGbp(inputs.newChargeAmount));
+  c.row("Loan amount requested", formatGbp(inputs.newChargeAmount));
+  if (inputs.cost && inputs.cost.feesAddedToLoan > 0) {
+    c.row("Loan amount including fees added to the loan", formatGbp(inputs.cost.totalLoanIncludingFees));
+  }
   c.row("Annual interest rate", formatPercent(inputs.annualRatePercent, 2));
   c.row("Term", `${inputs.termMonths} months`);
   c.row("Repayment type", inputs.repaymentType === "repayment" ? "Repayment (capital & interest)" : "Interest-only");
@@ -90,11 +101,16 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
     c.row("Total interest over term", formatGbp(inputs.cost.totalInterest));
   }
   c.gap(2);
-  c.row("Lender fee", formatGbp(inputs.lenderFee));
-  c.row("Broker fee", formatGbp(inputs.brokerFee));
-  c.row("Valuation fee", formatGbp(inputs.valuationFee));
-  if (inputs.otherFees > 0) c.row("Other fees", formatGbp(inputs.otherFees));
+  if (inputs.cost && inputs.cost.feeLines.length > 0) {
+    c.table(
+      ["Fee", "Amount", "How it is paid"],
+      inputs.cost.feeLines.map((l) => [l.label, formatGbp(l.amount), l.addedToLoan ? "Added to the loan" : "Paid upfront"]),
+      [0.45, 0.25, 0.3]
+    );
+  }
   if (inputs.cost) {
+    c.row("Fees paid upfront", formatGbp(inputs.cost.feesPayableUpfront));
+    c.row("Fees added to the loan", formatGbp(inputs.cost.feesAddedToLoan));
     c.row("Total fees", formatGbp(inputs.cost.totalFees));
     c.row("Total cost of borrowing", formatGbp(inputs.cost.totalCostOfBorrowing));
   }

@@ -16,7 +16,7 @@ function buildCalc(overrides: Partial<Calc> = {}): Calc {
       equity: 150_000,
       equityAfterProposedBorrowing: 150_000,
     },
-    fees: { totalFees: 0, payableUpfront: 0, addedToLoan: 0 },
+    fees: { lines: [], totalFees: 0, payableUpfront: 0, addedToLoan: 0 },
     loanAmountIncludingFees: 150_000,
     ltvIncludingFees: null,
     maxLoanBands: [{ ltvPercent: 75, maxLoan: 225_000, additionalBorrowingAvailable: 75_000 }],
@@ -75,7 +75,15 @@ describe("generateCaseSummaryPdf", () => {
       rentalYield: { annualRent: 14_400, grossYieldPercent: 4.8 },
       maxLoanFromRent: 150_000,
       applicant2Age: { years: 33, months: 2, totalMonths: 398 },
-      fees: { totalFees: 1_500, payableUpfront: 501, addedToLoan: 999 },
+      fees: {
+        lines: [
+          { label: "Lender/product fee", amount: 999, addedToLoan: true },
+          { label: "Valuation fee", amount: 501, addedToLoan: false },
+        ],
+        totalFees: 1_500,
+        payableUpfront: 501,
+        addedToLoan: 999,
+      },
       loanAmountIncludingFees: 150_999,
       ltvIncludingFees: {
         currentLtvPercent: 50,
@@ -100,5 +108,31 @@ describe("generateCaseSummaryPdf", () => {
     expect(doc.getNumberOfPages()).toBeGreaterThanOrEqual(1);
     const output = doc.output();
     expect(output.slice(0, 5)).toBe("%PDF-");
+  });
+
+  it("shows each fee and whether it is added to the loan or paid upfront", () => {
+    const calc = buildCalc({
+      fees: {
+        lines: [
+          { label: "Lender/product fee", amount: 999, addedToLoan: true },
+          { label: "Valuation fee", amount: 501, addedToLoan: false },
+        ],
+        totalFees: 1_500,
+        payableUpfront: 501,
+        addedToLoan: 999,
+      },
+      loanAmountIncludingFees: 150_999,
+      ltvIncludingFees: {
+        currentLtvPercent: 50,
+        totalProposedBorrowing: 150_999,
+        proposedLtvPercent: 50.33,
+        equity: 150_000,
+        equityAfterProposedBorrowing: 149_001,
+      },
+    });
+    const output = generateCaseSummaryPdf(DEFAULT_CASE, calc).output();
+    expect(output).toContain("Lender/product fee");
+    expect(output).toContain("Added to the loan");
+    expect(output).toContain("Paid upfront");
   });
 });

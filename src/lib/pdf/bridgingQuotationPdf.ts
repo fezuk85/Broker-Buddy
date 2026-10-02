@@ -20,6 +20,10 @@ export interface BridgingQuotationInputs {
   brokerFee: number;
   valuationFee: number;
   otherFees: number;
+  arrangementFeeAddedToLoan: boolean;
+  brokerFeeAddedToLoan: boolean;
+  valuationFeeAddedToLoan: boolean;
+  otherFeesAddedToLoan: boolean;
   result: BridgingResult | null;
 }
 
@@ -46,10 +50,16 @@ export function generateBridgingQuotationPdf(inputs: BridgingQuotationInputs): j
   c.row("Interest type", inputs.interestType === "retained" ? "Retained (deducted from advance)" : "Serviced (paid monthly)");
 
   c.sectionHeading("Fees");
-  c.row("Arrangement fee", formatPercent(inputs.arrangementFeePercent, 2));
-  c.row("Broker fee", formatGbp(inputs.brokerFee));
-  c.row("Valuation fee", formatGbp(inputs.valuationFee));
-  if (inputs.otherFees > 0) c.row("Other fees", formatGbp(inputs.otherFees));
+  c.row("Arrangement fee rate", formatPercent(inputs.arrangementFeePercent, 2));
+  if (inputs.result && inputs.result.feeLines.length > 0) {
+    c.table(
+      ["Fee", "Amount", "How it is paid"],
+      inputs.result.feeLines.map((l) => [l.label, formatGbp(l.amount), l.addedToLoan ? "Added to the loan" : "Paid upfront"]),
+      [0.45, 0.25, 0.3]
+    );
+    c.row("Fees paid upfront", formatGbp(inputs.result.feesPayableUpfront));
+    c.row("Fees added to the loan", formatGbp(inputs.result.feesAddedToLoan));
+  }
 
   if (inputs.result) {
     c.sectionHeading("Cost");

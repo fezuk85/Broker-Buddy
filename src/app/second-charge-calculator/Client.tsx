@@ -13,6 +13,7 @@ import {
 import { formatGbp, formatPercent } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
+import { FeeField } from "@/components/FeeField";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { SecondChargeGuide } from "@/content/guides/secondCharge";
@@ -43,6 +44,10 @@ export default function SecondChargeCalculatorClient() {
   const [brokerFee, setBrokerFee] = useState(500);
   const [valuationFee, setValuationFee] = useState(250);
   const [otherFees, setOtherFees] = useState(0);
+  const [lenderFeeAddedToLoan, setLenderFeeAddedToLoan] = useState(false);
+  const [brokerFeeAddedToLoan, setBrokerFeeAddedToLoan] = useState(false);
+  const [valuationFeeAddedToLoan, setValuationFeeAddedToLoan] = useState(false);
+  const [otherFeesAddedToLoan, setOtherFeesAddedToLoan] = useState(false);
 
   const [isRental, setIsRental] = useState(false);
   const [firstChargePayment, setFirstChargePayment] = useState(900);
@@ -54,8 +59,6 @@ export default function SecondChargeCalculatorClient() {
     setTaxStatus(status);
     setRequiredIcrPercent(STANDARD_ICR_PERCENT_BY_TAX_STATUS[status]);
   }
-
-  const combined = useMemo(() => calculateCombinedCharges(propertyValue, charges, newChargeAmount), [propertyValue, charges, newChargeAmount]);
 
   // The calculation engine works in monthly rate terms (matching the bridging calculator's
   // convention); the second-charge market quotes rates annually, so convert at the boundary.
@@ -72,8 +75,32 @@ export default function SecondChargeCalculatorClient() {
         brokerFee,
         valuationFee,
         otherFees,
+        lenderFeeAddedToLoan,
+        brokerFeeAddedToLoan,
+        valuationFeeAddedToLoan,
+        otherFeesAddedToLoan,
       }),
-    [newChargeAmount, monthlyRateForCalc, termMonths, repaymentType, lenderFee, brokerFee, valuationFee, otherFees]
+    [
+      newChargeAmount,
+      monthlyRateForCalc,
+      termMonths,
+      repaymentType,
+      lenderFee,
+      brokerFee,
+      valuationFee,
+      otherFees,
+      lenderFeeAddedToLoan,
+      brokerFeeAddedToLoan,
+      valuationFeeAddedToLoan,
+      otherFeesAddedToLoan,
+    ]
+  );
+
+  // Fees added to the loan are secured on the property too, so the combined LTV uses the loan including them.
+  const newChargeIncludingFees = cost?.totalLoanIncludingFees ?? newChargeAmount;
+  const combined = useMemo(
+    () => calculateCombinedCharges(propertyValue, charges, newChargeIncludingFees),
+    [propertyValue, charges, newChargeIncludingFees]
   );
 
   const combinedDscr = useMemo(
@@ -115,6 +142,10 @@ export default function SecondChargeCalculatorClient() {
         brokerFee,
         valuationFee,
         otherFees,
+        lenderFeeAddedToLoan,
+        brokerFeeAddedToLoan,
+        valuationFeeAddedToLoan,
+        otherFeesAddedToLoan,
         combined,
         cost,
         isRental,
@@ -208,18 +239,17 @@ export default function SecondChargeCalculatorClient() {
                   ]}
                 />
               </Field>
-              <Field label="Lender fee">
-                <NumberInput prefix="£" value={lenderFee} onChange={setLenderFee} />
-              </Field>
-              <Field label="Broker fee">
-                <NumberInput prefix="£" value={brokerFee} onChange={setBrokerFee} />
-              </Field>
-              <Field label="Valuation fee">
-                <NumberInput prefix="£" value={valuationFee} onChange={setValuationFee} />
-              </Field>
-              <Field label="Other fees" hint="e.g. application/booking fee, telegraphic transfer fee, exit fee">
-                <NumberInput prefix="£" value={otherFees} onChange={setOtherFees} />
-              </Field>
+              <FeeField label="Lender fee" amount={lenderFee} onAmountChange={setLenderFee} addedToLoan={lenderFeeAddedToLoan} onAddedToLoanChange={setLenderFeeAddedToLoan} />
+              <FeeField label="Broker fee" amount={brokerFee} onAmountChange={setBrokerFee} addedToLoan={brokerFeeAddedToLoan} onAddedToLoanChange={setBrokerFeeAddedToLoan} />
+              <FeeField label="Valuation fee" amount={valuationFee} onAmountChange={setValuationFee} addedToLoan={valuationFeeAddedToLoan} onAddedToLoanChange={setValuationFeeAddedToLoan} />
+              <FeeField
+                label="Other fees"
+                hint="e.g. application/booking fee, telegraphic transfer fee, exit fee"
+                amount={otherFees}
+                onAmountChange={setOtherFees}
+                addedToLoan={otherFeesAddedToLoan}
+                onAddedToLoanChange={setOtherFeesAddedToLoan}
+              />
             </div>
           </Section>
 
@@ -276,8 +306,8 @@ export default function SecondChargeCalculatorClient() {
                     </tr>
                   ))}
                   <tr className="border-t border-[var(--bb-border)] font-medium">
-                    <td className="py-1.5 pr-4">+ New charge</td>
-                    <td className="py-1.5 pr-4">{formatGbp(newChargeAmount)}</td>
+                    <td className="py-1.5 pr-4">{newChargeIncludingFees > newChargeAmount ? "+ New charge (including fees added to the loan)" : "+ New charge"}</td>
+                    <td className="py-1.5 pr-4">{formatGbp(newChargeIncludingFees)}</td>
                     <td className="py-1.5 pr-4">{formatGbp(combined.totalProposedBalance)}</td>
                     <td className="py-1.5">{formatPercent(combined.proposedCombinedLtvPercent)}</td>
                   </tr>
@@ -293,6 +323,11 @@ export default function SecondChargeCalculatorClient() {
                 <StatTile label="Total interest" value={formatGbp(cost.totalInterest)} />
                 <StatTile label="Total fees" value={formatGbp(cost.totalFees)} />
                 <StatTile label="Total cost of borrowing" value={formatGbp(cost.totalCostOfBorrowing)} />
+                <StatTile label="Fees paid upfront" value={formatGbp(cost.feesPayableUpfront)} />
+                <StatTile label="Fees added to the loan" value={formatGbp(cost.feesAddedToLoan)} />
+                {cost.feesAddedToLoan > 0 && (
+                  <StatTile label="Loan including added fees" value={formatGbp(cost.totalLoanIncludingFees)} subValue="Payment, interest and LTV use this amount" />
+                )}
               </div>
             ) : (
               <p className="text-sm text-[var(--bb-muted)]">Enter a valid loan amount, rate and term.</p>

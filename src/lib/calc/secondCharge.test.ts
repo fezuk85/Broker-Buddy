@@ -132,3 +132,53 @@ describe("calculateSecuredLoanCost", () => {
     ).toBeNull();
   });
 });
+
+describe("calculateSecuredLoanCost fees added to the loan", () => {
+  const base = {
+    loanAmount: 40_000,
+    monthlyInterestRatePercent: 0.6,
+    termMonths: 24,
+    repaymentType: "interest-only" as const,
+    lenderFee: 500,
+    brokerFee: 800,
+    valuationFee: 200,
+    otherFees: 0,
+  };
+
+  it("keeps every fee upfront by default", () => {
+    const r = calculateSecuredLoanCost(base);
+    expect(r?.feesAddedToLoan).toBe(0);
+    expect(r?.feesPayableUpfront).toBe(1_500);
+    expect(r?.totalLoanIncludingFees).toBe(40_000);
+    expect(r?.monthlyPayment).toBeCloseTo(240, 5);
+  });
+
+  it("capitalises fees marked as added, raising the payment and interest", () => {
+    const r = calculateSecuredLoanCost({ ...base, lenderFeeAddedToLoan: true, brokerFeeAddedToLoan: true });
+    expect(r?.feesAddedToLoan).toBe(1_300); // lender 500 + broker 800
+    expect(r?.feesPayableUpfront).toBe(200); // valuation stays upfront
+    expect(r?.totalLoanIncludingFees).toBe(41_300);
+    expect(r?.monthlyPayment).toBeCloseTo(41_300 * 0.006, 5); // 247.80
+    expect(r?.totalInterest).toBeCloseTo(41_300 * 0.006 * 24, 5);
+    expect(r?.totalFees).toBe(1_500);
+    expect(r?.totalCostOfBorrowing).toBeCloseTo(41_300 * 0.006 * 24 + 1_500, 5);
+    expect(r?.feeLines).toEqual([
+      { label: "Lender fee", amount: 500, addedToLoan: true },
+      { label: "Broker fee", amount: 800, addedToLoan: true },
+      { label: "Valuation fee", amount: 200, addedToLoan: false },
+    ]);
+  });
+
+  it("amortises the loan including added fees for repayment loans", () => {
+    const withFees = calculateSecuredLoanCost({ ...base, repaymentType: "repayment", valuationFeeAddedToLoan: true });
+    const direct = calculateSecuredLoanCost({
+      ...base,
+      repaymentType: "repayment",
+      loanAmount: 40_200,
+      lenderFee: 0,
+      brokerFee: 0,
+      valuationFee: 0,
+    });
+    expect(withFees?.monthlyPayment).toBeCloseTo(direct!.monthlyPayment, 8);
+  });
+});
