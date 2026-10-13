@@ -66,7 +66,7 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   c.gap(1);
   if (inputs.combined.existingCharges.length > 0) {
     c.table(
-      ["Charge", "Balance", "Cumulative LTV"],
+      ["Charge", "Balance", "LTV"],
       inputs.combined.existingCharges.map((row) => [row.label, formatGbp(row.balance), formatPercent(row.cumulativeLtvPercent)]),
       [0.4, 0.3, 0.3]
     );
@@ -96,7 +96,6 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   c.row("Early repayment charges", inputs.earlyRepaymentCharges?.trim() || "Not specified");
   if (inputs.cost) {
     c.row("Monthly payment", formatGbp(inputs.cost.monthlyPayment));
-    c.row("Total interest over term", formatGbp(inputs.cost.totalInterest));
   }
   c.gap(2);
   if (inputs.cost && inputs.cost.feeLines.length > 0) {

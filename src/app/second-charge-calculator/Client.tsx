@@ -341,7 +341,7 @@ export default function SecondChargeCalculatorClient() {
                   <tr className="text-left text-[var(--bb-muted)]">
                     <th className="font-medium py-1 pr-4">Charge</th>
                     <th className="font-medium py-1 pr-4">Balance</th>
-                    <th className="font-medium py-1">Cumulative LTV</th>
+                    <th className="font-medium py-1">LTV</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -366,7 +366,6 @@ export default function SecondChargeCalculatorClient() {
             {cost ? (
               <div className="grid grid-cols-2 gap-3">
                 <StatTile label="Monthly payment" value={formatGbp(cost.monthlyPayment)} accent="primary" />
-                <StatTile label="Total interest" value={formatGbp(cost.totalInterest)} />
                 <StatTile label="Total fees" value={formatGbp(cost.totalFees)} />
                 <StatTile label="Fees paid upfront" value={formatGbp(cost.feesPayableUpfront)} />
                 <StatTile label="Fees added to the loan" value={formatGbp(cost.feesAddedToLoan)} />
