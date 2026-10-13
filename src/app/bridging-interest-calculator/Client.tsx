@@ -8,10 +8,13 @@ import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/compone
 import { FeeField } from "@/components/FeeField";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { LogoUpload } from "@/components/LogoUpload";
+import { useBranding } from "@/lib/branding/BrandingProvider";
 import { BridgingGuide } from "@/content/guides/bridging";
 import { FileDown } from "lucide-react";
 
 export default function BridgingCalculatorClient() {
+  const { logoDataUrl } = useBranding();
   const [clientReference, setClientReference] = useState("");
   const [quotationDate, setQuotationDate] = useState("");
   const [generatingPdf, setGeneratingPdf] = useState(false);
@@ -75,6 +78,7 @@ export default function BridgingCalculatorClient() {
       downloadBridgingQuotationPdf({
         clientReference,
         quotationDate,
+        logoDataUrl,
         netLoan,
         monthlyRate,
         termMonths,
@@ -110,6 +114,9 @@ export default function BridgingCalculatorClient() {
               <Field label="Quotation date" hint="Defaults to today if left blank">
                 <DateInput value={quotationDate} onChange={setQuotationDate} />
               </Field>
+            </div>
+            <div className="mt-3">
+              <LogoUpload />
             </div>
             <button
               type="button"
