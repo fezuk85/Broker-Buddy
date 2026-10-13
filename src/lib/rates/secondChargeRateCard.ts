@@ -38,6 +38,21 @@ export const PRODUCT_OPTIONS: { value: SecondChargeProduct; label: string }[] = 
   { value: "boe-tracker", label: "BoE Lifetime Tracker (variable)" },
 ];
 
+/**
+ * Early repayment charge schedule per product, read straight off the same rate card — identical
+ * across all five credit profiles (only the rates themselves vary by profile). These reducing,
+ * term-matched structures (3%/2% on a 2yr fix, 5%/4%/3%/2%/2% on a 5yr fix, etc.) are a standard
+ * shape across second-charge lenders generally, not unique to this one, so they double as a
+ * reasonable default for any product/lender until the actual offer is confirmed.
+ */
+export const PRODUCT_ERC: Record<SecondChargeProduct, string> = {
+  "boe-tracker": "3% in year 1, 2% in year 2",
+  "2yr-fix": "3% in year 1, 2% in year 2",
+  "3yr-fix": "3% in year 1, 2% in year 2, 2% in year 3",
+  "5yr-fix": "5% in year 1, 4% in year 2, 3% in year 3, 2% in year 4, 2% in year 5",
+  "5yr-fix-no-erc": "None",
+};
+
 /** One rate card row: a credit profile's pricing across every LTV band for every product. `null`
  * means that band/product isn't offered for this profile (e.g. no lender goes to 90% on this card).
  * Tracker rates are a margin over the Bank of England base rate, not a standalone figure. */
