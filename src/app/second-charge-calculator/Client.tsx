@@ -340,7 +340,6 @@ export default function SecondChargeCalculatorClient() {
                 <StatTile label="Monthly payment" value={formatGbp(cost.monthlyPayment)} accent="primary" />
                 <StatTile label="Total interest" value={formatGbp(cost.totalInterest)} />
                 <StatTile label="Total fees" value={formatGbp(cost.totalFees)} />
-                <StatTile label="Total cost of borrowing" value={formatGbp(cost.totalCostOfBorrowing)} />
                 <StatTile label="Fees paid upfront" value={formatGbp(cost.feesPayableUpfront)} />
                 <StatTile label="Fees added to the loan" value={formatGbp(cost.feesAddedToLoan)} />
                 {cost.feesAddedToLoan > 0 && (

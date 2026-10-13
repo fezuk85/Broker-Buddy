@@ -110,11 +110,7 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
     c.row("Fees paid upfront", formatGbp(inputs.cost.feesPayableUpfront));
     c.row("Fees added to the loan", formatGbp(inputs.cost.feesAddedToLoan));
     c.row("Total fees", formatGbp(inputs.cost.totalFees));
-    c.row("Total cost of borrowing", formatGbp(inputs.cost.totalCostOfBorrowing));
   }
-  c.paragraph(
-    "Total cost of borrowing is a total-cost illustration (interest + fees over the term), not a mandatory APRC calculation — quote the lender's own APRC for regulatory disclosure."
-  );
 
   // --- Rental coverage ---
   if (inputs.isRental) {
