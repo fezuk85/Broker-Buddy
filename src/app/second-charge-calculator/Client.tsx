@@ -12,7 +12,7 @@ import {
 } from "@/lib/calc";
 import { formatGbp, formatPercent } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
-import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
+import { Field, NumberInput, SelectInput, TextInput, DateInput, CheckboxInput } from "@/components/Field";
 import { FeeField } from "@/components/FeeField";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
@@ -69,6 +69,7 @@ export default function SecondChargeCalculatorClient() {
   const [lenderFeeAddedToLoan, setLenderFeeAddedToLoan] = useState(false);
   const [brokerFeeAddedToLoan, setBrokerFeeAddedToLoan] = useState(false);
   const [valuationFeeAddedToLoan, setValuationFeeAddedToLoan] = useState(false);
+  const [valuationFeeRefundedOnCompletion, setValuationFeeRefundedOnCompletion] = useState(false);
   const [otherFeesAddedToLoan, setOtherFeesAddedToLoan] = useState(false);
   const [earlyRepaymentCharges, setEarlyRepaymentCharges] = useState<string>(ERC_DEFAULT);
 
@@ -170,6 +171,7 @@ export default function SecondChargeCalculatorClient() {
         brokerFeeAddedToLoan,
         valuationFeeAddedToLoan,
         otherFeesAddedToLoan,
+        valuationFeeRefundedOnCompletion,
         earlyRepaymentCharges,
         combined,
         cost,
@@ -276,7 +278,14 @@ export default function SecondChargeCalculatorClient() {
               </Field>
               <FeeField label="Lender fee" amount={lenderFee} onAmountChange={setLenderFee} addedToLoan={lenderFeeAddedToLoan} onAddedToLoanChange={setLenderFeeAddedToLoan} />
               <FeeField label="Broker fee" amount={brokerFee} onAmountChange={setBrokerFee} addedToLoan={brokerFeeAddedToLoan} onAddedToLoanChange={setBrokerFeeAddedToLoan} />
-              <FeeField label="Valuation fee" amount={valuationFee} onAmountChange={setValuationFee} addedToLoan={valuationFeeAddedToLoan} onAddedToLoanChange={setValuationFeeAddedToLoan} />
+              <div>
+                <FeeField label="Valuation fee" amount={valuationFee} onAmountChange={setValuationFee} addedToLoan={valuationFeeAddedToLoan} onAddedToLoanChange={setValuationFeeAddedToLoan} />
+                <CheckboxInput
+                  checked={valuationFeeRefundedOnCompletion}
+                  onChange={setValuationFeeRefundedOnCompletion}
+                  label="Refunded on completion"
+                />
+              </div>
               <FeeField
                 label="Other fees"
                 hint="e.g. application/booking fee, telegraphic transfer fee, exit fee"

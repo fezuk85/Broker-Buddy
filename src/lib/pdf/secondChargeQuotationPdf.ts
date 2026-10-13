@@ -33,6 +33,7 @@ export interface SecondChargeQuotationInputs {
   brokerFeeAddedToLoan: boolean;
   valuationFeeAddedToLoan: boolean;
   otherFeesAddedToLoan: boolean;
+  valuationFeeRefundedOnCompletion?: boolean;
   earlyRepaymentCharges?: string;
   combined: CombinedChargeResult;
   cost: SecuredLoanCostResult | null;
@@ -99,8 +100,12 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   if (inputs.cost && inputs.cost.feeLines.length > 0) {
     c.table(
       ["Fee", "Amount", "How it is paid"],
-      inputs.cost.feeLines.map((l) => [l.label, formatGbp(l.amount), l.addedToLoan ? "Added to the loan" : "Paid upfront"]),
-      [0.45, 0.25, 0.3]
+      inputs.cost.feeLines.map((l) => {
+        const refunded = inputs.valuationFeeRefundedOnCompletion && l.label === "Valuation fee";
+        const howPaid = l.addedToLoan ? "Added to the loan" : "Paid upfront";
+        return [l.label, formatGbp(l.amount), refunded ? `${howPaid} (refunded on completion)` : howPaid];
+      }),
+      [0.4, 0.2, 0.4]
     );
   }
   if (inputs.cost) {
