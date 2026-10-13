@@ -332,8 +332,6 @@ export default function SecondChargeCalculatorClient() {
             <div className="grid grid-cols-2 gap-3">
               <StatTile label="Current combined LTV" value={formatPercent(combined.currentCombinedLtvPercent)} />
               <StatTile label="Proposed combined LTV" value={formatPercent(combined.proposedCombinedLtvPercent)} accent="primary" />
-              <StatTile label="Equity now" value={formatGbp(combined.equity)} />
-              <StatTile label="Equity after new charge" value={formatGbp(combined.equityAfterNewCharge)} />
             </div>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">

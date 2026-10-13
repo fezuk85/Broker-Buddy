@@ -81,8 +81,6 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   }
   c.row("Current combined LTV", formatPercent(inputs.combined.currentCombinedLtvPercent));
   c.row("Proposed combined LTV", formatPercent(inputs.combined.proposedCombinedLtvPercent));
-  c.row("Equity now", formatGbp(inputs.combined.equity));
-  c.row("Equity after new charge", formatGbp(inputs.combined.equityAfterNewCharge));
 
   // --- New charge details ---
   c.sectionHeading("New Charge Details");
