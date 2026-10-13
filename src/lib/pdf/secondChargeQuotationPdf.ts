@@ -33,6 +33,7 @@ export interface SecondChargeQuotationInputs {
   brokerFeeAddedToLoan: boolean;
   valuationFeeAddedToLoan: boolean;
   otherFeesAddedToLoan: boolean;
+  earlyRepaymentCharges?: string;
   combined: CombinedChargeResult;
   cost: SecuredLoanCostResult | null;
   isRental: boolean;
@@ -65,14 +66,9 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   c.gap(1);
   if (inputs.combined.existingCharges.length > 0) {
     c.table(
-      ["Charge", "Balance", "Cumulative", "Cumulative LTV"],
-      inputs.combined.existingCharges.map((row) => [
-        row.label,
-        formatGbp(row.balance),
-        formatGbp(row.cumulativeBalance),
-        formatPercent(row.cumulativeLtvPercent),
-      ]),
-      [0.35, 0.25, 0.2, 0.2]
+      ["Charge", "Balance", "Cumulative LTV"],
+      inputs.combined.existingCharges.map((row) => [row.label, formatGbp(row.balance), formatPercent(row.cumulativeLtvPercent)]),
+      [0.4, 0.3, 0.3]
     );
   }
 
@@ -97,6 +93,7 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   c.row("Annual interest rate", formatPercent(inputs.annualRatePercent, 2));
   c.row("Term", `${inputs.termMonths} months`);
   c.row("Repayment type", inputs.repaymentType === "repayment" ? "Repayment (capital & interest)" : "Interest-only");
+  c.row("Early repayment charges", inputs.earlyRepaymentCharges?.trim() || "Not specified");
   if (inputs.cost) {
     c.row("Monthly payment", formatGbp(inputs.cost.monthlyPayment));
     c.row("Total interest over term", formatGbp(inputs.cost.totalInterest));
