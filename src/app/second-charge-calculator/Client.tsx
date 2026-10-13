@@ -52,6 +52,7 @@ export default function SecondChargeCalculatorClient() {
   const [brokerFeeAddedToLoan, setBrokerFeeAddedToLoan] = useState(false);
   const [valuationFeeAddedToLoan, setValuationFeeAddedToLoan] = useState(false);
   const [otherFeesAddedToLoan, setOtherFeesAddedToLoan] = useState(false);
+  const [earlyRepaymentCharges, setEarlyRepaymentCharges] = useState("");
 
   const [isRental, setIsRental] = useState(false);
   const [firstChargePayment, setFirstChargePayment] = useState(900);
@@ -151,6 +152,7 @@ export default function SecondChargeCalculatorClient() {
         brokerFeeAddedToLoan,
         valuationFeeAddedToLoan,
         otherFeesAddedToLoan,
+        earlyRepaymentCharges,
         combined,
         cost,
         isRental,
@@ -264,6 +266,11 @@ export default function SecondChargeCalculatorClient() {
                 addedToLoan={otherFeesAddedToLoan}
                 onAddedToLoanChange={setOtherFeesAddedToLoan}
               />
+              <div className="col-span-2">
+                <Field label="Early repayment charges" hint="e.g. &quot;5% yr1, 4% yr2, 3% yr3&quot; or &quot;None&quot; — leave blank if not yet known">
+                  <TextInput value={earlyRepaymentCharges} onChange={setEarlyRepaymentCharges} placeholder="Not specified" />
+                </Field>
+              </div>
             </div>
           </Section>
 
@@ -306,7 +313,6 @@ export default function SecondChargeCalculatorClient() {
                   <tr className="text-left text-[var(--bb-muted)]">
                     <th className="font-medium py-1 pr-4">Charge</th>
                     <th className="font-medium py-1 pr-4">Balance</th>
-                    <th className="font-medium py-1 pr-4">Cumulative</th>
                     <th className="font-medium py-1">Cumulative LTV</th>
                   </tr>
                 </thead>
@@ -315,14 +321,12 @@ export default function SecondChargeCalculatorClient() {
                     <tr key={row.label} className="border-t border-[var(--bb-border)]">
                       <td className="py-1.5 pr-4">{row.label}</td>
                       <td className="py-1.5 pr-4">{formatGbp(row.balance)}</td>
-                      <td className="py-1.5 pr-4">{formatGbp(row.cumulativeBalance)}</td>
                       <td className="py-1.5">{formatPercent(row.cumulativeLtvPercent)}</td>
                     </tr>
                   ))}
                   <tr className="border-t border-[var(--bb-border)] font-medium">
                     <td className="py-1.5 pr-4">{newChargeIncludingFees > newChargeAmount ? "+ New charge (including fees added to the loan)" : "+ New charge"}</td>
                     <td className="py-1.5 pr-4">{formatGbp(newChargeIncludingFees)}</td>
-                    <td className="py-1.5 pr-4">{formatGbp(combined.totalProposedBalance)}</td>
                     <td className="py-1.5">{formatPercent(combined.proposedCombinedLtvPercent)}</td>
                   </tr>
                 </tbody>

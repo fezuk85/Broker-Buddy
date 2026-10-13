@@ -34,6 +34,7 @@ describe("quotation PDFs show how each fee is paid", () => {
       brokerFeeAddedToLoan: false,
       valuationFeeAddedToLoan: false,
       otherFeesAddedToLoan: false,
+      earlyRepaymentCharges: "",
       combined: calculateCombinedCharges(400_000, charges, cost!.totalLoanIncludingFees),
       cost,
       isRental: false,
