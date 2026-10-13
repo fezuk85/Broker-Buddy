@@ -11,11 +11,27 @@ import { Coins, BarChart3, TrendingUp, CalendarDays, Home, PieChart } from "luci
 type Calc = ReturnType<typeof useCaseCalculations>;
 
 export function OverviewPanel({ calc }: { calc: Calc; caseState: CaseState }) {
+  // When fees are added to the loan, the loan actually drawn — and so the real LTV — is higher
+  // than the plain requested-borrowing figure. The headline numbers should reflect what the loan
+  // will really be, with the pre-fee figure as a secondary note, not the other way round.
+  const headlineLoan = calc.ltvIncludingFees ?? calc.ltv;
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 min-w-0">
-        <StatTile label="New loan" value={formatGbp(calc.ltv.totalProposedBorrowing)} accent="primary" icon={Coins} />
-        <StatTile label="Proposed LTV" value={formatPercent(calc.ltv.proposedLtvPercent)} accent="primary" icon={BarChart3} />
+        <StatTile
+          label="New loan"
+          value={formatGbp(headlineLoan.totalProposedBorrowing)}
+          subValue={calc.ltvIncludingFees ? `${formatGbp(calc.ltv.totalProposedBorrowing)} before fees added to loan` : undefined}
+          accent="primary"
+          icon={Coins}
+        />
+        <StatTile
+          label="Proposed LTV"
+          value={formatPercent(headlineLoan.proposedLtvPercent)}
+          subValue={calc.ltvIncludingFees ? `${formatPercent(calc.ltv.proposedLtvPercent)} before fees added to loan` : undefined}
+          accent="primary"
+          icon={BarChart3}
+        />
         <StatTile label="Loan-to-income" value={formatMultiple(calc.lti)} icon={TrendingUp} />
         <StatTile
           label="Monthly payment"
@@ -35,22 +51,28 @@ export function OverviewPanel({ calc }: { calc: Calc; caseState: CaseState }) {
 }
 
 export function MortgagePanel({ calc, caseState }: { calc: Calc; caseState: CaseState }) {
+  // Same reasoning as OverviewPanel: when fees are capitalised into the loan, the headline LTV
+  // and equity figures should reflect the loan as it will actually be drawn.
+  const headline = calc.ltvIncludingFees ?? calc.ltv;
   return (
     <div className="space-y-4">
       <Section title="Loan-to-value & equity">
         <div className="grid grid-cols-2 gap-3 min-w-0">
           <StatTile label="Current LTV" value={formatPercent(calc.ltv.currentLtvPercent)} />
-          <StatTile label="Proposed LTV" value={formatPercent(calc.ltv.proposedLtvPercent)} />
+          <StatTile
+            label="Proposed LTV"
+            value={formatPercent(headline.proposedLtvPercent)}
+            subValue={calc.ltvIncludingFees ? `${formatPercent(calc.ltv.proposedLtvPercent)} before fees added to loan` : undefined}
+          />
           <StatTile label="Equity now" value={formatGbp(calc.ltv.equity)} />
-          <StatTile label="Equity after borrowing" value={formatGbp(calc.ltv.equityAfterProposedBorrowing)} />
+          <StatTile
+            label="Equity after borrowing"
+            value={formatGbp(headline.equityAfterProposedBorrowing)}
+            subValue={
+              calc.ltvIncludingFees ? `${formatGbp(calc.ltv.equityAfterProposedBorrowing)} before fees added to loan` : undefined
+            }
+          />
         </div>
-        {calc.ltvIncludingFees && (
-          <p className="mt-3 text-xs text-[var(--bb-muted)]">
-            Including the fees added to the loan: proposed LTV{" "}
-            {formatPercent(calc.ltvIncludingFees.proposedLtvPercent)}, borrowing{" "}
-            {formatGbp(calc.ltvIncludingFees.totalProposedBorrowing)}.
-          </p>
-        )}
       </Section>
 
       {calc.fees.totalFees > 0 && (
