@@ -33,10 +33,10 @@ const TAX_STATUS_OPTIONS: { value: LandlordTaxStatus; label: string }[] = [
 
 /**
  * ERC structures to offer as quick picks — reducing, term-matched charges (e.g. 3%/2% on a 2yr
- * fix, 5%/4%/3%/2%/2% on a 5yr fix) read straight off UTB's second charge rate card (see
+ * fix, 5%/4%/3%/2%/2% on a 5yr fix) read straight off the example second charge rate card (see
  * secondChargeRateCard.ts). That shape is standard across second-charge lenders generally, not
- * unique to this one, so it's a reasonable default pick pending the actual lender's offer — and
- * selecting "Use this rate" in the rate finder above applies the matching one automatically.
+ * unique to any one of them, so it's a reasonable default pick pending the actual lender's offer —
+ * and selecting "Use this rate" in the rate finder above applies the matching one automatically.
  */
 const ERC_PRESETS = [
   { value: "Indicative — to be confirmed once a soft search / DIP has been run", label: "Indicative (default, pre-soft-search)" },

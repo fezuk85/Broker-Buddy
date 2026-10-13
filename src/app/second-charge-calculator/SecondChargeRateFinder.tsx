@@ -14,10 +14,11 @@ import {
 } from "@/lib/rates/secondChargeRateCard";
 
 /**
- * Lets a broker pick a lender's real credit profile + product and apply the matching rate for the
+ * Lets a broker pick a credit profile + product and apply the matching indicative rate for the
  * case's current combined LTV directly into the "Annual interest rate" field — rather than having
- * to look it up in the PDF rate card by hand. Sourced from one specific lender's published card
- * (see RATE_CARD_SOURCE), not a market average or live feed, so it's labelled accordingly.
+ * to look one up by hand. The figures are a real lender's published pricing at a point in time
+ * (see secondChargeRateCard.ts), shown generically as an example rather than attributed to that
+ * lender, so it's labelled as indicative rather than as a live or market-average rate.
  */
 export function SecondChargeRateFinder({
   combinedLtvPercent,
@@ -44,9 +45,9 @@ export function SecondChargeRateFinder({
     <div className="rounded-lg border border-[var(--bb-border)] p-3">
       <p className="text-sm font-medium text-[var(--bb-foreground)]">Find a rate by LTV</p>
       <p className="mt-1 text-xs text-[var(--bb-muted)]">
-        {RATE_CARD_SOURCE.lender} {RATE_CARD_SOURCE.product} rate card, effective {effectiveDateLabel}. One
-        lender&apos;s published pricing at a point in time — not a market average, and it will go stale as
-        they reprice.
+        {RATE_CARD_SOURCE.label}, illustrative as of {effectiveDateLabel}. Gives a sense of how pricing
+        typically varies by credit profile, product and LTV — not a live quote from a specific lender or a
+        market average, and it will go stale over time.
       </p>
 
       <div className="mt-3 grid grid-cols-2 gap-3">

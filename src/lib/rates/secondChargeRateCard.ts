@@ -1,21 +1,19 @@
 /**
- * United Trust Bank (UTB) Residential Second Charge Loans rate card, transcribed from the lender's
- * own product guide PDF the user supplied ("Core24044-Resi-Second-Charge-v1-25.09.26.pdf",
- * effective 25 September 2026). This is real, lender-published data — not invented or scraped —
- * but it's a snapshot of one lender's pricing at one point in time, so it's shown with that source
- * and date attached rather than presented as a live or universal rate, and will go stale as the
- * lender repriced; update this file (or re-upload a newer PDF) when that happens.
+ * An indicative second-charge rate structure, transcribed from a real lender's product guide PDF
+ * the user supplied, as a starting point rather than inventing generic figures or scraping the web
+ * for them. The specific lender isn't named on the site — these are shown to brokers as an example
+ * of how pricing typically varies by credit profile, product and LTV, not as that lender's current
+ * live pricing, so no particular institution is attributed. It's still real, not fabricated, data —
+ * just presented generically; update this file (or re-upload a newer PDF) if it needs refreshing.
  *
- * Each "Max LTV" column on the real card is a band ceiling (e.g. the "65%" column prices any loan
+ * Each "Max LTV" column on the source card is a band ceiling (e.g. the "65%" column prices any loan
  * up to and including 65% combined LTV) — findSecondChargeRate() picks the smallest band that
- * covers the actual combined LTV, matching how the lender's own card is read.
+ * covers the actual combined LTV, matching how the original card is read.
  */
 
 export const RATE_CARD_SOURCE = {
-  lender: "United Trust Bank (UTB)",
-  product: "Residential Second Charge Loans",
+  label: "Example indicative rate card",
   effectiveDate: "2026-09-25",
-  reference: "Core24044-Resi-Second-Charge-v1-25.09.26",
 };
 
 export type CreditProfile = "super-prime" | "prime-plus" | "prime" | "near-prime" | "specialist";
