@@ -22,9 +22,10 @@ function applicantAgeLabel(age: { years: number; months: number } | null): strin
   return `${age.years}y ${age.months}m`;
 }
 
-export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc): jsPDF {
+export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc, logoDataUrl?: string | null): jsPDF {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const c = new PdfCursor(doc);
+  if (logoDataUrl) c.logo(logoDataUrl);
 
   c.title("Lending Calculator — Mortgage Case Summary");
   const generatedOn = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -161,8 +162,8 @@ export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc): jsPDF 
 }
 
 /** Builds and triggers a browser download of the case summary PDF. Client-only (uses jsPDF's save()). */
-export function downloadCaseSummaryPdf(caseState: CaseState, calc: Calc): void {
-  const doc = generateCaseSummaryPdf(caseState, calc);
+export function downloadCaseSummaryPdf(caseState: CaseState, calc: Calc, logoDataUrl?: string | null): void {
+  const doc = generateCaseSummaryPdf(caseState, calc, logoDataUrl);
   const postcodePart = caseState.property.postcode ? `-${caseState.property.postcode.replace(/\s+/g, "")}` : "";
   const datePart = new Date().toISOString().slice(0, 10);
   doc.save(`Lending-Calculator-Case-Summary${postcodePart}-${datePart}.pdf`);

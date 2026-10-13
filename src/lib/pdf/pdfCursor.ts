@@ -41,6 +41,27 @@ export class PdfCursor {
     this.y += 7;
   }
 
+  /**
+   * Draws a broker's own uploaded logo (a data URL) top-right of the first page, scaled to fit
+   * within a fixed box while preserving aspect ratio. Never throws — a corrupt/unreadable data
+   * URL just means no logo rather than a failed PDF, since this comes from arbitrary user upload.
+   */
+  logo(dataUrl: string, options?: { maxWidth?: number; maxHeight?: number }) {
+    try {
+      const props = this.doc.getImageProperties(dataUrl);
+      const maxWidth = options?.maxWidth ?? 32;
+      const maxHeight = options?.maxHeight ?? 16;
+      const ratio = Math.min(maxWidth / props.width, maxHeight / props.height, 1);
+      const w = props.width * ratio;
+      const h = props.height * ratio;
+      const x = PAGE_WIDTH - MARGIN_X - w;
+      const y = MARGIN_TOP - 10;
+      this.doc.addImage(dataUrl, props.fileType, x, y, w, h);
+    } catch {
+      // Skip silently — see doc comment above.
+    }
+  }
+
   subtitle(text: string) {
     this.ensureSpace(6);
     this.doc.setFont("helvetica", "normal");

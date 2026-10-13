@@ -16,6 +16,8 @@ import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/compone
 import { FeeField } from "@/components/FeeField";
 import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
+import { LogoUpload } from "@/components/LogoUpload";
+import { useBranding } from "@/lib/branding/BrandingProvider";
 import { SecondChargeGuide } from "@/content/guides/secondCharge";
 import { FileDown } from "lucide-react";
 
@@ -28,6 +30,7 @@ const TAX_STATUS_OPTIONS: { value: LandlordTaxStatus; label: string }[] = [
 ];
 
 export default function SecondChargeCalculatorClient() {
+  const { logoDataUrl } = useBranding();
   const [clientReference, setClientReference] = useState("");
   const [quotationDate, setQuotationDate] = useState("");
   const [generatingPdf, setGeneratingPdf] = useState(false);
@@ -132,6 +135,7 @@ export default function SecondChargeCalculatorClient() {
       downloadSecondChargeQuotationPdf({
         clientReference,
         quotationDate,
+        logoDataUrl,
         propertyValue,
         charges,
         newChargeAmount,
@@ -176,6 +180,9 @@ export default function SecondChargeCalculatorClient() {
               <Field label="Quotation date" hint="Defaults to today if left blank">
                 <DateInput value={quotationDate} onChange={setQuotationDate} />
               </Field>
+            </div>
+            <div className="mt-3">
+              <LogoUpload />
             </div>
             <button
               type="button"

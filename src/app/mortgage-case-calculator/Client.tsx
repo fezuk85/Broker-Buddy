@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useCase } from "@/lib/case/CaseProvider";
 import { useCaseCalculations } from "@/lib/case/useCaseCalculations";
+import { useBranding } from "@/lib/branding/BrandingProvider";
 import { CaseInputs } from "./CaseInputs";
 import { OverviewPanel, MortgagePanel, PropertyPanel, AffordabilityPanel, RentalPanel } from "./panels";
 import { CaseCalculatorSidebar } from "@/components/CaseCalculatorSidebar";
+import { LogoUpload } from "@/components/LogoUpload";
 import { PieChart, Home, Building2, TrendingUp, Wallet, RotateCcw, FileDown } from "lucide-react";
 
 const TABS = [
@@ -21,6 +23,7 @@ type TabKey = (typeof TABS)[number]["key"];
 export default function MortgageCaseCalculatorClient() {
   const { caseState, updateCase, resetCase } = useCase();
   const calc = useCaseCalculations(caseState);
+  const { logoDataUrl } = useBranding();
   const [tab, setTab] = useState<TabKey>("overview");
   const [generatingPdf, setGeneratingPdf] = useState(false);
 
@@ -28,7 +31,7 @@ export default function MortgageCaseCalculatorClient() {
     setGeneratingPdf(true);
     try {
       const { downloadCaseSummaryPdf } = await import("@/lib/pdf/caseSummaryPdf");
-      downloadCaseSummaryPdf(caseState, calc);
+      downloadCaseSummaryPdf(caseState, calc, logoDataUrl);
     } finally {
       setGeneratingPdf(false);
     }
@@ -68,6 +71,10 @@ export default function MortgageCaseCalculatorClient() {
             Reset case
           </button>
         </div>
+      </div>
+
+      <div className="mt-3">
+        <LogoUpload />
       </div>
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_280px] gap-6">
