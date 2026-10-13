@@ -53,9 +53,8 @@ function formatQuotationDate(isoDate: string): string {
 export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationInputs): jsPDF {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const c = new PdfCursor(doc);
-  if (inputs.logoDataUrl) c.logo(inputs.logoDataUrl);
+  if (inputs.logoDataUrl) c.headerLogo(inputs.logoDataUrl);
 
-  c.title("Lending Calculator — Second & Third Charge Loan Quotation");
   const subtitleParts = [`Date: ${formatQuotationDate(inputs.quotationDate)}`];
   if (inputs.clientReference.trim()) subtitleParts.push(`Client: ${inputs.clientReference.trim()}`);
   c.subtitle(subtitleParts.join(" · "));

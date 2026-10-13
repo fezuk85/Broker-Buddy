@@ -32,33 +32,31 @@ export class PdfCursor {
     }
   }
 
-  title(text: string) {
-    this.ensureSpace(10);
-    this.doc.setFont("helvetica", "bold");
-    this.doc.setFontSize(18);
-    this.doc.setTextColor(...INK);
-    this.doc.text(text, MARGIN_X, this.y);
-    this.y += 7;
-  }
-
   /**
-   * Draws a broker's own uploaded logo (a data URL) top-right of the first page, scaled to fit
-   * within a fixed box while preserving aspect ratio. Never throws — a corrupt/unreadable data
-   * URL just means no logo rather than a failed PDF, since this comes from arbitrary user upload.
+   * Draws a broker's own uploaded logo (a data URL) as a full-width letterhead banner across the
+   * top of the first page — centered, scaled up to a generous max height while preserving aspect
+   * ratio (never wider than the content area), with a thin rule separating it from the document
+   * body. Moves the cursor below the banner, replacing the usual MARGIN_TOP start. Never throws —
+   * a corrupt/unreadable data URL just means no header rather than a failed PDF, since this comes
+   * from arbitrary user upload.
    */
-  logo(dataUrl: string, options?: { maxWidth?: number; maxHeight?: number }) {
+  headerLogo(dataUrl: string, options?: { maxHeight?: number }) {
     try {
       const props = this.doc.getImageProperties(dataUrl);
-      const maxWidth = options?.maxWidth ?? 32;
-      const maxHeight = options?.maxHeight ?? 16;
-      const ratio = Math.min(maxWidth / props.width, maxHeight / props.height, 1);
+      const maxHeight = options?.maxHeight ?? 26;
+      const ratio = Math.min(CONTENT_WIDTH / props.width, maxHeight / props.height, 1);
       const w = props.width * ratio;
       const h = props.height * ratio;
-      const x = PAGE_WIDTH - MARGIN_X - w;
-      const y = MARGIN_TOP - 10;
+      const x = (PAGE_WIDTH - w) / 2;
+      const y = 10;
       this.doc.addImage(dataUrl, props.fileType, x, y, w, h);
+      this.y = y + h + 6;
+      this.doc.setDrawColor(...MUTED);
+      this.doc.setLineWidth(0.2);
+      this.doc.line(MARGIN_X, this.y, PAGE_WIDTH - MARGIN_X, this.y);
+      this.y += 6;
     } catch {
-      // Skip silently — see doc comment above.
+      // Skip silently — see doc comment above. Cursor stays at its default MARGIN_TOP start.
     }
   }
 
