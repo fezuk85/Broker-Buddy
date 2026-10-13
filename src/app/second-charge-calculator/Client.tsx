@@ -18,6 +18,7 @@ import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { LogoUpload } from "@/components/LogoUpload";
 import { useBranding } from "@/lib/branding/BrandingProvider";
+import { SecondChargeRateFinder } from "./SecondChargeRateFinder";
 import { SecondChargeGuide } from "@/content/guides/secondCharge";
 import { FileDown } from "lucide-react";
 
@@ -226,6 +227,12 @@ export default function SecondChargeCalculatorClient() {
           </Section>
 
           <Section title="New charge requested" className="mt-4">
+            <div className="mb-4">
+              <SecondChargeRateFinder
+                combinedLtvPercent={combined.proposedCombinedLtvPercent ?? 0}
+                onApplyRate={setAnnualRatePercent}
+              />
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="New loan amount">
                 <NumberInput prefix="£" value={newChargeAmount} onChange={setNewChargeAmount} />
