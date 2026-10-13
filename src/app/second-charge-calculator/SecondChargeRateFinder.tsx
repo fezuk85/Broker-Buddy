@@ -5,6 +5,7 @@ import { Field, SelectInput } from "@/components/Field";
 import {
   CREDIT_PROFILE_OPTIONS,
   PRODUCT_OPTIONS,
+  PRODUCT_ERC,
   RATE_CARD_SOURCE,
   CreditProfile,
   SecondChargeProduct,
@@ -21,9 +22,11 @@ import {
 export function SecondChargeRateFinder({
   combinedLtvPercent,
   onApplyRate,
+  onApplyErc,
 }: {
   combinedLtvPercent: number;
   onApplyRate: (ratePercent: number) => void;
+  onApplyErc?: (erc: string) => void;
 }) {
   const [creditProfile, setCreditProfile] = useState<CreditProfile>("prime");
   const [product, setProduct] = useState<SecondChargeProduct>("2yr-fix");
@@ -69,7 +72,10 @@ export function SecondChargeRateFinder({
               </p>
               <button
                 type="button"
-                onClick={() => onApplyRate(match.ratePercent!)}
+                onClick={() => {
+                  onApplyRate(match.ratePercent!);
+                  onApplyErc?.(PRODUCT_ERC[product]);
+                }}
                 className="bb-tap-target shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-white"
                 style={{ background: "var(--bb-primary)" }}
               >

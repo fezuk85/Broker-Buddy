@@ -18,6 +18,7 @@ import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { LogoUpload } from "@/components/LogoUpload";
 import { useBranding } from "@/lib/branding/BrandingProvider";
+import { PRODUCT_ERC } from "@/lib/rates/secondChargeRateCard";
 import { SecondChargeRateFinder } from "./SecondChargeRateFinder";
 import { SecondChargeGuide } from "@/content/guides/secondCharge";
 import { FileDown } from "lucide-react";
@@ -29,6 +30,23 @@ const TAX_STATUS_OPTIONS: { value: LandlordTaxStatus; label: string }[] = [
   { value: "higher-additional-rate", label: "Higher / additional rate taxpayer" },
   { value: "limited-company", label: "Limited company" },
 ];
+
+/**
+ * ERC structures to offer as quick picks — reducing, term-matched charges (e.g. 3%/2% on a 2yr
+ * fix, 5%/4%/3%/2%/2% on a 5yr fix) read straight off UTB's second charge rate card (see
+ * secondChargeRateCard.ts). That shape is standard across second-charge lenders generally, not
+ * unique to this one, so it's a reasonable default pick pending the actual lender's offer — and
+ * selecting "Use this rate" in the rate finder above applies the matching one automatically.
+ */
+const ERC_PRESETS = [
+  { value: "Indicative — to be confirmed once a soft search / DIP has been run", label: "Indicative (default, pre-soft-search)" },
+  { value: PRODUCT_ERC["5yr-fix-no-erc"], label: "None" },
+  { value: PRODUCT_ERC["2yr-fix"], label: "3%, 2% (typical 2yr fix)" },
+  { value: PRODUCT_ERC["3yr-fix"], label: "3%, 2%, 2% (typical 3yr fix)" },
+  { value: PRODUCT_ERC["5yr-fix"], label: "5%, 4%, 3%, 2%, 2% (typical 5yr fix)" },
+] as const;
+const ERC_CUSTOM_VALUE = "__custom__";
+const ERC_DEFAULT = ERC_PRESETS[0].value;
 
 export default function SecondChargeCalculatorClient() {
   const { logoDataUrl } = useBranding();
@@ -52,7 +70,7 @@ export default function SecondChargeCalculatorClient() {
   const [brokerFeeAddedToLoan, setBrokerFeeAddedToLoan] = useState(false);
   const [valuationFeeAddedToLoan, setValuationFeeAddedToLoan] = useState(false);
   const [otherFeesAddedToLoan, setOtherFeesAddedToLoan] = useState(false);
-  const [earlyRepaymentCharges, setEarlyRepaymentCharges] = useState("");
+  const [earlyRepaymentCharges, setEarlyRepaymentCharges] = useState<string>(ERC_DEFAULT);
 
   const [isRental, setIsRental] = useState(false);
   const [firstChargePayment, setFirstChargePayment] = useState(900);
@@ -233,6 +251,7 @@ export default function SecondChargeCalculatorClient() {
               <SecondChargeRateFinder
                 combinedLtvPercent={combined.proposedCombinedLtvPercent ?? 0}
                 onApplyRate={setAnnualRatePercent}
+                onApplyErc={setEarlyRepaymentCharges}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -267,9 +286,18 @@ export default function SecondChargeCalculatorClient() {
                 onAddedToLoanChange={setOtherFeesAddedToLoan}
               />
               <div className="col-span-2">
-                <Field label="Early repayment charges" hint="e.g. &quot;5% yr1, 4% yr2, 3% yr3&quot; or &quot;None&quot; — leave blank if not yet known">
-                  <TextInput value={earlyRepaymentCharges} onChange={setEarlyRepaymentCharges} placeholder="Not specified" />
+                <Field label="Early repayment charges" hint="Defaults to indicative, pending a soft search — pick a common pattern or type your own">
+                  <SelectInput
+                    value={ERC_PRESETS.some((p) => p.value === earlyRepaymentCharges) ? earlyRepaymentCharges : ERC_CUSTOM_VALUE}
+                    onChange={(v) => {
+                      if (v !== ERC_CUSTOM_VALUE) setEarlyRepaymentCharges(v);
+                    }}
+                    options={[...ERC_PRESETS, { value: ERC_CUSTOM_VALUE, label: "Custom — type below" }]}
+                  />
                 </Field>
+                <div className="mt-2">
+                  <TextInput value={earlyRepaymentCharges} onChange={setEarlyRepaymentCharges} placeholder="Not specified" />
+                </div>
               </div>
             </div>
           </Section>
