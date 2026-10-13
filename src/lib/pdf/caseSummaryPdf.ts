@@ -25,9 +25,8 @@ function applicantAgeLabel(age: { years: number; months: number } | null): strin
 export function generateCaseSummaryPdf(caseState: CaseState, calc: Calc, logoDataUrl?: string | null): jsPDF {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const c = new PdfCursor(doc);
-  if (logoDataUrl) c.logo(logoDataUrl);
+  if (logoDataUrl) c.headerLogo(logoDataUrl);
 
-  c.title("Lending Calculator — Mortgage Case Summary");
   const generatedOn = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   c.subtitle(
     `Generated ${generatedOn}${caseState.property.postcode ? ` · ${caseState.property.postcode}` : ""}${
