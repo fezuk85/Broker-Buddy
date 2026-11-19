@@ -60,6 +60,9 @@ export default function SecondChargeCalculatorClient() {
   ]);
   const [newChargeAmount, setNewChargeAmount] = useState(40_000);
   const [annualRatePercent, setAnnualRatePercent] = useState(9.5);
+  // Product (e.g. "2 Yr Fix") whose rate was applied from the rate finder. Cleared on a manual rate
+  // edit so the quotation never names a product that no longer matches the rate shown.
+  const [productLabel, setProductLabel] = useState("");
   const [termMonths, setTermMonths] = useState(60);
   const [repaymentType, setRepaymentType] = useState<RepaymentType>("interest-only");
   const [lenderFee, setLenderFee] = useState(750);
@@ -161,6 +164,7 @@ export default function SecondChargeCalculatorClient() {
         charges,
         newChargeAmount,
         annualRatePercent,
+        productLabel,
         termMonths,
         repaymentType,
         lenderFee,
@@ -254,6 +258,7 @@ export default function SecondChargeCalculatorClient() {
                 combinedLtvPercent={combined.proposedCombinedLtvPercent ?? 0}
                 onApplyRate={setAnnualRatePercent}
                 onApplyErc={setEarlyRepaymentCharges}
+                onApplyProduct={setProductLabel}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -261,7 +266,15 @@ export default function SecondChargeCalculatorClient() {
                 <NumberInput prefix="£" value={newChargeAmount} onChange={setNewChargeAmount} />
               </Field>
               <Field label="Annual interest rate (%)">
-                <NumberInput suffix="%" value={annualRatePercent} onChange={setAnnualRatePercent} step={0.01} />
+                <NumberInput
+                  suffix="%"
+                  value={annualRatePercent}
+                  onChange={(v) => {
+                    setAnnualRatePercent(v);
+                    setProductLabel("");
+                  }}
+                  step={0.01}
+                />
               </Field>
               <Field label="Term (months)">
                 <NumberInput suffix="months" value={termMonths} onChange={setTermMonths} min={1} step={1} />

@@ -23,6 +23,8 @@ export interface SecondChargeQuotationInputs {
   charges: ExistingCharge[];
   newChargeAmount: number;
   annualRatePercent: number;
+  /** Product the rate was taken from (e.g. "2 Yr Fix"); omitted when the rate was typed in by hand. */
+  productLabel?: string;
   termMonths: number;
   repaymentType: "repayment" | "interest-only";
   lenderFee: number;
@@ -89,6 +91,7 @@ export function generateSecondChargeQuotationPdf(inputs: SecondChargeQuotationIn
   if (inputs.cost && inputs.cost.feesAddedToLoan > 0) {
     c.row("Loan amount including fees added to the loan", formatGbp(inputs.cost.totalLoanIncludingFees));
   }
+  if (inputs.productLabel?.trim()) c.row("Product", inputs.productLabel.trim());
   c.row("Annual interest rate", formatPercent(inputs.annualRatePercent, 2));
   c.row("Term", `${inputs.termMonths} months`);
   c.row("Repayment type", inputs.repaymentType === "repayment" ? "Repayment (capital & interest)" : "Interest-only");
