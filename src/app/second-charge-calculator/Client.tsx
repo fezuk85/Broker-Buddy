@@ -60,9 +60,10 @@ export default function SecondChargeCalculatorClient() {
   ]);
   const [newChargeAmount, setNewChargeAmount] = useState(40_000);
   const [annualRatePercent, setAnnualRatePercent] = useState(9.5);
-  // Product (e.g. "2 Yr Fix") whose rate was applied from the rate finder. Cleared on a manual rate
-  // edit so the quotation never names a product that no longer matches the rate shown.
-  const [productLabel, setProductLabel] = useState("");
+  // Product / fixed term (e.g. 2 Yr Fix vs 5 Yr Fix). Set automatically by the rate finder's
+  // "Use this rate", or chosen by hand; always printed on the quotation when set.
+  const [product, setProduct] = useState<SecondChargeProduct | "none">("none");
+  const productLabel = PRODUCT_OPTIONS.find((o) => o.value === product)?.label ?? "";
   const [termMonths, setTermMonths] = useState(60);
   const [repaymentType, setRepaymentType] = useState<RepaymentType>("interest-only");
   const [lenderFee, setLenderFee] = useState(750);
