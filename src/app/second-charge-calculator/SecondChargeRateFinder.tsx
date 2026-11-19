@@ -29,8 +29,8 @@ export function SecondChargeRateFinder({
   combinedLtvPercent: number;
   onApplyRate: (ratePercent: number) => void;
   onApplyErc?: (erc: string) => void;
-  /** Reports the label of the product whose rate was applied (e.g. "2 Yr Fix"), so the quotation can name it. */
-  onApplyProduct?: (productLabel: string) => void;
+  /** Reports the product whose rate was applied (e.g. "2yr-fix"), so the form and quotation can name it. */
+  onApplyProduct?: (product: SecondChargeProduct) => void;
 }) {
   const [creditProfile, setCreditProfile] = useState<CreditProfile>("prime");
   const [product, setProduct] = useState<SecondChargeProduct>("2yr-fix");
@@ -79,7 +79,7 @@ export function SecondChargeRateFinder({
                 onClick={() => {
                   onApplyRate(match.ratePercent!);
                   onApplyErc?.(PRODUCT_ERC[product]);
-                  onApplyProduct?.(PRODUCT_OPTIONS.find((o) => o.value === product)?.label ?? "");
+                  onApplyProduct?.(product);
                 }}
                 className="bb-tap-target shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-white"
                 style={{ background: "var(--bb-primary)" }}

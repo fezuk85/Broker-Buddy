@@ -18,7 +18,7 @@ import { Section } from "@/components/Section";
 import { StatTile } from "@/components/StatTile";
 import { LogoUpload } from "@/components/LogoUpload";
 import { useBranding } from "@/lib/branding/BrandingProvider";
-import { PRODUCT_ERC } from "@/lib/rates/secondChargeRateCard";
+import { PRODUCT_ERC, PRODUCT_OPTIONS, SecondChargeProduct } from "@/lib/rates/secondChargeRateCard";
 import { SecondChargeRateFinder } from "./SecondChargeRateFinder";
 import { SecondChargeGuide } from "@/content/guides/secondCharge";
 import { FileDown } from "lucide-react";
@@ -258,7 +258,7 @@ export default function SecondChargeCalculatorClient() {
                 combinedLtvPercent={combined.proposedCombinedLtvPercent ?? 0}
                 onApplyRate={setAnnualRatePercent}
                 onApplyErc={setEarlyRepaymentCharges}
-                onApplyProduct={setProductLabel}
+                onApplyProduct={setProduct}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -266,14 +266,13 @@ export default function SecondChargeCalculatorClient() {
                 <NumberInput prefix="£" value={newChargeAmount} onChange={setNewChargeAmount} />
               </Field>
               <Field label="Annual interest rate (%)">
-                <NumberInput
-                  suffix="%"
-                  value={annualRatePercent}
-                  onChange={(v) => {
-                    setAnnualRatePercent(v);
-                    setProductLabel("");
-                  }}
-                  step={0.01}
+                <NumberInput suffix="%" value={annualRatePercent} onChange={setAnnualRatePercent} step={0.01} />
+              </Field>
+              <Field label="Product / fixed term">
+                <SelectInput
+                  value={product}
+                  onChange={setProduct}
+                  options={[{ value: "none", label: "Not specified" }, ...PRODUCT_OPTIONS]}
                 />
               </Field>
               <Field label="Term (months)">

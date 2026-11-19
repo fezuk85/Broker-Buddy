@@ -23,7 +23,7 @@ export interface SecondChargeQuotationInputs {
   charges: ExistingCharge[];
   newChargeAmount: number;
   annualRatePercent: number;
-  /** Product the rate was taken from (e.g. "2 Yr Fix"); omitted when the rate was typed in by hand. */
+  /** Product / fixed term selected (e.g. "5 Yr Fix"); omitted when not specified. */
   productLabel?: string;
   termMonths: number;
   repaymentType: "repayment" | "interest-only";
