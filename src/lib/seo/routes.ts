@@ -15,6 +15,7 @@ export const PUBLIC_ROUTES: { path: string; priority: number }[] = [
   { path: "/help-to-buy-second-charge", priority: 0.9 },
   { path: "/help-to-buy-fee-calculator", priority: 0.9 },
   { path: "/second-charge-self-employed", priority: 0.8 },
+  { path: "/second-charge-lenders", priority: 0.9 },
   { path: "/broker-cases", priority: 0.9 },
   { path: "/broker-cases/sole-trader-to-limited-company", priority: 0.9 },
   { path: "/broker-cases/gross-rental-income-low-sa302", priority: 0.9 },
