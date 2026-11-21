@@ -88,6 +88,13 @@ export const CALCULATORS: CalculatorInfo[] = [
     related: ["ltv-calculator", "bridging-interest-calculator", "mortgage-repayment-calculator"],
   },
   {
+    slug: "second-charge-vs-early-repayment-charge",
+    title: "Second Charge vs Early Repayment Charge",
+    shortTitle: "2nd Charge vs ERC",
+    desc: "Compare a second charge loan with paying your early repayment charge and remortgaging.",
+    related: ["second-charge-calculator", "mortgage-overpayment-calculator", "ltv-calculator"],
+  },
+  {
     slug: "salary-calculator",
     title: "Salary Take-Home Calculator",
     shortTitle: "Salary",
@@ -153,7 +160,7 @@ export const CALCULATOR_GROUPS: CalculatorGroup[] = [
     id: "secured",
     title: "Short-term & secured lending",
     blurb: "Bridging finance and second or third charges.",
-    slugs: ["bridging-interest-calculator", "second-charge-calculator"],
+    slugs: ["bridging-interest-calculator", "second-charge-calculator", "second-charge-vs-early-repayment-charge"],
   },
 ];
 
