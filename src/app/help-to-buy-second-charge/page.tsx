@@ -89,6 +89,14 @@ export default function Page() {
         </div>
       </Section>
 
+      <p className="mt-3 text-sm text-[var(--bb-muted)]">
+        Work out your own fee year by year, and what repaying would cost at today&apos;s value, with the{" "}
+        <Link href="/help-to-buy-fee-calculator" className="underline hover:text-[var(--bb-foreground)]">
+          Help to Buy equity loan fee calculator
+        </Link>
+        .
+      </p>
+
       <Section className="mt-8" title="Repaying the equity loan, in part or in full">
         <ul className="list-disc pl-5 text-sm text-[var(--bb-muted)] space-y-1">
           <li>

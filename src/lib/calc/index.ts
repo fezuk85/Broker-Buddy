@@ -13,3 +13,4 @@ export * from "./stampDuty";
 export * from "./affordability";
 export * from "./overpayment";
 export * from "./ercBreakEven";
+export * from "./helpToBuy";

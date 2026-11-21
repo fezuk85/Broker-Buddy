@@ -13,6 +13,8 @@ export const PUBLIC_ROUTES: { path: string; priority: number }[] = [
   { path: "/second-charge-calculator", priority: 0.8 },
   { path: "/second-charge-vs-early-repayment-charge", priority: 0.9 },
   { path: "/help-to-buy-second-charge", priority: 0.9 },
+  { path: "/help-to-buy-fee-calculator", priority: 0.9 },
+  { path: "/second-charge-self-employed", priority: 0.8 },
   { path: "/salary-calculator", priority: 0.8 },
   { path: "/dividend-calculator", priority: 0.8 },
   { path: "/stamp-duty-calculator", priority: 0.9 },

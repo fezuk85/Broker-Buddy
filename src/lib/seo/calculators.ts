@@ -95,6 +95,13 @@ export const CALCULATORS: CalculatorInfo[] = [
     related: ["second-charge-calculator", "mortgage-overpayment-calculator", "ltv-calculator"],
   },
   {
+    slug: "help-to-buy-fee-calculator",
+    title: "Help to Buy Equity Loan Fee Calculator",
+    shortTitle: "Help to Buy fees",
+    desc: "The fee after year five, how it rises with RPI, and the cost to repay the equity loan.",
+    related: ["second-charge-vs-early-repayment-charge", "ltv-calculator", "mortgage-repayment-calculator"],
+  },
+  {
     slug: "salary-calculator",
     title: "Salary Take-Home Calculator",
     shortTitle: "Salary",
@@ -160,7 +167,7 @@ export const CALCULATOR_GROUPS: CalculatorGroup[] = [
     id: "secured",
     title: "Short-term & secured lending",
     blurb: "Bridging finance and second or third charges.",
-    slugs: ["bridging-interest-calculator", "second-charge-calculator", "second-charge-vs-early-repayment-charge"],
+    slugs: ["bridging-interest-calculator", "second-charge-calculator", "second-charge-vs-early-repayment-charge", "help-to-buy-fee-calculator"],
   },
 ];
 
