@@ -6,13 +6,18 @@ import { BrokerCta } from "@/components/BrokerCta";
 import { SITE_URL } from "@/lib/seo/routes";
 
 export const metadata: Metadata = {
-  title: "Second Charge on a Help to Buy Home — Repaying the Equity Loan",
+  title: "Pay Off Your Help to Buy Equity Loan: Can a Second Charge Help?",
   description:
-    "Can you take out a second charge loan on a Help to Buy home, or use one to repay the equity loan? What the government's own guide says about the year-5 fee, repaying early and further borrowing.",
+    "Want to pay off your Help to Buy equity loan? See how the repayment is worked out, what the government's guide says about the year-5 fee and further borrowing, and where a second charge loan fits.",
   alternates: { canonical: "/help-to-buy-second-charge" },
 };
 
 const faqs = [
+  {
+    question: "If my home has gone up in value, how much will it cost to pay off my Help to Buy equity loan?",
+    answer:
+      "More. What you repay is a share of your home's current value, not the original amount, so if the property has gone up in value the cost of repaying goes up with it. An independent valuer must value the property, you pay for the valuation, and any outstanding fees are paid at the same time.",
+  },
   {
     question: "Can I get a second charge loan on a Help to Buy home?",
     answer:
@@ -55,7 +60,7 @@ export default function Page() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
 
       <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-        Second charge on a Help to Buy home: repaying the equity loan or borrowing more
+        Paying off your Help to Buy equity loan: can a second charge help?
       </h1>
       <p className="mt-3 text-[var(--bb-muted)]">
         If you bought with a Help to Buy equity loan in England, the fee that starts after year five, or a need to
