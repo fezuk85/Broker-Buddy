@@ -1,6 +1,11 @@
 // Problem-led guides shown on /guides and the homepage. Keep in sync with src/app/<slug>/page.tsx.
 export const PROBLEM_GUIDES: { slug: string; title: string; description: string }[] = [
   {
+    "slug": "borrow-against-home-for-business-purposes",
+    "title": "Can I borrow against my home for business purposes?",
+    "description": "How borrowing secured on your home for business purposes works in the UK: regulated or unregulated, common uses, evidence lenders ask for, options and the risks."
+  },
+  {
     "slug": "borrow-against-your-house-without-remortgaging",
     "title": "How to borrow against your house without remortgaging",
     "description": "The UK ways to raise money against your home without replacing your mortgage: a further advance, a second charge loan or an unsecured loan, with costs and risks."
@@ -14,6 +19,11 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "slug": "debt-consolidation-mortgage-or-second-charge",
     "title": "Consolidating debts into your mortgage or a second charge: how it works and the risks",
     "description": "Thinking of rolling credit cards and loans into your mortgage or a second charge loan? See how the cost, the risk to your home and the alternatives work in the UK."
+  },
+  {
+    "slug": "deposit-for-investment-property-borrow-against-home",
+    "title": "Can I borrow against my home for a deposit on a buy-to-let?",
+    "description": "How UK homeowners use equity for a buy-to-let deposit: second charge, further advance or remortgage, lender views on borrowed deposits, extra tax and the risks."
   },
   {
     "slug": "early-repayment-charge-options",
@@ -39,6 +49,11 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "slug": "moving-home-keeping-old-house-to-rent",
     "title": "Moving home but keeping your old house to rent out: your options",
     "description": "Moving but keeping your old house as a rental? See how consent to let, buy-to-let and let to buy work, how rent is assessed, the extra property tax and the risks."
+  },
+  {
+    "slug": "pay-off-tax-bill-hmrc-borrow-against-home",
+    "title": "Can I borrow against my home to pay a tax bill to HMRC?",
+    "description": "Short of cash for a tax bill? See how HMRC Time to Pay works, what late payment costs, and where a further advance, remortgage or second charge fits."
   },
   {
     "slug": "release-equity-to-buy-another-property",
