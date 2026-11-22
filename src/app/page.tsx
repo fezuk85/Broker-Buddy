@@ -12,6 +12,17 @@ const POPULAR = [
   { href: "/stamp-duty-calculator", title: "Stamp duty calculator", desc: "England, Wales and Scotland rates." },
 ];
 
+const FEATURED = [
+  "mortgage-declined-what-next",
+  "moving-home-keeping-old-house-to-rent",
+  "can-i-borrow-more-on-my-mortgage",
+  "just-changed-jobs-can-i-borrow-more",
+  "remortgage-with-a-ccj-or-defaults",
+  "rent-out-a-property-not-yet-let-finance",
+  "second-charge-with-adverse-credit",
+  "early-repayment-charge-options",
+];
+
 const STEPS = [
   { n: "1", title: "Find your situation", body: "Read the guide that matches what has happened, in plain English, with its sources." },
   { n: "2", title: "Put numbers on it", body: "Use a calculator to see what borrowing more would really cost you." },
@@ -52,7 +63,7 @@ export default function Home() {
         <h2 className="text-xl font-semibold tracking-tight">What has happened?</h2>
         <p className="mt-1 text-sm text-[var(--bb-muted)]">Pick the guide closest to your situation. Each one lists its sources.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {PROBLEM_GUIDES.map((g) => (
+          {FEATURED.map((slug) => PROBLEM_GUIDES.find((x) => x.slug === slug)).filter((g): g is (typeof PROBLEM_GUIDES)[number] => Boolean(g)).map((g) => (
             <Link key={g.slug} href={`/${g.slug}`} className="bb-card p-4 hover:border-[var(--bb-primary)] transition-colors">
               <p className="text-sm font-semibold leading-snug">{g.title}</p>
               <p className="mt-2 text-xs text-[var(--bb-muted)] line-clamp-3">{g.description}</p>
