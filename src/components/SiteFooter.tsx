@@ -32,6 +32,7 @@ export function SiteFooter() {
         <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
           <Link href="/mortgage-case-calculator" className="hover:text-[var(--bb-foreground)]">Case Calculator</Link>
           <Link href="/guides" className="hover:text-[var(--bb-foreground)]">Guides</Link>
+          <Link href="/for-brokers" className="hover:text-[var(--bb-foreground)]">For brokers</Link>
           <Link href="/data-sources" className="hover:text-[var(--bb-foreground)]">Data Sources</Link>
           <Link href="/about-us" className="hover:text-[var(--bb-foreground)]">About Us</Link>
           <Link href="/contact-us" className="hover:text-[var(--bb-foreground)]">Contact Us</Link>

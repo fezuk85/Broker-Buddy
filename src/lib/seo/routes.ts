@@ -21,6 +21,7 @@ export const PUBLIC_ROUTES: { path: string; priority: number }[] = [
   { path: "/mortgage-affordability-calculator", priority: 0.9 },
   { path: "/mortgage-overpayment-calculator", priority: 0.8 },
   { path: "/guides", priority: 0.8 },
+  { path: "/for-brokers", priority: 0.8 },
   { path: "/borrow-against-your-house-without-remortgaging", priority: 0.8 },
   { path: "/debt-consolidation-mortgage-or-second-charge", priority: 0.8 },
   { path: "/early-repayment-charge-options", priority: 0.8 },
