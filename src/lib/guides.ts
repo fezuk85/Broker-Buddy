@@ -11,6 +11,11 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "description": "The UK ways to raise money against your home without replacing your mortgage: a further advance, a second charge loan or an unsecured loan, with costs and risks."
   },
   {
+    "slug": "borrow-money-for-home-improvements",
+    "title": "Borrowing money for home improvements: kitchen, bathroom, extension or loft",
+    "description": "How people pay for a kitchen, bathroom or extension in the UK: savings, personal loans, further advance, remortgage, second charge and 0% cards, and the risks."
+  },
+  {
     "slug": "can-i-borrow-more-on-my-mortgage",
     "title": "Can I borrow more on my mortgage? The UK routes explained",
     "description": "Can you borrow more on your mortgage? See how a further advance, product transfer, remortgage and second charge loan work, what lenders check and the risks."
@@ -59,6 +64,11 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "slug": "pay-off-tax-bill-hmrc-borrow-against-home",
     "title": "Can I borrow against my home to pay a tax bill to HMRC?",
     "description": "Short of cash for a tax bill? See how HMRC Time to Pay works, what late payment costs, and where a further advance, remortgage or second charge fits."
+  },
+  {
+    "slug": "property-without-kitchen-or-bathroom-unmortgageable",
+    "title": "Mortgage valuation fails: no kitchen or bathroom and an unmortgageable property",
+    "description": "Why a home with no working kitchen or bathroom can fail a mortgage valuation, what valuers look for, and the routes people explore when a lender will not lend."
   },
   {
     "slug": "release-equity-to-buy-another-property",

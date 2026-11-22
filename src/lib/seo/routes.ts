@@ -44,6 +44,8 @@ export const PUBLIC_ROUTES: { path: string; priority: number }[] = [
   { path: "/deposit-for-investment-property-borrow-against-home", priority: 0.8 },
   { path: "/borrow-against-home-for-business-purposes", priority: 0.8 },
   { path: "/divorce-buy-out-ex-partner-borrow-against-home", priority: 0.8 },
+  { path: "/borrow-money-for-home-improvements", priority: 0.8 },
+  { path: "/property-without-kitchen-or-bathroom-unmortgageable", priority: 0.8 },
   { path: "/data-sources", priority: 0.5 },
   { path: "/about-us", priority: 0.4 },
   { path: "/contact-us", priority: 0.4 },
