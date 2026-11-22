@@ -24,6 +24,12 @@ export function SiteHeader() {
         </Link>
         <nav aria-label="Main" className="flex items-center gap-2 sm:gap-3">
           <Link
+            href="/guides"
+            className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-[var(--bb-foreground)] hover:text-[var(--bb-primary)]"
+          >
+            Guides
+          </Link>
+          <Link
             href="/about-us"
             className="hidden md:inline-block rounded-lg px-2.5 py-1.5 text-sm text-[var(--bb-muted)] hover:text-[var(--bb-foreground)]"
           >

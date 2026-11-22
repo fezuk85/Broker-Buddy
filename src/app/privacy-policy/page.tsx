@@ -40,6 +40,17 @@ export default function PrivacyPolicyPage() {
         </p>
       </Section>
 
+      <Section className="mt-8" title="Enquiries you email us">
+        <p className="text-sm text-[var(--bb-muted)]">
+          If you use an &ldquo;Email us your situation&rdquo; button on one of our guides, your message comes to us as a
+          normal email from your own email client. We use it only to reply and to talk your situation through with you.
+        </p>
+        <p className="mt-3 text-sm text-[var(--bb-muted)]">
+          If another broker would suit you better, for example a mainstream mortgage broker, we will only pass your
+          details to them after we have spoken to you and you have agreed.
+        </p>
+      </Section>
+
       <Section className="mt-8" title="Cookies and advertising">
         <p className="text-sm text-[var(--bb-muted)]">
           We use Google AdSense to show adverts, which may use cookies to serve ads based on your

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ScenarioPicker } from "@/components/ScenarioPicker";
+import { PROBLEM_GUIDES } from "@/lib/guides";
 
 export default function Home() {
   return (
@@ -17,8 +18,46 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-8">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <a href="#calculators" className="bb-card p-5 hover:border-[var(--bb-primary)] transition-colors">
+            <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--bb-primary)" }}>Brokers</p>
+            <p className="mt-1 font-semibold">Pick a case type and get the right calculators</p>
+            <p className="mt-1 text-sm text-[var(--bb-muted)]">LTV, affordability, second charge, bridging, buy-to-let and more.</p>
+          </a>
+          <Link href="/guides" className="bb-card p-5 hover:border-[var(--bb-primary)] transition-colors">
+            <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--bb-primary)" }}>Homeowners</p>
+            <p className="mt-1 font-semibold">Declined, adverse credit or a fixed rate you can&apos;t leave?</p>
+            <p className="mt-1 text-sm text-[var(--bb-muted)]">Read our specialist lending guides and see what your options are.</p>
+          </Link>
+        </div>
+      </section>
+
+      <section id="calculators" className="mx-auto max-w-6xl px-4 sm:px-6 pb-10 scroll-mt-24">
         <ScenarioPicker />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">Specialist lending guides</h2>
+            <p className="mt-1 text-sm text-[var(--bb-muted)]">For when your situation doesn&apos;t fit a standard mortgage. Every guide lists its sources.</p>
+          </div>
+          <Link href="/guides" className="hidden sm:inline text-sm font-medium underline shrink-0" style={{ color: "var(--bb-primary)" }}>
+            All guides →
+          </Link>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {PROBLEM_GUIDES.map((g) => (
+            <Link key={g.slug} href={`/${g.slug}`} className="bb-card p-4 hover:border-[var(--bb-primary)] transition-colors">
+              <p className="text-sm font-semibold leading-snug">{g.title}</p>
+              <p className="mt-2 text-xs text-[var(--bb-muted)] line-clamp-3">{g.description}</p>
+            </Link>
+          ))}
+        </div>
+        <Link href="/guides" className="sm:hidden mt-4 inline-block text-sm font-medium underline" style={{ color: "var(--bb-primary)" }}>
+          All guides →
+        </Link>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">

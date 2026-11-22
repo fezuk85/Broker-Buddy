@@ -27,6 +27,10 @@ const RELATED_LABELS: Record<string, string> = {
   "/bridging-interest-calculator": "Bridging interest calculator",
 };
 
+function anchor(text: string) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 export function GuidePage({ data }: { data: GuideData }) {
   const faqLd = {
     "@context": "https://schema.org",
@@ -60,8 +64,30 @@ export function GuidePage({ data }: { data: GuideData }) {
       <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight">{data.h1}</h1>
       <p className="mt-3 text-[var(--bb-muted)]">{data.intro}</p>
 
+      <div className="mt-6">
+        <EnquiryCta topic={data.h1} variant="compact" />
+      </div>
+
+      <nav aria-label="On this page" className="mt-6 rounded-xl border border-[var(--bb-border)] p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--bb-muted)]">On this page</p>
+        <ol className="mt-2 list-decimal pl-5 text-sm space-y-1">
+          {data.sections.map((s) => (
+            <li key={s.heading}>
+              <a href={`#${anchor(s.heading)}`} className="underline hover:text-[var(--bb-primary)]">
+                {s.heading}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="#common-questions" className="underline hover:text-[var(--bb-primary)]">
+              Common questions
+            </a>
+          </li>
+        </ol>
+      </nav>
+
       {data.sections.map((s) => (
-        <Section key={s.heading} className="mt-8" title={s.heading}>
+        <Section key={s.heading} id={anchor(s.heading)} className="mt-8" title={s.heading}>
           {s.paragraphs?.map((p, i) => (
             <p key={i} className={`text-sm text-[var(--bb-muted)] ${i > 0 ? "mt-3" : ""}`}>
               {p}
@@ -91,7 +117,7 @@ export function GuidePage({ data }: { data: GuideData }) {
         </Section>
       )}
 
-      <Section className="mt-8" title="Common questions">
+      <Section id="common-questions" className="mt-8" title="Common questions">
         <div className="space-y-4">
           {data.faqs.map((f) => (
             <div key={f.q}>
