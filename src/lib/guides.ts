@@ -26,6 +26,11 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "description": "How UK homeowners use equity for a buy-to-let deposit: second charge, further advance or remortgage, lender views on borrowed deposits, extra tax and the risks."
   },
   {
+    "slug": "divorce-buy-out-ex-partner-borrow-against-home",
+    "title": "Buying out your ex-partner's share of the house: how people raise the money",
+    "description": "How a divorce buy-out of the family home works in the UK: equity, the lender's role, ways to raise the money, tax on transfers and the risks of borrowing."
+  },
+  {
     "slug": "early-repayment-charge-options",
     "title": "Early repayment charges: your options if you need to borrow during a fixed or tracker deal",
     "description": "What an early repayment charge is, how to find yours, how it is worked out, and the options if you need to borrow during a fixed or tracker deal."
