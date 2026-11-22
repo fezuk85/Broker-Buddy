@@ -41,8 +41,8 @@ export function SiteHeader() {
           ))}
           <AllCalculatorsMenu />
           <TalkButton topic="Header">
-            <span className="sm:hidden">Talk</span>
-            <span className="hidden sm:inline">Talk to us</span>
+            <span className="sm:hidden">Email</span>
+            <span className="hidden sm:inline">Email Andrew</span>
           </TalkButton>
         </nav>
       </div>

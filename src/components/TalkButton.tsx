@@ -7,7 +7,7 @@ import Link from "next/link";
 export function TalkButton({
   topic = "Homepage",
   className = "",
-  children = "Talk to us",
+  children = "Email Andrew",
 }: {
   topic?: string;
   className?: string;
