@@ -113,3 +113,49 @@ export function calculateBridgingLoan(inputs: BridgingInputs): BridgingResult | 
     feesPayableUpfront: fees.payableUpfront,
   };
 }
+
+export interface BridgingRepaymentRow {
+  /** Whole months the loan is kept. */
+  month: number;
+  /** Interest for the months used so far (gross loan x monthly rate x months). */
+  interestToDate: number;
+  /** All fees; these are the same whichever month the loan is repaid. */
+  fees: number;
+  /** Interest to date plus fees: what the loan has cost by this month. */
+  totalCost: number;
+  /**
+   * What is owed to the lender to clear the loan at the end of this month. Serviced: the gross loan
+   * (interest has been paid monthly). Retained: the gross loan less the retained interest not yet
+   * used, which assumes unused retained interest is rebated on early repayment.
+   */
+  repayLender: number;
+}
+
+/**
+ * "If you keep it for N months, you owe this." Interest is taken as simple monthly interest on the
+ * gross loan for the months used. Generic maths only: real lenders can set a minimum interest period,
+ * charge exit fees or calculate interest daily, so the table is an illustration, not a payoff figure.
+ */
+export function bridgingRepaymentSchedule(
+  inputs: Pick<BridgingInputs, "monthlyInterestRatePercent" | "termMonths" | "interestType">,
+  result: Pick<BridgingResult, "grossLoan" | "totalFees">
+): BridgingRepaymentRow[] {
+  const { monthlyInterestRatePercent, termMonths, interestType } = inputs;
+  if (!(termMonths > 0) || !(monthlyInterestRatePercent >= 0)) return [];
+  const monthlyRate = monthlyInterestRatePercent / 100;
+  const monthlyInterest = result.grossLoan * monthlyRate;
+  const months: number[] = [];
+  for (let m = 1; m < termMonths && m <= 60; m++) months.push(m);
+  months.push(termMonths);
+  return months.map((month) => {
+    const interestToDate = monthlyInterest * month;
+    const unusedRetained = interestType === "retained" ? monthlyInterest * (termMonths - month) : 0;
+    return {
+      month,
+      interestToDate,
+      fees: result.totalFees,
+      totalCost: interestToDate + result.totalFees,
+      repayLender: result.grossLoan - unusedRetained,
+    };
+  });
+}

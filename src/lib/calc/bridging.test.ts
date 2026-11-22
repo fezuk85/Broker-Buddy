@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateBridgingLoan } from "./bridging";
+import { calculateBridgingLoan, bridgingRepaymentSchedule } from "./bridging";
 
 describe("calculateBridgingLoan - serviced interest", () => {
   it("computes interest and fees without inflating the loan", () => {
@@ -188,5 +188,37 @@ describe("calculateBridgingLoan - fees added to the loan or paid upfront", () =>
       ["Broker fee", true],
       ["Other fees", false],
     ]);
+  });
+});
+
+describe("bridgingRepaymentSchedule", () => {
+  const base = {
+    netLoanRequired: 500_000,
+    monthlyInterestRatePercent: 0.85,
+    termMonths: 12,
+    arrangementFeePercent: 2,
+    brokerFee: 0,
+    otherFees: 0,
+  };
+
+  it("charges interest only for the months used (serviced)", () => {
+    const inputs = { ...base, interestType: "serviced" as const };
+    const r = calculateBridgingLoan(inputs)!;
+    const rows = bridgingRepaymentSchedule(inputs, r);
+    expect(rows).toHaveLength(12);
+    expect(rows[2].month).toBe(3);
+    expect(rows[2].interestToDate).toBeCloseTo(500_000 * 0.0085 * 3, 5);
+    expect(rows[2].repayLender).toBeCloseTo(500_000, 5);
+    expect(rows[11].interestToDate).toBeCloseTo(r.totalInterest, 5);
+  });
+
+  it("retained: month 3 repayment is the gross loan less nine months of unused interest, and the last row is the gross loan", () => {
+    const inputs = { ...base, interestType: "retained" as const };
+    const r = calculateBridgingLoan(inputs)!;
+    const rows = bridgingRepaymentSchedule(inputs, r);
+    const monthly = r.grossLoan * 0.0085;
+    expect(rows[2].repayLender).toBeCloseTo(r.grossLoan - monthly * 9, 5);
+    expect(rows[11].repayLender).toBeCloseTo(r.grossLoan, 5);
+    expect(rows[2].totalCost).toBeCloseTo(monthly * 3 + r.totalFees, 5);
   });
 });

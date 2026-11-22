@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { calculateBridgingLoan, BridgingInterestType } from "@/lib/calc";
+import { calculateBridgingLoan, bridgingRepaymentSchedule, BridgingInterestType } from "@/lib/calc";
 import { formatGbp } from "@/lib/format";
 import { CalculatorPage } from "@/components/CalculatorPage";
 import { Field, NumberInput, SelectInput, TextInput, DateInput } from "@/components/Field";
@@ -69,6 +69,11 @@ export default function BridgingCalculatorClient() {
       valuationFeeAddedToLoan,
       otherFeesAddedToLoan,
     ]
+  );
+
+  const schedule = useMemo(
+    () => (result ? bridgingRepaymentSchedule({ monthlyInterestRatePercent: monthlyRate, termMonths, interestType }, result) : []),
+    [result, monthlyRate, termMonths, interestType]
   );
 
   async function handleDownloadPdf() {
@@ -167,6 +172,7 @@ export default function BridgingCalculatorClient() {
         </>
       }
       results={
+        <>
         <Section title="Results">
           {result ? (
             <div className="grid grid-cols-2 gap-3">
@@ -185,6 +191,46 @@ export default function BridgingCalculatorClient() {
             </p>
           )}
         </Section>
+        {result && schedule.length > 0 && (
+          <Section title="What you owe if you repay early">
+            <p className="mb-3 text-sm text-[var(--bb-muted)]">
+              A bridging loan is not a fixed bill for the whole term. You pay interest for the months you keep it, so repaying
+              in month {Math.min(3, schedule.length)} costs far less than the full {termMonths} months. Fees are the same whenever you repay.
+              {interestType === "retained"
+                ? " This assumes unused retained interest is given back when you repay early."
+                : ""}
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-[var(--bb-muted)]">
+                    <th className="font-medium py-1 pr-3">Kept for</th>
+                    <th className="font-medium py-1 pr-3">Interest so far</th>
+                    <th className="font-medium py-1 pr-3">Fees</th>
+                    <th className="font-medium py-1 pr-3">Total cost</th>
+                    <th className="font-medium py-1 text-right">Repay the lender</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {schedule.map((row) => (
+                    <tr key={row.month} className="border-t border-[var(--bb-border)]">
+                      <td className="py-1.5 pr-3">{row.month} {row.month === 1 ? "month" : "months"}</td>
+                      <td className="py-1.5 pr-3">{formatGbp(row.interestToDate)}</td>
+                      <td className="py-1.5 pr-3">{formatGbp(row.fees)}</td>
+                      <td className="py-1.5 pr-3 font-medium">{formatGbp(row.totalCost)}</td>
+                      <td className="py-1.5 text-right">{formatGbp(row.repayLender)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3 text-xs text-[var(--bb-muted)]">
+              Illustration only. Lenders can set a minimum interest period, charge an exit fee or work interest out daily, so check the
+              terms for your loan.
+            </p>
+          </Section>
+        )}
+        </>
       }
       explanation={
         <>
