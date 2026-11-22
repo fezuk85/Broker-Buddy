@@ -50,6 +50,25 @@ export default function Page() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
+        <div className="bb-card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="font-semibold">Cases lenders often decline</h2>
+            <p className="mt-1 text-sm text-[var(--bb-muted)] max-w-2xl">
+              Newly limited companies, tax-efficient SA302s, Right to Buy properties and more: how some second charge
+              lenders still approach them, and what evidence to send.
+            </p>
+          </div>
+          <Link
+            href="/broker-cases"
+            className="bb-tap-target inline-flex shrink-0 items-center justify-center rounded-lg px-5 py-3 text-sm font-medium text-white"
+            style={{ background: "var(--bb-primary)" }}
+          >
+            Read the broker guides
+          </Link>
+        </div>
+      </section>
+
       <section id="all" className="mx-auto max-w-6xl px-4 sm:px-6 pb-16 scroll-mt-24">
         <Section title="Every calculator">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
