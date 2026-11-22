@@ -1,17 +1,15 @@
+import { enquiryMailto } from "@/lib/enquiryEmail";
+
 /**
  * "Talk it through" enquiry card. Renders nothing unless NEXT_PUBLIC_ENQUIRY_EMAIL is set.
- * The mailto link carries only a subject line naming the page the visitor was reading.
+ * The mailto link pre-fills a subject naming the page and a blank list of details (see lib/enquiryEmail.ts).
  * variant="compact" is a one-line strip for the top of a guide; "full" is the card at the end.
  */
 export function EnquiryCta({ topic, variant = "full" }: { topic: string; variant?: "full" | "compact" }) {
   const email = process.env.NEXT_PUBLIC_ENQUIRY_EMAIL;
   if (!email) return null;
 
-  const subject = encodeURIComponent(`Enquiry from lendingcalculator.co.uk: ${topic}`);
-  const body = encodeURIComponent(
-    "Hello,\n\nI read the page above and would like to talk through my situation.\n\nMy name:\nBest number or email to reach me:\nWhat I would like to borrow and why (roughly):\nAnything that has made this difficult so far:\n"
-  );
-  const href = `mailto:${email}?subject=${subject}&body=${body}`;
+  const href = enquiryMailto(email, topic);
 
   if (variant === "compact") {
     return (

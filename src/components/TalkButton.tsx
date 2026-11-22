@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { enquiryMailto } from "@/lib/enquiryEmail";
 
 /**
  * "Talk to us" button. Opens an email to NEXT_PUBLIC_ENQUIRY_EMAIL when it is set; otherwise falls back to
@@ -23,12 +24,9 @@ export function TalkButton({
       </Link>
     );
   }
-  const subject = encodeURIComponent(`Enquiry from lendingcalculator.co.uk: ${topic}`);
-  const body = encodeURIComponent(
-    "Hello,\n\nI would like to talk through my situation.\n\nMy name:\nBest number or email to reach me:\nWhat I would like to borrow and why (roughly):\nAnything that has made this difficult so far:\n"
-  );
+
   return (
-    <a href={`mailto:${email}?subject=${subject}&body=${body}`} className={cls} style={style}>
+    <a href={enquiryMailto(email, topic)} className={cls} style={style}>
       {children}
     </a>
   );
