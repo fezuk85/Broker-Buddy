@@ -1,9 +1,19 @@
 // Problem-led guides shown on /guides and the homepage. Keep in sync with src/app/<slug>/page.tsx.
 export const PROBLEM_GUIDES: { slug: string; title: string; description: string }[] = [
   {
+    "slug": "auction-purchase-finance-bridging-or-second-charge",
+    "title": "How to fund an auction property purchase: bridging, mortgage, second charge or savings",
+    "description": "How UK auction buyers fund a purchase: the usual 28-day timetable, bridging, mortgages, second charges and savings, and what happens if you cannot complete."
+  },
+  {
     "slug": "borrow-against-home-for-business-purposes",
     "title": "Can I borrow against my home for business purposes?",
     "description": "How borrowing secured on your home for business purposes works in the UK: regulated or unregulated, common uses, evidence lenders ask for, options and the risks."
+  },
+  {
+    "slug": "borrow-against-your-home-in-retirement-pension-income",
+    "title": "Borrowing against your home in retirement on a pension income",
+    "description": "How UK homeowners in retirement can borrow against their home: RIO mortgages, lifetime mortgages, further advances, second charges, and the trade-offs and risks."
   },
   {
     "slug": "borrow-against-your-house-without-remortgaging",
@@ -19,6 +29,11 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "slug": "can-i-borrow-more-on-my-mortgage",
     "title": "Can I borrow more on my mortgage? The UK routes explained",
     "description": "Can you borrow more on your mortgage? See how a further advance, product transfer, remortgage and second charge loan work, what lenders check and the risks."
+  },
+  {
+    "slug": "clear-debt-management-plan-iva-ccj-secured-loan",
+    "title": "Can I clear a debt management plan, IVA or CCJ with a secured loan?",
+    "description": "Some homeowners use a second charge to clear a DMP, IVA or CCJ. See how each shows on a credit file, the free advice available and the risks to your home."
   },
   {
     "slug": "debt-consolidation-mortgage-or-second-charge",
@@ -61,9 +76,19 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "description": "Moving but keeping your old house as a rental? See how consent to let, buy-to-let and let to buy work, how rent is assessed, the extra property tax and the risks."
   },
   {
+    "slug": "pay-off-bridging-loan-refinance-exit",
+    "title": "How to repay or refinance a bridging loan when the term ends",
+    "description": "What happens when a UK bridging loan term ends? See how exit strategies work, the main refinancing routes, what lenders check and the risks of overrunning."
+  },
+  {
     "slug": "pay-off-tax-bill-hmrc-borrow-against-home",
     "title": "Can I borrow against my home to pay a tax bill to HMRC?",
     "description": "Short of cash for a tax bill? See how HMRC Time to Pay works, what late payment costs, and where a further advance, remortgage or second charge fits."
+  },
+  {
+    "slug": "pay-school-fees-borrow-against-home",
+    "title": "Paying private school fees: savings, payment plans and borrowing against your home",
+    "description": "How UK families pay private school fees: income, savings, payment plans, loans, a further advance, remortgage or second charge, and the risks of borrowing."
   },
   {
     "slug": "property-without-kitchen-or-bathroom-unmortgageable",
@@ -99,5 +124,10 @@ export const PROBLEM_GUIDES: { slug: string; title: string; description: string 
     "slug": "second-charge-with-adverse-credit",
     "title": "Second charge mortgage with adverse credit: how lenders generally look at it",
     "description": "How second charge lenders can view missed payments, defaults and CCJs, what affects your options, what it can cost, and the risk of securing more debt on your home."
+  },
+  {
+    "slug": "self-employed-one-year-of-accounts-borrow-more",
+    "title": "Self-employed with only one year of accounts: can I get a mortgage or borrow more?",
+    "description": "Self-employed with only one year of accounts? See why lenders ask for more history, what evidence helps, and the options and risks, including second charge loans."
   }
 ];
