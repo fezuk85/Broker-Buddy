@@ -5,7 +5,7 @@
  * date, both of which appear in the document header when provided.
  */
 import { jsPDF } from "jspdf";
-import { BridgingInterestType, BridgingResult } from "@/lib/calc";
+import { BridgingInterestType, BridgingResult, bridgingRepaymentSchedule } from "@/lib/calc";
 import { formatGbp, formatPercent } from "@/lib/format";
 import { PdfCursor, renderFooterOnEveryPage } from "./pdfCursor";
 
@@ -75,6 +75,32 @@ export function generateBridgingQuotationPdf(inputs: BridgingQuotationInputs): j
     c.paragraph(
       "This combination of rate, term and fees isn't fundable with retained interest — try a shorter term, lower rate, or switch to serviced interest."
     );
+  }
+
+  if (inputs.result) {
+    const schedule = bridgingRepaymentSchedule(
+      { monthlyInterestRatePercent: inputs.monthlyRate, termMonths: inputs.termMonths, interestType: inputs.interestType },
+      inputs.result
+    );
+    if (schedule.length > 0) {
+      c.sectionHeading("What you owe if you repay early");
+      c.paragraph(
+        "You pay interest only for the months you keep the loan, so repaying early costs less than the full term. Fees are the same whenever you repay." +
+          (inputs.interestType === "retained" ? " This assumes unused retained interest is given back on early repayment." : "") +
+          " Illustration only: a lender may set a minimum interest period, charge an exit fee or work interest out daily."
+      );
+      c.table(
+        ["Kept for", "Interest so far", "Fees", "Total cost", "Repay the lender"],
+        schedule.map((r) => [
+          `${r.month} ${r.month === 1 ? "month" : "months"}`,
+          formatGbp(r.interestToDate),
+          formatGbp(r.fees),
+          formatGbp(r.totalCost),
+          formatGbp(r.repayLender),
+        ]),
+        [0.18, 0.21, 0.17, 0.21, 0.23]
+      );
+    }
   }
 
   renderFooterOnEveryPage(
